@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"backend/controllers"
 	"backend/models"
 	"backend/routes"
 
@@ -23,6 +24,10 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
+	filename := "models/dummydata/users.csv"
+	controllers.LoadUsers(models.DB, filename)
+	log.Printf("loadusers finished")
+
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -34,6 +39,7 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
+
 }
 
 // Handler function placeholders - implement these in separate controller files

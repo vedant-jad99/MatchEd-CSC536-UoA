@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -19,17 +20,45 @@ func AddFromJSON(db *gorm.DB, jsonData []map[string]string, modelType interface{
 	}
 
 	for _, entry := range jsonData {
-		newModel := reflect.New(modelTypeValue).Interface()
-		jsonBytes, err := json.Marshal(entry)
+		processedEntry := make(map[string]interface{})
+
+		for key, value := range entry {
+			field, found := modelTypeValue.FieldByName(key)
+			if !found {
+				processedEntry[key] = value
+				continue
+			}
+
+			switch field.Type.Kind() {
+			case reflect.Uint, reflect.Uint32, reflect.Uint64:
+				num, err := strconv.ParseUint(value, 10, 64)
+				if err != nil {
+					return errors.New("invalid number format for field: " + key)
+				}
+				processedEntry[key] = uint(num)
+			case reflect.Int, reflect.Int32, reflect.Int64:
+				num, err := strconv.Atoi(value)
+				if err != nil {
+					return errors.New("invalid number format for field: " + key)
+				}
+				processedEntry[key] = num
+			default:
+				processedEntry[key] = value
+			}
+		}
+
+		jsonBytes, err := json.Marshal(processedEntry)
 		if err != nil {
 			return err
 		}
+
+		newModel := reflect.New(modelTypeValue).Interface()
 		err = json.Unmarshal(jsonBytes, newModel)
 		if err != nil {
 			return err
 		}
-		err = db.Create(newModel).Error
-		if err != nil {
+
+		if err := db.Create(newModel).Error; err != nil {
 			return err
 		}
 	}
@@ -37,13 +66,13 @@ func AddFromJSON(db *gorm.DB, jsonData []map[string]string, modelType interface{
 }
 
 // Functions to add and save models to the database
-func AddUser(db *gorm.DB, name, email string) (models.User, error) {
+func AddUser(db *gorm.DB, name string, email string) (models.User, error) {
 	user := models.User{Name: name, Email: email}
 	err := db.Create(&user).Error
 	return user, err
 }
 
-func AddCourse(db *gorm.DB, name, courseType string) (models.Course, error) {
+func AddCourse(db *gorm.DB, name string, courseType string) (models.Course, error) {
 	course := models.Course{Name: name, Type: courseType}
 	err := db.Create(&course).Error
 	return course, err
