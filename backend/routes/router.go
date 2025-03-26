@@ -53,16 +53,6 @@ func setApiHandlers(r *gin.Engine) {
 	api := r.Group("/api")
 	{
 
-		// People routes
-		people := api.Group("/people")
-		{
-			people.GET("/", controllers.GetAllPeople)
-			people.GET("/:id", controllers.GetPersonById)
-			people.POST("/", controllers.CreatePerson)
-			people.PUT("/:id", controllers.UpdatePerson)
-			people.DELETE("/:id", controllers.DeletePerson)
-		}
-
 		// User routes
 		users := api.Group("/users")
 		{
