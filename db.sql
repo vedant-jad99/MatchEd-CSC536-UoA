@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS match_schema.course (
     id SERIAL PRIMARY KEY,
     number VARCHAR NOT NULL,
     name VARCHAR NOT NULL,
-    location VARCHAR NOT NULL,
+    campus VARCHAR NOT NULL,
     semesters VARCHAR NOT NULL
 );
 

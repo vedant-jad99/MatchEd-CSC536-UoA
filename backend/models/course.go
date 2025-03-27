@@ -7,11 +7,13 @@ package models
 // number, location, semesters
 type Course struct {
 	//gorm.Model        // Adds ID, CreatedAt, UpdatedAt, DeletedAt
-	ID   uint   `gorm:"primaryKey"`
-	Name string `gorm:"type:varchar;not null"`
-	Type string `gorm:"type:varchar;not null"`
+	ID        uint   `gorm:"primaryKey"`
+	Number    string `gorm:"type:varchar;not null"` // occasionally contains chars (199H)
+	Name      string `gorm:"type:varchar;not null"`
+	Campus    string `gorm:"type:varchar;not null"`
+	Semesters string `gorm:"type:varchar;not null"`
 }
 
 func (Course) TableName() string {
-	return "match_schema.courses"
+	return `"match_schema"."course"`
 }

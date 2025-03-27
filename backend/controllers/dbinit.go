@@ -1,15 +1,37 @@
 package controllers
 
 import (
+	"backend/models"
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
+	"runtime"
 
 	"gorm.io/gorm"
 )
 
-func InitializeTables(db *gorm.DB)
-{
+func InitializeTables(db *gorm.DB) {
 	log.Printf("Initializing database tables from init-data/*.csv")
-	LoadCSVtoDatabase(db, "../models/init-data/users.csv", models.User{})
+	//csvPath := getFilePath("../models/init-data/users.csv")
+	//LoadCSVtoDatabase(db, csvPath, models.User{})
+	csvPath := getFilePath("../models/init-data/courses.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Course{})
+}
+
+func getFilePath(partialPath string) string {
+	// Get the directory of the current script
+	_, currentFile, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(currentFile)
+
+	// Construct the path to the CSV file relative to the script
+	csvPath := filepath.Join(dir, partialPath)
+
+	// Check if the file exists
+	if _, err := os.Stat(csvPath); err != nil {
+		fmt.Println("Error:", err)
+	}
+	return csvPath
 }
 
 func LoadCSVtoDatabase(db *gorm.DB, filePath string, modelType interface{}) {
@@ -19,8 +41,8 @@ func LoadCSVtoDatabase(db *gorm.DB, filePath string, modelType interface{}) {
 		return
 	}
 
-	log.Printf("loaded csv")
-	log.Printf("JSON Entry: %s", jsonData) // Debugging output
+	//log.Printf("loaded csv")
+	//log.Printf("JSON Entry: %s", jsonData) // Debugging output
 
 	err = AddFromJSON(db, jsonData, modelType)
 	if err != nil {

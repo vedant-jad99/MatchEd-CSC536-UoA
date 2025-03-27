@@ -72,8 +72,8 @@ func AddUser(db *gorm.DB, name string, email string) (models.User, error) {
 	return user, err
 }
 
-func AddCourse(db *gorm.DB, name string, courseType string) (models.Course, error) {
-	course := models.Course{Name: name, Type: courseType}
+func AddCourse(db *gorm.DB, number string, name string, campus string, semesters string) (models.Course, error) {
+	course := models.Course{Number: number, Name: name, Campus: campus, Semesters: semesters}
 	err := db.Create(&course).Error
 	return course, err
 }
