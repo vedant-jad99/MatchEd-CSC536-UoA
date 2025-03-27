@@ -24,9 +24,8 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
-	filename := "models/dummydata/users.csv"
-	controllers.LoadUsers(models.DB, filename)
-	log.Printf("loadusers finished")
+	// initialize the tables
+	controllers.InitializeTables(models.DB)
 
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")

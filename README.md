@@ -13,3 +13,12 @@ A software engineering project, matching faculty/educators to courses being taug
 
 ## Database setup
     $ psql -U postgres -h localhost -f db.sql
+
+## Database viewing
+    SELECT table_name FROM information_schema.tables WHERE table_schema = 'match_schema';
+    SET search_path TO match_schema;
+    \dt
+    SELECT * FROM match_schema."user";
+
+    note that "user" is a reserved keyword in postgresql, so quotes are needed
+

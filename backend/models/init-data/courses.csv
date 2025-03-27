@@ -1,0 +1,112 @@
+ID,Number,Name,Campus,Semesters
+1,101,Introduction to Computer Science,Main Campus,"Fall, Spring"
+2,110,Introduction to Computer Programming I,Main Campus,"Fall, Spring, Summer"
+3,120,Introduction to Computer Programming II,Main Campus,"Fall, Spring, Summer"
+4,144,Discrete Mathematics for Computer Science I,Main Campus,"Fall, Spring, Summer"
+5,199,Independent Study,Main Campus,"Fall, Spring"
+6,199H,Honors Independent Study,Main Campus,"Fall, Spring"
+7,210,Software Development,Main Campus,"Fall, Spring, Summer"
+8,244,Discrete Mathematics for Computer Science II,Main Campus,"Fall, Spring, Summer"
+9,252,Computer Organization,Main Campus,"Fall, Spring"
+10,296,Special Topics in Computer Science Seminar,Main Campus,"Fall, Spring"
+11,296B,Seminar in Bioinformatics,Main Campus,Fall
+12,299,Independent Study,Main Campus,"Fall, Spring, Summer"
+13,299H,Honors Independent Study,Main Campus,"Fall, Spring"
+14,317,Mobile Application Programming,Main Campus,"Fall, Spring"
+15,335,Object-Oriented Programming and Design,Main Campus,"Fall, Spring"
+16,337,Web Programming,Main Campus,"Fall, Spring"
+17,343,Human Computer Interaction,Main Campus,"Fall, Spring"
+18,345,Analysis of Discrete Structures,Main Campus,"Fall, Spring"
+19,346,Cloud Computing,Main Campus,Fall
+20,350,Fundamentals of Computer Science Theory,Main Campus,Fall
+21,352,Systems Programming and Unix,Main campus,Fall,Spring
+22,355,Discrete Structures and Basic Algorithms,Main campus,Fall,Spring
+23,355,Discrete Structures and Basic Algorithms,Online campus,Fall,Spring
+24,372,Comparative Programming Languages,Main campus,Spring
+25,380,Principles of Data Science,Main campus,Fall,Spring
+26,382,Software Development in C++,Main campus,Fall,Spring
+27,391,Preceptorship,Main campus,Fall,Spring,Summer
+28,392,Directed Research,Main campus,Fall,Spring
+29,396,Special Topics in Computer Science Seminar,Main campus,Fall,Spring
+30,399,Independent Study,Main campus,Fall,Spring
+31,399H,Honors Independent Study,Main campus,Fall,Spring
+32,401A,Symbolic Logic,Main campus,Fall
+33,401B,Symbolic Logic,Main campus,Spring
+34,422,Introduction to Parallel and Distributed Programming,Main campus,Spring
+35,425,Computer Networking,Main campus,Spring
+36,433,Computer Graphics,Main campus,Spring
+37,436,Software Engineering,Main campus,Fall
+38,437,Geometric Algorithms,Main campus,Fall
+39,438,Computational Linguistics,Main campus,Fall
+40,439,Statistical Natural Language Processing,Main campus,Fall
+41,444,Data Visualization,Main campus,Spring
+42,445,Algorithms,Main campus,Fall,Spring
+43,447,Green Computing,Main campus,Spring
+44,450,Algorithms in Bioinformatics,Main campus,Fall
+45,452,Principles of Operating Systems,Main campus,Fall,Spring
+46,453,Compilers and Systems Software,Main campus,Spring
+47,455,Philosophy and Artificial Intelligence,Main campus,Fall,Spring
+48,460,Database Design,Main campus,Fall,Spring
+49,465,Reverse Engineering vs. Software Protection,Main campus,Spring
+50,466,Computer Security,Main campus,Fall,Spring
+51,473,Automata, Grammars and Languages,Main campus,Spring
+52,474A,Computer-Aided Logic Design,Main campus,Fall
+53,477,Introduction to Computer Vision,Main campus,Fall
+54,480,Principles of Machine Learning,Main campus,Fall,Spring
+55,483,Text Retrieval and Web Search,Main campus,Fall
+56,492,Directed Research,Main campus,Fall,Spring
+57,493,Internship,Main campus,Fall,Spring,Summer
+58,496,Special Topics in Computer Science Seminar,Main campus,Fall,Spring
+59,498H,Honors Thesis,Main campus,Fall,Spring
+60,499,Independent Study,Main campus,Fall,Spring
+61,499H,Honors Independent Study,Main campus,Fall,Spring
+62,501A,Symbolic Logic,Main campus,Fall
+63,501B,Symbolic Logic,Main campus,Spring
+64,502,Mathematical Logic,Main campus,Fall (even years only)
+65,520,Principles of Programming Languages,Main campus,Spring
+66,522,Parallel and Distributed Computing,Main campus,Fall
+67,525,Principles of Computer Networking,Main campus,Fall
+68,533,Computer Graphics,Main campus,Spring
+69,535,Probabilistic Graphical Models,Main campus,Spring
+70,536,Software Engineering,Main campus,Spring
+71,537,Geometric Algorithms,Main campus,Spring
+72,538,Computational Linguistics,Main campus,Fall
+73,539,Statistical Natural Language Processing,Main campus,Fall
+74,543,Theory of Graphs and Networks,Main campus,Fall (even years only)
+75,544,Advanced Data Visualization,Main campus,Fall
+76,545,Design and Analysis of Algorithms,Main campus,Fall
+77,547,Green Computing,Main campus,Spring
+78,550,Algorithms in Bioinformatics,Main campus,Spring
+79,552,Advanced Operating Systems,Main campus,Fall
+80,553,Principles of Compilation,Main campus,Spring
+81,555,Philosophy and Artificial Intelligence,Main campus,Fall,Spring
+82,560,Database Systems Implementation,Main campus,Spring
+83,566,Computer Security,Main campus,Fall
+84,573,Theory of Computation,Main campus,Spring
+85,574A,Computer-Aided Logic Design,Main campus,Fall
+86,576,Computer Architecture,Main campus,Spring
+87,577,Introduction to Computer Vision,Main campus,Fall
+88,580,Principles of Machine Learning,Main campus,Fall,Spring
+89,581,Advanced Computational Linguistics,Main campus,Spring
+90,583,Text Retrieval and Web Search,Main campus,Fall
+91,585,Algorithms for Natural Language Processing,Main campus,Fall,Spring
+92,588,Machine Learning Theory,Main campus,Fall,Spring
+93,593,Internship,Main campus,Fall,Spring,Summer
+94,596,Special Topics in Computer Science Seminar,Main campus,Fall,Spring
+95,599,Independent Study,Main campus,Fall,Spring
+96,695A,Graduate Colloquium,Main campus,Fall,Spring
+97,696A,Advanced Topics in Programming Languages and Compilers,Main campus,Fall,Spring
+98,696B,Advanced Topics in Parallel, Distributed, and High-Performance Computing,Main campus,Fall,Spring
+99,696C,Advanced Topics in Computer Science,Main campus,Fall,Spring
+100,696D,Advanced Topics in Visualization and Graphics,Main campus,Fall,Spring
+101,696E,Advanced Topics in Algorithms,Main campus,Fall,Spring
+102,696F,Advanced Topics in Computer Systems,Main campus,Fall,Spring
+103,696G,Topics in Computational Linguistics,Main campus,Fall,Spring
+104,696H,Advanced Topics in Artificial Intelligence,Main campus,Fall,Spring
+105,696I,Advanced Topics in Security,Main campus,Fall,Spring
+106,696J,Advanced Topics in Data Systems,Main campus,Fall,Spring
+107,699,Independent Study,Main campus,Fall,Spring
+108,799,Independent Study,Main campus,Fall,Spring
+109,900,Research,Main campus,Fall,Spring
+110,910,Thesis,Main campus,Fall,Spring
+111,920,Dissertation,Main campus,Fall,Spring
