@@ -29,10 +29,6 @@ const All = () => {
   };
 
   const handlePagination = (page: number) => {
-    
-    //server call (api/people/get)
-
-
     // COMMENT: This should trigger SQL pagination on the Go backend
     // Example: SELECT * FROM items LIMIT 10 OFFSET (page - 1) * 10
     console.log('Go to page:', page);

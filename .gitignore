@@ -25,6 +25,7 @@ dist-ssr
 
 # Ignore node_modules in frontend directory
 frontend/node_modules/
+temp_matched_ui/
 
 # Ignore build directory and other artifacts in frontend (React-related)
 frontend/build/
