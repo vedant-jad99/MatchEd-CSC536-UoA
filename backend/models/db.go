@@ -14,7 +14,7 @@ import (
 var DB *gorm.DB
 
 // TODO initialize gorm with postgres using real dbname
-func InitDB() {
+func InitDB() error {
 
 	// get dsn
 	dsn := getDSN()
@@ -25,23 +25,7 @@ func InitDB() {
 	var err error
 	// try to connect to database with gorm
 	DB, err = gorm.Open(postgres.New(postgres.Config{DSN: dsn}), &gorm.Config{})
-	if DB == nil {
-		fmt.Println("DB is nil")
-	}
-	if err != nil {
-		fmt.Printf("Error connecting to database %v\n", err)
-		panic("failed to connect to database")
-	}
-
-	// double check the underlying database object
-	// and ping the database
-
-	if isDatabaseAvailable() {
-		fmt.Printf("Database connected: %s", DB.Name())
-	} else {
-		fmt.Println("Failed to ping database")
-	}
-
+	return err;
 }
 
 // TODO: there is some bug here with a nil pointer

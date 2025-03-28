@@ -3,10 +3,9 @@ package main
 import (
 	"log"
 	"os"
-
+	// "fmt"
 	"backend/models"
 	"backend/routes"
-
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -19,7 +18,11 @@ func main() {
 	}
 
 	// init gorm
-	models.InitDB()
+	err = models.InitDB()
+	if err != nil {
+		log.Fatalf("Error connecting to database %v\n", err)
+	}
+
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
