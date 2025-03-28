@@ -11,14 +11,14 @@ import { Badge } from '../ui/badge';
 export interface CardProps {
   id: string;
   name: string;
+  number?: string;
   image?: string;
   assigned?: string;
   details?: string;
   color?: string;
   className?: string;
-  type: 'human' | 'book';
+  type: 'course' | 'faculty';
   status: 'active' | 'inactive';
-  sourceRoleId?: string;
   draggable?: boolean;
   onDragStart?: (e: React.DragEvent) => void;
 }
@@ -86,7 +86,7 @@ export const Card: React.FC<CardProps> = ({
           )}
           <div className="flex mt-1 space-x-1">
             <Badge variant="outline" className={status === 'active' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}>
-              {type === 'human' ? 'Person' : 'Course'}
+              {type === 'faculty' ? 'Person' : 'Course'}
             </Badge>
           </div>
         </div>

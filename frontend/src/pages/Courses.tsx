@@ -17,11 +17,12 @@ import { useToast } from '@/hooks/use-toast';
 // Transform API course data to card format
 const transformCoursesToCards = (courses: Course[]): CardProps[] => {
   return courses.map(course => ({
-    id: course.Number,
+    id: String(course.ID),
+    number: course.Number,
     name: course.Name,
-    assigned: course.Campus || 'No Campus',
+    location: course.Campus || 'No Campus',
     details: course.Semesters || 'No semesters available',
-    type: 'book',
+    type: 'course',
     status: 'active' // Default status as the GORM schema doesn't include status
   }));
 };
@@ -56,13 +57,6 @@ const CoursesContainer = () => {
       title: 'All Courses',
       people: data?.courses 
         ? transformCoursesToCards(data.courses)
-        : [],
-    },
-    {
-      id: 'role-4',
-      title: 'Filtered Courses',
-      people: data?.courses 
-        ? transformCoursesToCards(data.courses.filter(c => c.Campus === 'Main Campus'))
         : [],
     },
   ];

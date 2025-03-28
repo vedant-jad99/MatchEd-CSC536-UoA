@@ -52,6 +52,15 @@ func SetupRouter() *gin.Engine {
 func setApiHandlers(r *gin.Engine) {
 	api := r.Group("/api")
 	{
+		// Course routes
+		courses := api.Group("/courses")
+		{
+			courses.GET("/", controllers.GetAllCourses)
+			courses.GET("/:id", controllers.GetCourseById)
+			courses.POST("/", controllers.CreateCourse)
+			courses.PUT("/:id", controllers.UpdateCourse)
+			courses.DELETE("/:id", controllers.DeleteCourse)
+		}
 
 		// User routes
 		users := api.Group("/users")
@@ -81,15 +90,7 @@ func setApiHandlers(r *gin.Engine) {
 
 
 
-			// Course routes
-			courses := api.Group("/courses")
-			{
-				courses.GET("/", getAllCourses)
-				courses.GET("/:id", getCourseById)
-				courses.POST("/", createCourse)
-				courses.PUT("/:id", updateCourse)
-				courses.DELETE("/:id", deleteCourse)
-			}
+
 		*/
 	}
 }
