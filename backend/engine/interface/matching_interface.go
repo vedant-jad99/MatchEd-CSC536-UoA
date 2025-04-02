@@ -1,25 +1,47 @@
-package Minterface
+package matching
 
 import (
 	"time"
 )
 
-type MatchingIteration	int64
+type IDType	int64
 
 type Preferences struct {
-	PreferenceID	int64
+	PreferenceID	IDType
+	UserID			IDType
+	CourseID 		IDType
 	Semester		string
-	UserID			int64
-	CourseID 		int64
 	PreferenceLevel	int64
 }
 
+type CourseSems struct {
+	CourseSemID 	IDType
+	CourseID		IDType
+	Semester		string
+	MandatoryLevel	int		// TODO: Custom mandatory type
+	TimeSlot		string	// TODO: Custom time slot type or timestamp?
+}
+
+type Faculty struct {
+	UserID			IDType
+}
+
+type MatchingInput struct {
+	faculty 	[]Faculty
+	course_s	[]CourseSems
+	preferences	[]Preferences
+}
+
+type MatchingElement struct {
+	MatchingID			IDType
+	MatchingIterationID	IDType
+	UserID				IDType
+	CourseID			IDType
+	MatchingScore		float64
+}
+
 type Matching struct {
-	MatchingID			int64
-	MatchingIterationID	MatchingIteration
-	UserID				int64
-	CourseID			int64
-	MatchingScore		int
+	matchings []MatchingElement
 }
 
 type MatchingQueue struct {
