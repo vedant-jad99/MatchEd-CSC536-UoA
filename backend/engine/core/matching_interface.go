@@ -26,7 +26,7 @@ const (
 type Preferences struct {
 	PreferenceID    IDType
 	UserID          IDType
-	CourseID        IDType
+	CourseSemID     IDType
 	Semester        string
 	PreferenceLevel int64
 }
@@ -53,7 +53,7 @@ type MatchingElement struct {
 	MatchingID          IDType
 	MatchingIterationID IDType
 	UserID              IDType
-	CourseID            IDType
+	CourseSemID         IDType
 	MatchingScore       float64
 }
 
@@ -77,7 +77,7 @@ func NewMatchingInterface() *MatchingInterface {
 func (m_Interface *MatchingInterface) TriggerMatching(matchingIterID IDType) error {
 	if matchingIterID == -1 {
 		// TODO: Return custom error type
-		return fmt.Errorf("Invalid matching iteration ID")
+		return fmt.Errorf("invalid matching iteration ID")
 	}
 
 	m_Interface.m_Queue.m_IterQ = append(m_Interface.m_Queue.m_IterQ, matchingIterID)
@@ -98,7 +98,7 @@ func (m_Interface *MatchingInterface) StoreMatchingResult(matching Matching) err
 func (m_Interface *MatchingInterface) UpdateStatus(matchingIterID IDType) (string, error) {
 	if matchingIterID == -1 {
 		// TODO: Return custom error type
-		return "Error", fmt.Errorf("Invalid matching iteration ID")
+		return "Error", fmt.Errorf("invalid matching iteration ID")
 	}
 	/*
 		TODO: Some code goes here. Get the status

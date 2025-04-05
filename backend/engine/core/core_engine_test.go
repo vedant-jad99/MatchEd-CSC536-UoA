@@ -1,84 +1,170 @@
 package matching
 
 import (
-	"math/rand"
+	"reflect"
+	"sort"
 	"testing"
-	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPreprocessMatchingInput(t *testing.T) {
-	matchingInput := MatchingInput{
-		faculty:  []IDType{"f1", "f2"},
-		course_s: []IDType{"c1", "c2"},
+	input := MatchingInput{
+		faculty: []Faculty{
+			{UserID: 1},
+			{UserID: 2},
+		},
+		course_s: []CourseSems{
+			{CourseSemID: 101},
+			{CourseSemID: 102},
+		},
 		preferences: []Preferences{
-			{UserID: "f1", CourseID: "c1", PreferenceLevel: 1},
-			{UserID: "f2", CourseID: "c2", PreferenceLevel: 2},
+			{UserID: 1, CourseSemID: 101, PreferenceLevel: 3},
+			{UserID: 2, CourseSemID: 102, PreferenceLevel: 2},
 		},
 	}
 
-	preprocessedInput, err := preprocessMatchingInput(matchingInput)
-	assert.NoError(t, err)
-	assert.Equal(t, []IDType{"f1", "f2"}, preprocessedInput.faculty_ids)
-	assert.Equal(t, []IDType{"c1", "c2"}, preprocessedInput.course_ids)
-	assert.Equal(t, 2, len(preprocessedInput.preferences))
-	assert.Equal(t, preferenceMapValue{courseID: "c1", preferenceLevel: 1}, preprocessedInput.preference_map["f1"])
-	assert.Equal(t, preferenceMapValue{courseID: "c2", preferenceLevel: 2}, preprocessedInput.preference_map["f2"])
+	expected := pMatchingInput{
+		faculty_ids:  []IDType{1, 2},
+		course_s_ids: []IDType{101, 102},
+		preferences: []Preferences{
+			{UserID: 1, CourseSemID: 101, PreferenceLevel: 3},
+			{UserID: 2, CourseSemID: 102, PreferenceLevel: 2},
+		},
+		fc_map: map[IDType]IDType{
+			1: -1,
+			2: -1,
+		},
+		c_map: map[IDType]bool{
+			101: false,
+			102: false,
+		},
+		preference_map: map[IDType]map[int64]IDType{
+			1: {3: 101},
+			2: {2: 102},
+		},
+	}
+
+	result, err := preprocessMatchingInput(input)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, got %v", expected, result)
+	}
 }
 
 func TestMatchingEngine(t *testing.T) {
-	preprocessedInput := pMatchingInput{
-		faculty_ids: []IDType{"f1", "f2"},
-		course_ids:  []IDType{"c1", "c2"},
+	input := pMatchingInput{
+		faculty_ids:  []IDType{1, 2},
+		course_s_ids: []IDType{101, 102},
 		preferences: []Preferences{
-			{UserID: "f1", CourseID: "c1", PreferenceLevel: 1},
-			{UserID: "f2", CourseID: "c2", PreferenceLevel: 2},
+			{UserID: 1, CourseSemID: 101, PreferenceLevel: 3},
+			{UserID: 2, CourseSemID: 102, PreferenceLevel: 2},
 		},
-		fc_map: map[IDType]any{
-			"f1": nil,
-			"f2": nil,
+		fc_map: map[IDType]IDType{
+			1: -1,
+			2: -1,
 		},
 		c_map: map[IDType]bool{
-			"c1": false,
-			"c2": false,
+			101: false,
+			102: false,
 		},
-		preference_map: map[IDType]preferenceMapValue{
-			"f1": {courseID: "c1", preferenceLevel: 1},
-			"f2": {courseID: "c2", preferenceLevel: 2},
+		preference_map: map[IDType]map[int64]IDType{
+			1: {3: 101},
+			2: {2: 102},
 		},
 	}
 
-	rand.Seed(time.Now().UnixNano())
-	matching, err := matchingEngine(preprocessedInput)
-	assert.NoError(t, err)
-	assert.NotNil(t, matching)
-	assert.Equal(t, 2, len(matching.matchings))
+	matchingIter := IDType(1)
+
+	expected := Matching{
+		matchings: []MatchingElement{
+			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
+			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+		},
+	}
+	// Simulate the matching engine logic
+
+	result, err := matchingEngine(input, matchingIter)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if len(result.matchings) != 2 {
+		t.Errorf("Expected 2 matchings, got %d", len(result.matchings))
+	}
+
+	for _, match := range result.matchings {
+		if match.MatchingIterationID != matchingIter {
+			t.Errorf("Expected MatchingIterationID %d, got %d", matchingIter, match.MatchingIterationID)
+		}
+		if match.MatchingScore != 1.0 {
+			t.Errorf("Expected MatchingScore 1.0, got %f", match.MatchingScore)
+		}
+	}
+	// sort the result and expected's matchings using userid
+	sort.Slice(result.matchings, func(i, j int) bool {
+		return result.matchings[i].UserID < result.matchings[j].UserID
+	})
+	sort.Slice(expected.matchings, func(i, j int) bool {
+		return expected.matchings[i].UserID < expected.matchings[j].UserID
+	})
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, got %v", expected, result)
+	}
 }
 
 func TestRunMatching(t *testing.T) {
-	matchingInput := MatchingInput{
-		faculty:  []IDType{"f1", "f2"},
-		course_s: []IDType{"c1", "c2"},
+	input := MatchingInput{
+		faculty: []Faculty{
+			{UserID: 1},
+			{UserID: 2},
+		},
+		course_s: []CourseSems{
+			{CourseSemID: 101},
+			{CourseSemID: 102},
+		},
 		preferences: []Preferences{
-			{UserID: "f1", CourseID: "c1", PreferenceLevel: 1},
-			{UserID: "f2", CourseID: "c2", PreferenceLevel: 2},
+			{UserID: 1, CourseSemID: 101, PreferenceLevel: 3},
+			{UserID: 2, CourseSemID: 102, PreferenceLevel: 2},
 		},
 	}
 
-	matching, err := runMatching(matchingInput)
-	assert.NoError(t, err)
-	assert.NotNil(t, matching)
-	assert.Equal(t, 2, len(matching.matchings))
-}
+	matchingIter := IDType(1)
 
-func TestGetInput(t *testing.T) {
-	_, err := GetInput()
-	assert.Error(t, err) // Since the function is not implemented, it should return an error
-}
+	expected := Matching{
+		matchings: []MatchingElement{
+			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
+			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+		},
+	}
+	// Simulate the runMatching logic
 
-func TestStartMatching(t *testing.T) {
-	matchingIter := MatchingIteration{}
-	_, err := StartMatching(matchingIter)
-	assert.Error(t, err) // Since GetInput is not implemented, this should return an error
+	result, err := runMatching(input, matchingIter)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if len(result.matchings) != 2 {
+		t.Errorf("Expected 2 matchings, got %d", len(result.matchings))
+	}
+
+	for _, match := range result.matchings {
+		if match.MatchingIterationID != matchingIter {
+			t.Errorf("Expected MatchingIterationID %d, got %d", matchingIter, match.MatchingIterationID)
+		}
+		if match.MatchingScore != 1.0 {
+			t.Errorf("Expected MatchingScore 1.0, got %f", match.MatchingScore)
+		}
+	}
+	// sort the result and expected's matchings using userid
+	sort.Slice(result.matchings, func(i, j int) bool {
+		return result.matchings[i].UserID < result.matchings[j].UserID
+	})
+	sort.Slice(expected.matchings, func(i, j int) bool {
+		return expected.matchings[i].UserID < expected.matchings[j].UserID
+	})
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, got %v", expected, result)
+	}
 }
