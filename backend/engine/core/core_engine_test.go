@@ -1,7 +1,6 @@
 package matching
 
 import (
-	"errors"
 	"math/rand"
 	"testing"
 	"time"
@@ -11,8 +10,8 @@ import (
 
 func TestPreprocessMatchingInput(t *testing.T) {
 	matchingInput := MatchingInput{
-		faculty:    []IDType{"f1", "f2"},
-		course_s:   []IDType{"c1", "c2"},
+		faculty:  []IDType{"f1", "f2"},
+		course_s: []IDType{"c1", "c2"},
 		preferences: []Preferences{
 			{UserID: "f1", CourseID: "c1", PreferenceLevel: 1},
 			{UserID: "f2", CourseID: "c2", PreferenceLevel: 2},
@@ -59,8 +58,8 @@ func TestMatchingEngine(t *testing.T) {
 
 func TestRunMatching(t *testing.T) {
 	matchingInput := MatchingInput{
-		faculty:    []IDType{"f1", "f2"},
-		course_s:   []IDType{"c1", "c2"},
+		faculty:  []IDType{"f1", "f2"},
+		course_s: []IDType{"c1", "c2"},
 		preferences: []Preferences{
 			{UserID: "f1", CourseID: "c1", PreferenceLevel: 1},
 			{UserID: "f2", CourseID: "c2", PreferenceLevel: 2},
