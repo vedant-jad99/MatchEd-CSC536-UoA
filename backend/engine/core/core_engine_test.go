@@ -40,9 +40,9 @@ func TestPreprocessMatchingInput(t *testing.T) {
 			101: false,
 			102: false,
 		},
-		preference_map: map[IDType]map[int64]IDType{
-			1: {3: 101},
-			2: {2: 102},
+		preference_map: map[IDType]map[int64][]IDType{
+			1: {3: []IDType{101}},
+			2: {2: []IDType{102}},
 		},
 	}
 
@@ -72,9 +72,9 @@ func TestMatchingEngine(t *testing.T) {
 			101: false,
 			102: false,
 		},
-		preference_map: map[IDType]map[int64]IDType{
-			1: {3: 101},
-			2: {2: 102},
+		preference_map: map[IDType]map[int64][]IDType{
+			1: {3: []IDType{101}},
+			2: {2: []IDType{102}},
 		},
 	}
 
@@ -181,7 +181,7 @@ func TestCoreStartMatching(t *testing.T) {
 	fmt.Println("Matching started successfully:")
 
 	// Output matching data to a JSON file
-	filePath := "/home/krishna/Desktop/academic/ua/software/MatchEd-CSC536-UoA/backend/engine/core/matching_output.json"
+	filePath := "matching_output.json"
 	file, err := os.Create(filePath)
 	if err != nil {
 		t.Fatalf("Failed to create output file: %v", err)

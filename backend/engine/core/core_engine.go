@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"time"
+	"slices"
 )
 
 type pMatchingInput struct {
@@ -14,7 +15,7 @@ type pMatchingInput struct {
 	preferences    []Preferences
 	fc_map         map[IDType]IDType
 	c_map          map[IDType]bool
-	preference_map map[IDType]map[int64]IDType //FacultyID --> preference (3,2,1) --> courseSemID
+	preference_map map[IDType]map[int64][]IDType //FacultyID --> preference (3,2,1) --> courseSemID[]
 }
 
 // TODO: Get the input from the database. Communicates to the matching interface
@@ -93,7 +94,7 @@ func preprocessMatchingInput(mI MatchingInput) (pMatchingInput, error) {
 	var preprocessInput pMatchingInput
 	preprocessInput.fc_map = make(map[IDType]IDType)
 	preprocessInput.c_map = make(map[IDType]bool)
-	preprocessInput.preference_map = make(map[IDType]map[int64]IDType)
+	preprocessInput.preference_map = make(map[IDType]map[int64][]IDType)
 
 	for _, value := range mI.faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
@@ -109,10 +110,10 @@ func preprocessMatchingInput(mI MatchingInput) (pMatchingInput, error) {
 
 		_, exists := preprocessInput.preference_map[userId]
 		if exists {
-			preprocessInput.preference_map[userId][level] = courseSemId
+			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], courseSemId)
 		} else {
-			preprocessInput.preference_map[userId] = make(map[int64]IDType)
-			preprocessInput.preference_map[userId][level] = courseSemId
+			preprocessInput.preference_map[userId] = make(map[int64][]IDType)
+			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], courseSemId)
 		}
 	}
 
@@ -126,13 +127,25 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 	})
 	for _, value := range pI.faculty_ids {
 		for i := PreferenceLevelGreen; i < PreferenceLevelEnd; i++ {
-			courseSemId, exists := pI.preference_map[value][i]
+			_, exists := pI.preference_map[value][i]
 			if !exists {
 				continue
 			}
-			if !pI.c_map[courseSemId] { // If course is not assigned
-				pI.fc_map[value] = courseSemId
-				pI.c_map[courseSemId] = true
+
+			length, j, flag := len(pI.preference_map[value][i]), 0, false
+			for j < length {
+				courseSemId := pI.preference_map[value][i][j]
+				j++;
+				if !pI.c_map[courseSemId] { // If course is not assigned
+					pI.fc_map[value] = courseSemId
+					pI.c_map[courseSemId] = true
+					flag = true
+					break
+				}
+			}
+
+			pI.preference_map[value][i] = slices.Delete(pI.preference_map[value][i], 0, j)
+			if flag {
 				break
 			}
 		}
