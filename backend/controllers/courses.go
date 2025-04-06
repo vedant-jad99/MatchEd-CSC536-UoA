@@ -24,8 +24,10 @@ func GetAllCourses(c *gin.Context) {
 	// Log the response
 	log.Printf("Fetched %d courses\n", len(courses))
 
-	// Return JSON response
-	c.JSON(http.StatusOK, courses)
+	// Return JSON response (wrapper transforms it from course[] to courses:course[])
+	c.JSON(http.StatusOK, gin.H{
+		"courses": courses,
+	})
 }
 
 // GetcourseById handles GET requests to fetch a course by ID

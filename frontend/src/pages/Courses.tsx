@@ -14,20 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Plus, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Transform API course data to card format
-const transformCoursesToCards = (courses: Course[]): CardProps[] => {
-  return courses.map(course => ({
-    id: String(course.ID),
-    number: course.Number,
-    name: course.Name,
-    location: course.Campus || 'No Campus',
-    details: course.Semesters || 'No semesters available',
-    type: 'course',
-    status: 'active' // Default status as the GORM schema doesn't include status
-  }));
-};
-
 const CoursesContainer = () => {
+  console.log("Rendering CoursesContainer...");
   const { movePerson } = useDragContext();
   const { toast } = useToast();
   
@@ -35,6 +23,7 @@ const CoursesContainer = () => {
   const { data, isLoading, isError, error, refetch } = useQuery<CourseResponse>({
     queryKey: ['courses'],
     queryFn: async () => {
+      console.warn("getting courses")
       try {
         const response = await axios.get(API_ENDPOINTS.COURSES.GET_ALL);
         return response.data;
@@ -48,18 +37,16 @@ const CoursesContainer = () => {
         throw err;
       }
     },
+    staleTime: 0,  // Forces fresh fetch
   });
 
-  // Initial structure for drag-and-drop boards
-  const initialRoles = [
-    {
-      id: 'role-3',
-      title: 'All Courses',
-      people: data?.courses 
-        ? transformCoursesToCards(data.courses)
-        : [],
-    },
-  ];
+  const initialCourses = data?.courses
+  ? data.courses.map((course) => ({
+      id: `course-${course.ID}`,
+      title: course.Name, // Set board titles as course names
+      people: [], // Empty initially, will hold faculty members later
+    }))
+  : [];
   
   if (isLoading) {
     return (
@@ -91,7 +78,7 @@ const CoursesContainer = () => {
             const data = JSON.parse(e.dataTransfer.getData('application/json'));
             if (data && data.personId && data.sourceRoleId) {
               // Find the unassigned role and move the person there
-              const unassignedRole = initialRoles.find(role => role.title === 'Filtered Courses');
+              const unassignedRole = initialCourses.find(role => role.title === 'Filtered Courses');
               if (unassignedRole) {
                 movePerson(data.personId, data.sourceRoleId, unassignedRole.id);
               }
@@ -100,15 +87,16 @@ const CoursesContainer = () => {
             console.error('Error parsing dropped data:', err);
           }
         }}>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {initialRoles.map((role) => (
-          <Board
-            key={role.id}
-            id={role.id}
-            title={role.title}
-            people={role.people}
-          />
-        ))}
+      {initialCourses.map((courseBoard) => (
+        <Board
+          key={courseBoard.id}
+          id={courseBoard.id}
+          title={courseBoard.title}
+          people={courseBoard.people} // Empty for now, faculty will go here later
+        />
+      ))}
       </div>
     </div>
   );
@@ -130,7 +118,7 @@ const Courses = () => {
         </div>
         
         <DragProvider initialRoles={[]}>
-          <CoursesContainer />
+          <CoursesContainer/>
         </DragProvider>
       </div>
     </MainLayout>
