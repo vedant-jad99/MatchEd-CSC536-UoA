@@ -39,6 +39,7 @@ func preprocessMatchingInput(mI MatchingInput) (pMatchingInput, error) {
 	preprocessInput.fc_map = make(map[IDType]IDType)
 	preprocessInput.c_map = make(map[IDType]bool)
 	preprocessInput.preference_map = make(map[IDType]map[int64]IDType)
+
 	for _, value := range mI.faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
 		preprocessInput.fc_map[value.UserID] = -1
