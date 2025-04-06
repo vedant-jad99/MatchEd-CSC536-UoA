@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"time"
 	"slices"
+	"time"
 )
 
 type pMatchingInput struct {
@@ -77,7 +77,7 @@ func GetInput(file string) (MatchingInput, error) {
 }
 
 func StartMatching(matchingIter IDType) (Matching, error) {
-	preferences, err := GetInput("sample/all_data_v0.json")
+	preferences, err := GetInput("sample/preferences.json")
 	if err != nil {
 		return Matching{}, err // TODO: Custom error type?
 	}
@@ -135,7 +135,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 			length, j, flag := len(pI.preference_map[value][i]), 0, false
 			for j < length {
 				courseSemId := pI.preference_map[value][i][j]
-				j++;
+				j++
 				if !pI.c_map[courseSemId] { // If course is not assigned
 					pI.fc_map[value] = courseSemId
 					pI.c_map[courseSemId] = true
