@@ -76,7 +76,7 @@ func GetInput(file string) (MatchingInput, error) {
 }
 
 func StartMatching(matchingIter IDType) (Matching, error) {
-	preferences, err := GetInput("sample/sample_template.json")
+	preferences, err := GetInput("sample/all_data_v0.json")
 	if err != nil {
 		return Matching{}, err // TODO: Custom error type?
 	}
@@ -152,7 +152,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 			MatchingScore:       1.0,
 		}
 
-		matching.matchings = append(matching.matchings, matchingElement)
+		matching.Matchings = append(matching.Matchings, matchingElement)
 	}
 
 	return matching, nil

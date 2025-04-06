@@ -50,15 +50,15 @@ type MatchingInput struct {
 }
 
 type MatchingElement struct {
-	MatchingID          IDType
-	MatchingIterationID IDType
-	UserID              IDType
-	CourseSemID         IDType
-	MatchingScore       float64
+	MatchingID          IDType  `json:"matching_id"`
+	MatchingIterationID IDType  `json:"matching_iteration_id"`
+	UserID              IDType  `json:"user_id"`
+	CourseSemID         IDType  `json:"course_sem_id"`
+	MatchingScore       float64 `json:"matching_score"`
 }
 
 type Matching struct {
-	matchings []MatchingElement
+	Matchings []MatchingElement
 }
 
 type MatchingQueue struct {

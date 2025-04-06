@@ -1,7 +1,9 @@
 package matching
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"reflect"
 	"sort"
 	"testing"
@@ -79,7 +81,7 @@ func TestMatchingEngine(t *testing.T) {
 	matchingIter := IDType(1)
 
 	expected := Matching{
-		matchings: []MatchingElement{
+		Matchings: []MatchingElement{
 			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
 			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
@@ -91,11 +93,11 @@ func TestMatchingEngine(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if len(result.matchings) != 2 {
-		t.Errorf("Expected 2 matchings, got %d", len(result.matchings))
+	if len(result.Matchings) != 2 {
+		t.Errorf("Expected 2 matchings, got %d", len(result.Matchings))
 	}
 
-	for _, match := range result.matchings {
+	for _, match := range result.Matchings {
 		if match.MatchingIterationID != matchingIter {
 			t.Errorf("Expected MatchingIterationID %d, got %d", matchingIter, match.MatchingIterationID)
 		}
@@ -104,11 +106,11 @@ func TestMatchingEngine(t *testing.T) {
 		}
 	}
 	// sort the result and expected's matchings using userid
-	sort.Slice(result.matchings, func(i, j int) bool {
-		return result.matchings[i].UserID < result.matchings[j].UserID
+	sort.Slice(result.Matchings, func(i, j int) bool {
+		return result.Matchings[i].UserID < result.Matchings[j].UserID
 	})
-	sort.Slice(expected.matchings, func(i, j int) bool {
-		return expected.matchings[i].UserID < expected.matchings[j].UserID
+	sort.Slice(expected.Matchings, func(i, j int) bool {
+		return expected.Matchings[i].UserID < expected.Matchings[j].UserID
 	})
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Expected %v, got %v", expected, result)
@@ -134,7 +136,7 @@ func TestRunMatching(t *testing.T) {
 	matchingIter := IDType(1)
 
 	expected := Matching{
-		matchings: []MatchingElement{
+		Matchings: []MatchingElement{
 			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
 			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
@@ -146,11 +148,11 @@ func TestRunMatching(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if len(result.matchings) != 2 {
-		t.Errorf("Expected 2 matchings, got %d", len(result.matchings))
+	if len(result.Matchings) != 2 {
+		t.Errorf("Expected 2 matchings, got %d", len(result.Matchings))
 	}
 
-	for _, match := range result.matchings {
+	for _, match := range result.Matchings {
 		if match.MatchingIterationID != matchingIter {
 			t.Errorf("Expected MatchingIterationID %d, got %d", matchingIter, match.MatchingIterationID)
 		}
@@ -159,11 +161,11 @@ func TestRunMatching(t *testing.T) {
 		}
 	}
 	// sort the result and expected's matchings using userid
-	sort.Slice(result.matchings, func(i, j int) bool {
-		return result.matchings[i].UserID < result.matchings[j].UserID
+	sort.Slice(result.Matchings, func(i, j int) bool {
+		return result.Matchings[i].UserID < result.Matchings[j].UserID
 	})
-	sort.Slice(expected.matchings, func(i, j int) bool {
-		return expected.matchings[i].UserID < expected.matchings[j].UserID
+	sort.Slice(expected.Matchings, func(i, j int) bool {
+		return expected.Matchings[i].UserID < expected.Matchings[j].UserID
 	})
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Expected %v, got %v", expected, result)
@@ -176,5 +178,21 @@ func TestCoreStartMatching(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
-	fmt.Println("Matching started successfully:", matching)
+	fmt.Println("Matching started successfully:")
+
+	// Output matching data to a JSON file
+	filePath := "/home/krishna/Desktop/academic/ua/software/MatchEd-CSC536-UoA/backend/engine/core/matching_output.json"
+	file, err := os.Create(filePath)
+	if err != nil {
+		t.Fatalf("Failed to create output file: %v", err)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(matching); err != nil {
+		t.Fatalf("Failed to write matching data to JSON file: %v", err)
+	}
+
+	fmt.Printf("Matching data successfully written to %s\n", filePath)
 }
