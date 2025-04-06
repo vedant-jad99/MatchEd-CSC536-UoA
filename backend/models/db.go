@@ -60,6 +60,6 @@ func getDSN() string {
 		"postgres",
 		"postgres",
 		"postgres", 
-		"5432")
+		"5432")///remove
 	return dsn
 }
