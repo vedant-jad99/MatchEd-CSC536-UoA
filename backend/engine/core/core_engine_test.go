@@ -1,6 +1,7 @@
 package matching
 
 import (
+	"fmt"
 	"reflect"
 	"sort"
 	"testing"
@@ -167,4 +168,13 @@ func TestRunMatching(t *testing.T) {
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Expected %v, got %v", expected, result)
 	}
+}
+
+func TestCoreStartMatching(t *testing.T) {
+	matchingIter := IDType(1)
+	matching, err := StartMatching(matchingIter)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+	fmt.Println("Matching started successfully:", matching)
 }
