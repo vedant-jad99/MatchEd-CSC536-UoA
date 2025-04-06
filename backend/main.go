@@ -8,18 +8,18 @@ import (
 	"backend/routes"
 	// "backend/controllers"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 )
 
 func main() {
 	// Load environment variables from the .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// init gorm
-	err = models.InitDB()
+	err := models.InitDB()
 	if err != nil {
 		log.Fatalf("Error connecting to database %v\n", err)
 	}

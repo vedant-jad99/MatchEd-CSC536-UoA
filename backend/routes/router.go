@@ -3,10 +3,12 @@ package routes
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"backend/controllers" // Import your controllers
 
-	"github.com/gin-contrib/static"
+	"github.com/gin-contrib/cors"
+	// "github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,11 +26,21 @@ func SetupRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
+	// Configure CORS middleware
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:8080"} // Replace with your frontend domain
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept"}
+    config.AllowCredentials = true
+    config.MaxAge = 12 * time.Hour
+
+	r.Use(cors.New(config))
+
 	// "/api" routes
 	setApiHandlers(r)
 
 	// Serve static files from the React app build directory in production
-	r.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
+	// r.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
 
 	// Handle all routes for SPA (forward to index.html)
 	// This should be after all API routes
