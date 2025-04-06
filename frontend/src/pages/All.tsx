@@ -3,6 +3,9 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import { 
   Pagination, 
   PaginationContent, 
@@ -13,6 +16,11 @@ import {
 import { Search, ArrowUpAZ, ArrowDownAZ, Upload, Download } from 'lucide-react';
 
 const All = () => {
+  const [preferences, setPreferences] = useState<any[]>([]); // State to hold preferences
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState<string | null>(null); 
+  const [currentPage, setCurrentPage] = useState(1);
+
   // COMMENT: For Go/Gin migration, this would be replaced with server-side data fetching
   // The following functions would trigger API calls to the Gin backend
 
@@ -35,6 +43,7 @@ const All = () => {
 
     // COMMENT: This should trigger SQL pagination on the Go backend
     // Example: SELECT * FROM items LIMIT 10 OFFSET (page - 1) * 10
+    setCurrentPage(page); // Update current page state
     console.log('Go to page:', page);
   };
 
@@ -50,6 +59,38 @@ const All = () => {
     console.log('Export data');
   };
 
+  const ShowPreferencesButton = async () => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        // API request to backend
+        useEffect(() => {
+          axios.get("http://localhost:8080/all")
+            .then(response => {
+              console.log("Data received:", response.data);
+              setData(response.data);
+            })
+            .catch(error => console.error("Error:", error));
+        }, []);
+      
+        // return (
+        //   <div>
+        //     <h2>API Data:</h2>
+        //     <pre>{JSON.stringify(data, null, 2)}</pre>
+        //   </div>
+        // );
+        const response = await axios.get('http://localhost:8080/all');
+        console.log(response)
+        setPreferences(response.data); // Storing preferences
+      } catch (err) {
+        setError('Failed to load preferences');
+      } finally {
+        setLoading(false);
+      }
+  };
+  
+  
   return (
     <MainLayout>
       <div className="container mx-auto py-6">
@@ -129,15 +170,50 @@ const All = () => {
                 <Download className="h-4 w-4" /> Export
               </Button>
             </div>
-            
+
+            {/* {Show Preferences Button} */}
+            <Button variant="outline" className="gap-2" onClick={ShowPreferencesButton}>
+              <Upload className="h-4 w-4" /> Show Preferences
+            </Button>
+
+            {error && <p>{error}</p>}
+
+            {/* {Rendering preferences table} */}
+            {!loading && !error && preferences.length > 0 && (
+              <table className="min-w-full mt-4">
+                <thead>
+                  <tr>
+                    <th className="border px-4 py-2">ID</th>
+                    <th className="border px-4 py-2">Semester</th>
+                    <th className="border px-4 py-2">UserID</th>
+                    <th className="border px-4 py-2">Name</th>
+                    <th className="border px-4 py-2">CourseSemID</th>
+                    <th className="border px-4 py-2">Preference Level</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {preferences.map((preference) => (
+                    <tr key={preference.ID}>
+                      <td className="border px-4 py-2">{preference.ID}</td>
+                      <td className="border px-4 py-2">{preference.Semester}</td>
+                      <td className="border px-4 py-2">{preference.UserID}</td>
+                      <td className="border px-4 py-2">{preference.Name}</td>
+                      <td className="border px-4 py-2">{preference.CourseSemID}</td>
+                      <td className="border px-4 py-2">{preference.PreferenceLevel}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )} 
+
             {/* Pagination */}
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious onClick={() => handlePagination(0)} />
+                  <PaginationPrevious onClick={() => handlePagination(currentPage -1)} />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationNext onClick={() => handlePagination(2)} />
+                  <PaginationNext onClick={() => handlePagination(currentPage + 1)} />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

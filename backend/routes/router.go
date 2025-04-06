@@ -73,6 +73,13 @@ func setApiHandlers(r *gin.Engine) {
 			users.DELETE("/:id", controllers.DeleteUser)
 		}
 
+		// "All" routes
+		all := api.Group("/all")
+		{
+			all.GET("/", controllers.GetPreferences)
+		}
+
+
 		// ping the server
 		// TODO, this should have a handler defined in controllers
 		// if you want to keep it

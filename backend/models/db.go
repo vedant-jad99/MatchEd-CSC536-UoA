@@ -18,6 +18,7 @@ func InitDB() error {
 
 	// get dsn
 	dsn := getDSN()
+	// dsn := "host=localhost user=match_user password=swifty dbname=match_db port=5432"
 
 	//TODO remove this print statement
 	//fmt.Println(dsn)
