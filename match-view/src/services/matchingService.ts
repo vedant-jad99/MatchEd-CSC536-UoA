@@ -28,7 +28,7 @@ export const fetchMatches = async (filters?: MatchFilters): Promise<MatchResult[
     }
     
     const data = await response.json();
-    return data.matchings || [];
+    return data || [];
   } catch (error) {
     console.error('Error in fetchMatches:', error);
     throw error;
