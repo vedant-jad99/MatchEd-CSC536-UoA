@@ -3,11 +3,9 @@ package routes
 import (
 	"net/http"
 	"os"
-	"time"
 
 	"backend/controllers" // Import your controllers
 
-	"github.com/gin-contrib/cors"
 	// "github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
@@ -25,16 +23,23 @@ func SetupRouter() *gin.Engine {
 	// Middleware
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-
 	// Configure CORS middleware
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080"} // Replace with your frontend domain
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept"}
-    config.AllowCredentials = true
-    config.MaxAge = 12 * time.Hour
+	r.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, Accept, User-Agent, Cache-Control, Pragma, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Accept-Encoding, Accept-Language, Content-Length")
+		c.Header("Access-Control-Expose-Headers", "Content-Length")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Max-Age", "43200")
 
-	r.Use(cors.New(config))
+		// Handle OPTIONS preflight
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
 
 	// "/api" routes
 	setApiHandlers(r)
@@ -62,6 +67,8 @@ func SetupRouter() *gin.Engine {
 // GET, POST, PUT, DELETE
 // for the api group "/api"
 func setApiHandlers(r *gin.Engine) {
+	// need to give the slash at the end for CORS to work because 
+	// otherwise 301 redirect response will be sent without CORS headers.
 	api := r.Group("/api")
 	{
 

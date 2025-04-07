@@ -82,7 +82,7 @@ const All = () => {
         //     <pre>{JSON.stringify(data, null, 2)}</pre>
         //   </div>
         // );
-        const response = await axios.get('http://localhost:3000/api/all');
+        const response = await axios.get('http://localhost:3000/api/all/');
         console.log("response:", response.data)
         setPreferences(response.data); // Storing preferences
       } catch (err) {
