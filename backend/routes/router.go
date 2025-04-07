@@ -3,9 +3,11 @@ package routes
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"backend/controllers" // Import your controllers
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +21,15 @@ func SetupRouter() *gin.Engine {
 
 	// Initialize the router
 	r := gin.Default()
+
+	// cors
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8080"}, // or "*" for all origins
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Middleware
 	r.Use(gin.Logger())
@@ -55,6 +66,18 @@ func SetupRouter() *gin.Engine {
 func setApiHandlers(r *gin.Engine) {
 	api := r.Group("/api")
 	{
+		/*
+			api.OPTIONS("/*path", func(c *gin.Context) {
+				c.Status(http.StatusOK)
+			})
+		*/
+		r.OPTIONS("/*path", func(c *gin.Context) {
+			c.Header("Access-Control-Allow-Origin", "*")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
+			c.Status(http.StatusOK)
+		})
+
 		// Course routes
 		courses := api.Group("/courses")
 		{

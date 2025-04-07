@@ -22,7 +22,7 @@ const MatchingResults = () => {
     setConfidenceFilter,
     refetch
   } = useMatches();
-  
+  console.log("MatchingResults loaded")
   const [currentPage, setCurrentPage] = useState(1);
   
   // Calculate pagination

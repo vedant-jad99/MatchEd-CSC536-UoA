@@ -29,7 +29,7 @@ func main() {
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
+		port = "8080"
 	}
 
 	// Start the server
@@ -42,7 +42,7 @@ func main() {
 
 // Handler function placeholders - implement these in separate controller files
 func loginHandler(c *gin.Context) {
-	// Implementation
+	// Implementation 
 }
 
 func registerHandler(c *gin.Context) {

@@ -8,6 +8,8 @@ import { MatchFilters, MatchStatus } from "@/types/matching";
 const USE_MOCK_DATA = true;
 
 export function useMatches() {
+  console.log("Using useMatches")
+
   const [filters, setFilters] = useState<MatchFilters>({
     status: 'all',
     searchTerm: '',
@@ -16,7 +18,7 @@ export function useMatches() {
 
   const matchesQuery = useQuery({
     queryKey: ['matches', filters],
-    queryFn: () => USE_MOCK_DATA ? getMockMatches() : fetchMatches(filters),
+    queryFn: () =>  USE_MOCK_DATA ? getMockMatches() : fetchMatches(filters),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
@@ -40,9 +42,10 @@ export function useMatches() {
   };
 
   // Apply client-side filtering for mock data
+  // TODO make this server side
   let filteredMatches = matchesQuery.data || [];
   
-  if (USE_MOCK_DATA) {
+  if(USE_MOCK_DATA){
     if (filters.status && filters.status !== 'all') {
       filteredMatches = filteredMatches.filter(match => match.status === filters.status);
     }

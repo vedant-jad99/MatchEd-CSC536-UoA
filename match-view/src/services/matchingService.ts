@@ -1,7 +1,6 @@
 
+import { API_ENDPOINTS } from "@/config/api";
 import { MatchFilters, MatchResult } from "@/types/matching";
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export const fetchMatches = async (filters?: MatchFilters): Promise<MatchResult[]> => {
   try {
@@ -21,14 +20,14 @@ export const fetchMatches = async (filters?: MatchFilters): Promise<MatchResult[
     }
     
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    const response = await fetch(`${API_URL}/matches${queryString}`);
+    const response = await fetch(API_ENDPOINTS.MATCHINGS.GET_ALL);//${queryString}`);
     
     if (!response.ok) {
       throw new Error(`Error fetching matches: ${response.statusText}`);
     }
     
     const data = await response.json();
-    return data || [];
+    return data.matchings || [];
   } catch (error) {
     console.error('Error in fetchMatches:', error);
     throw error;

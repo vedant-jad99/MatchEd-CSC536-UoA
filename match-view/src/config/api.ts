@@ -3,8 +3,8 @@
 // This will be used throughout the application to make requests to the Go/Gin backend
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' // In production, served directly from Gin
-  : '/api'; // In development, proxied through Vite
+  ? 'http://localhost:8080/api' // In production, served directly from Gin on port 8080
+  : 'http://localhost:8080/api'; // In development, proxied through Vite to port 8080
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -12,10 +12,6 @@ export const API_ENDPOINTS = {
     LOGIN: `${API_BASE_URL}/auth/login`,
     REGISTER: `${API_BASE_URL}/auth/register`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,
-  },
-  // Match endpoints
-  MATCH: {
-    GET_ALL: `${API_BASE_URL}/matches`,
   },
   // Users endpoints
   USERS: {
@@ -32,6 +28,10 @@ export const API_ENDPOINTS = {
     CREATE: `${API_BASE_URL}/courses`,
     UPDATE: (id: string) => `${API_BASE_URL}/courses/${id}`,
     DELETE: (id: string) => `${API_BASE_URL}/courses/${id}`,
+  },
+  // matchings endpoints
+  MATCHINGS: {
+    GET_ALL: `${API_BASE_URL}/matchings`,
   },
   // People endpoints
   PEOPLE: {
