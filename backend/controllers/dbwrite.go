@@ -6,7 +6,6 @@ import (
 	"errors"
 	"reflect"
 	"strconv"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -90,14 +89,16 @@ func AddPreferences(db *gorm.DB, userID, courseID uint, priority int) (models.Pr
 	return pref, err
 }
 
-func AddMatchingIteration(db *gorm.DB) (models.MatchingIteration, error) {
-	mi := models.MatchingIteration{CreatedAt: time.Now()}
-	err := db.Create(&mi).Error
-	return mi, err
-}
+/*
+	func AddMatchingIteration(db *gorm.DB, id, triggeredBy,status,createdAt, updatedAt ) (models.MatchingIteration, error) {
+		mi := models.MatchingIteration{ID,TriggeredBy, Status, CreatedAt: time.Now(), UpdatedAt:time.Now()}
 
-func AddMatching(db *gorm.DB, matchingIterationID, userID, courseID uint) (models.Matching, error) {
-	match := models.Matching{MatchingIterationID: matchingIterationID, UserID: userID, CourseID: courseID}
+		err := db.Create(&mi).Error
+		return mi, err
+	}
+*/
+func AddMatching(db *gorm.DB, matchingIterationID, userID, courseID, courseSemID, score uint) (models.Matching, error) {
+	match := models.Matching{MatchingIterationID: matchingIterationID, UserID: userID, CourseSemID: courseSemID, Score: score}
 	err := db.Create(&match).Error
 	return match, err
 }

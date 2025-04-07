@@ -28,7 +28,10 @@ func SetupRouter() *gin.Engine {
 	setApiHandlers(r)
 
 	// Serve static files from the React app build directory in production
-	r.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
+	// r.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
+
+	// alternative frontend
+	r.Use(static.Serve("/", static.LocalFile("../match-view/dist", false)))
 
 	// Handle all routes for SPA (forward to index.html)
 	// This should be after all API routes
@@ -60,6 +63,12 @@ func setApiHandlers(r *gin.Engine) {
 			courses.POST("/", controllers.CreateCourse)
 			courses.PUT("/:id", controllers.UpdateCourse)
 			courses.DELETE("/:id", controllers.DeleteCourse)
+		}
+
+		// Matching routes
+		matchings := api.Group("/matchings")
+		{
+			matchings.GET("/", controllers.GetAllMatchPairs)
 		}
 
 		// User routes

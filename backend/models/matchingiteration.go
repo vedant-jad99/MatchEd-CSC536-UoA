@@ -1,12 +1,17 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
 // MatchingIteration model represents a round of course matching.
+// id | triggered_by | status | created_at | updated_at
 type MatchingIteration struct {
-	//gorm.Model           // Adds ID, CreatedAt, UpdatedAt, DeletedAt
-	ID        uint      `gorm:"primaryKey"`
-	CreatedAt time.Time `gorm:"not null"`
+	ID          uint      `gorm:"primaryKey"`
+	TriggeredBy uint      `gorm:"column:triggered_by;not null"`
+	Status      string    `gorm:"column:status;type:varchar;not null"`
+	CreatedAt   time.Time `gorm:"column:created_at;not null"`
+	UpdatedAt   time.Time `gorm:"column:updated_at;not null"`
+}
+
+func (MatchingIteration) TableName() string {
+	return `"match_schema"."matching_iterations"`
 }

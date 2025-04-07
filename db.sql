@@ -83,8 +83,9 @@ CREATE TABLE IF NOT EXISTS match_schema.matching_iterations (
 CREATE TABLE IF NOT EXISTS match_schema.matchings (
     id SERIAL PRIMARY KEY,
     matching_iteration_id INT NOT NULL REFERENCES match_schema.matching_iterations(id),
-    user_id INT NOT NULL REFERENCES match_schema.roles(user_id),
-    course_sem_id INT NOT NULL REFERENCES match_schema.course_sems(id),
+    user_id INT NOT NULL REFERENCES match_schema.users(id),
+    course_id INT NOT NULL REFERENCES match_schema.courses(id),
+    course_sem_id INT NOT NULL,
     score DECIMAL NOT NULL
 );
 

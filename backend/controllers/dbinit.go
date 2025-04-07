@@ -13,10 +13,28 @@ import (
 
 func InitializeTables(db *gorm.DB) {
 	log.Printf("Initializing database tables from init-data/*.csv")
-	//csvPath := getFilePath("../models/init-data/users.csv")
-	//LoadCSVtoDatabase(db, csvPath, models.User{})
-	csvPath := getFilePath("../models/init-data/courses.csv")
+	// order matters here, because of database contstraints
+
+	// user file
+	csvPath := getFilePath("../models/init-data/users.csv")
+	LoadCSVtoDatabase(db, csvPath, models.User{})
+
+	// courses file
+	csvPath = getFilePath("../models/init-data/courses.csv")
 	LoadCSVtoDatabase(db, csvPath, models.Course{})
+
+	// matchings file
+	csvPath = getFilePath("../models/init-data/matching_iterations.csv")
+	LoadCSVtoDatabase(db, csvPath, models.MatchingIteration{})
+
+	// matchings file
+	csvPath = getFilePath("../models/init-data/roles.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Matching{})
+
+	// matchings file
+	csvPath = getFilePath("../models/init-data/matchings.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Matching{})
+
 }
 
 func getFilePath(partialPath string) string {
