@@ -27,11 +27,18 @@ if __name__ == "__main__":
 
     final_result = {}
     for el in res:
-        final_result[faculty_ids[str(el[0])]] = el[1]
+        final_result[el[1]] = faculty_ids[str(el[0])]
 
     with open(RESULT_FILE, 'w') as f:
         json.dump(final_result, f)
 
+    fp_index, text_result = 0, sorted(final_result.items())
+    for i, val in enumerate(text_result):
+        if val[0] > 0:
+            fp_index = i
+            break;
+
+    text_result = text_result[fp_index:] + text_result[:fp_index]
     with open(TEXT_RESULT_FILE, 'w') as f:
-        for key, val in final_result.items():
-            f.write(key + " : " + str(val) + "\n")
+        for key, val in text_result:
+            f.write(str(key) + " : " + val + "\n")
