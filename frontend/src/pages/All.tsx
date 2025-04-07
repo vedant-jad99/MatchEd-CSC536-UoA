@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
+import { Preferences } from "../types/all";
 import axios from 'axios';
 
 import { 
@@ -14,9 +15,10 @@ import {
   PaginationPrevious 
 } from '@/components/ui/pagination';
 import { Search, ArrowUpAZ, ArrowDownAZ, Upload, Download } from 'lucide-react';
+import { types } from 'util';
 
 const All = () => {
-  const [preferences, setPreferences] = useState<any[]>([]); // State to hold preferences
+  const [preferences, setPreferences] = useState<Preferences[]>([]); // State to hold preferences
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState<string | null>(null); 
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,23 +67,23 @@ const All = () => {
   
       try {
         // API request to backend
-        useEffect(() => {
-          axios.get("http://localhost:8080/all")
-            .then(response => {
-              console.log("Data received:", response.data);
-              setData(response.data);
-            })
-            .catch(error => console.error("Error:", error));
-        }, []);
-      
+        // useEffect(() => {
+        //     axios.get<Preference[]>("http://localhost:3000/api/all")
+        //     .then((res) => {
+        //       setPreferences(res.data);
+        //     })
+        //     .catch((err) => console.error(err));
+        // }, []);
+
+
         // return (
         //   <div>
         //     <h2>API Data:</h2>
         //     <pre>{JSON.stringify(data, null, 2)}</pre>
         //   </div>
         // );
-        const response = await axios.get('http://localhost:8080/all');
-        console.log(response)
+        const response = await axios.get('http://localhost:3000/api/all');
+        console.log("response:", response.data)
         setPreferences(response.data); // Storing preferences
       } catch (err) {
         setError('Failed to load preferences');
@@ -193,13 +195,12 @@ const All = () => {
                 </thead>
                 <tbody>
                   {preferences.map((preference) => (
-                    <tr key={preference.ID}>
-                      <td className="border px-4 py-2">{preference.ID}</td>
-                      <td className="border px-4 py-2">{preference.Semester}</td>
-                      <td className="border px-4 py-2">{preference.UserID}</td>
-                      <td className="border px-4 py-2">{preference.Name}</td>
-                      <td className="border px-4 py-2">{preference.CourseSemID}</td>
-                      <td className="border px-4 py-2">{preference.PreferenceLevel}</td>
+                    <tr key={preference.id}>
+                      <td className="border px-4 py-2">{preference.id}</td>
+                      <td className="border px-4 py-2">{preference.semester}</td>
+                      <td className="border px-4 py-2">{preference.user_id}</td>
+                      <td className="border px-4 py-2">{preference.course_sem_id}</td>
+                      <td className="border px-4 py-2">{preference.preference_level}</td>
                     </tr>
                   ))}
                 </tbody>

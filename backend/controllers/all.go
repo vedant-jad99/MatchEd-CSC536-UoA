@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetPreferences handles GET requests to fetch preferences (or any data from the database)
+// GetPreferences handles GET requests and determines what to return from the database to the client 
 func GetPreferences(c *gin.Context) {
 	var preferences []models.Preferences 
 	c.Header("Access-Control-Allow-Origin", "http://localhost:8080")
