@@ -46,7 +46,7 @@ func LoadCSVtoDatabase(db *gorm.DB, filePath string, modelType interface{}) {
 
 	err = AddFromJSON(db, jsonData, modelType)
 	if err != nil {
-		log.Printf("Error adding users:%s", err)
+		log.Printf("Error adding to relation:%s", err)
 	} else {
 		log.Printf("Users successfully added from%s", filePath)
 	}

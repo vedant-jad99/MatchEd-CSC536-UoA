@@ -12,5 +12,5 @@ type User struct {
 // grom converts tablenames to lowercase and pluralizes them
 // here is the workaround
 func (User) TableName() string {
-	return `"match_schema"."user"`
+	return `"match_schema"."users"`
 }

@@ -15,5 +15,5 @@ type Course struct {
 }
 
 func (Course) TableName() string {
-	return `"match_schema"."course"`
+	return `"match_schema"."courses"`
 }

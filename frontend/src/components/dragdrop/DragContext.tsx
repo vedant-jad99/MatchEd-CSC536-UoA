@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { CardProps } from '../people/Card';
+import { CardProps } from './Card';
 
 // COMMENT: For Go migration, this interface will become a Go struct
 // and the data will be stored in a database instead of in-memory state
