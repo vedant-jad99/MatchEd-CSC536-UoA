@@ -5,11 +5,13 @@ import (
 	"os"
 	"time"
 
-	"backend/controllers" // Import your controllers
-
+	// Import router dependencies
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+
+	// local models
+	"backend/models"
 )
 
 func SetupRouter() *gin.Engine {
@@ -81,27 +83,27 @@ func setApiHandlers(r *gin.Engine) {
 		// Course routes
 		courses := api.Group("/courses")
 		{
-			courses.GET("/", controllers.GetAllCourses)
-			courses.GET("/:id", controllers.GetCourseById)
-			courses.POST("/", controllers.CreateCourse)
-			courses.PUT("/:id", controllers.UpdateCourse)
-			courses.DELETE("/:id", controllers.DeleteCourse)
+			courses.GET("/", models.GetAllCourses)
+			courses.GET("/:id", models.GetCourseById)
+			courses.POST("/", models.CreateCourse)
+			courses.PUT("/:id", models.UpdateCourse)
+			courses.DELETE("/:id", models.DeleteCourse)
 		}
 
 		// Matching routes
 		matchings := api.Group("/matchings")
 		{
-			matchings.GET("/", controllers.GetAllMatchPairs)
+			matchings.GET("/", models.GetAllMatchPairs)
 		}
 
 		// User routes
 		users := api.Group("/users")
 		{
-			users.GET("/", controllers.GetAllUsers)
-			users.GET("/:id", controllers.GetUserById)
-			users.POST("/", controllers.CreateUser)
-			users.PUT("/:id", controllers.UpdateUser)
-			users.DELETE("/:id", controllers.DeleteUser)
+			users.GET("/", models.GetAllUsers)
+			users.GET("/:id", models.GetUserById)
+			users.POST("/", models.CreateUser)
+			users.PUT("/:id", models.UpdateUser)
+			users.DELETE("/:id", models.DeleteUser)
 		}
 
 		// ping the server

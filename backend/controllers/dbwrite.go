@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"backend/models"
 	"encoding/json"
 	"errors"
 	"reflect"
@@ -62,43 +61,4 @@ func AddFromJSON(db *gorm.DB, jsonData []map[string]string, modelType interface{
 		}
 	}
 	return nil
-}
-
-// Functions to add and save models to the database
-func AddUser(db *gorm.DB, name string, email string) (models.User, error) {
-	user := models.User{Name: name, Email: email}
-	err := db.Create(&user).Error
-	return user, err
-}
-
-func AddCourse(db *gorm.DB, number string, name string, campus string, semesters string) (models.Course, error) {
-	course := models.Course{Number: number, Name: name, Campus: campus, Semesters: semesters}
-	err := db.Create(&course).Error
-	return course, err
-}
-
-func AddCourseSemester(db *gorm.DB, courseID uint, semester string) (models.CourseSemester, error) {
-	cs := models.CourseSemester{CourseID: courseID, Semester: semester}
-	err := db.Create(&cs).Error
-	return cs, err
-}
-
-func AddPreferences(db *gorm.DB, userID, courseID uint, priority int) (models.Preferences, error) {
-	pref := models.Preferences{UserID: userID, CourseID: courseID, Priority: priority}
-	err := db.Create(&pref).Error
-	return pref, err
-}
-
-/*
-	func AddMatchingIteration(db *gorm.DB, id, triggeredBy,status,createdAt, updatedAt ) (models.MatchingIteration, error) {
-		mi := models.MatchingIteration{ID,TriggeredBy, Status, CreatedAt: time.Now(), UpdatedAt:time.Now()}
-
-		err := db.Create(&mi).Error
-		return mi, err
-	}
-*/
-func AddMatching(db *gorm.DB, matchingIterationID, userID, courseID, courseSemID, score uint) (models.Matching, error) {
-	match := models.Matching{MatchingIterationID: matchingIterationID, UserID: userID, CourseSemID: courseSemID, Score: score}
-	err := db.Create(&match).Error
-	return match, err
 }

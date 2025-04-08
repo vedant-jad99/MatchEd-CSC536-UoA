@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"backend/controllers"
 	"backend/models"
 	"backend/routes"
 
@@ -24,7 +25,7 @@ func main() {
 	router := routes.SetupRouter()
 
 	// initialize the tables
-	// controllers.InitializeTables(models.DB)
+	controllers.InitializeTables(models.DB)
 
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
@@ -42,7 +43,7 @@ func main() {
 
 // Handler function placeholders - implement these in separate controller files
 func loginHandler(c *gin.Context) {
-	// Implementation 
+	// Implementation
 }
 
 func registerHandler(c *gin.Context) {

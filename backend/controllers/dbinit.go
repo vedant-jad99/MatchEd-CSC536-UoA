@@ -13,27 +13,39 @@ import (
 
 func InitializeTables(db *gorm.DB) {
 	log.Printf("Initializing database tables from init-data/*.csv")
-	// order matters here, because of database contstraints
+	// ORDER MATTERS HERE, because of database contstraints
 
-	// user file
-	csvPath := getFilePath("../models/init-data/users.csv")
-	LoadCSVtoDatabase(db, csvPath, models.User{})
+	// auth file
+	csvPath := getFilePath("../models/init-data/auth.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Auth{})
+
+	// roles file
+	csvPath = getFilePath("../models/init-data/roles.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Role{})
+
+	// matching iterations file
+	csvPath = getFilePath("../models/init-data/matching_iterations.csv")
+	LoadCSVtoDatabase(db, csvPath, models.MatchingIteration{})
 
 	// courses file
 	csvPath = getFilePath("../models/init-data/courses.csv")
 	LoadCSVtoDatabase(db, csvPath, models.Course{})
 
-	// matchings file
-	csvPath = getFilePath("../models/init-data/matching_iterations.csv")
-	LoadCSVtoDatabase(db, csvPath, models.MatchingIteration{})
+	// course semesters file
+	csvPath = getFilePath("../models/init-data/course_semester.csv")
+	LoadCSVtoDatabase(db, csvPath, models.CourseSemester{})
 
-	// matchings file
-	csvPath = getFilePath("../models/init-data/roles.csv")
-	LoadCSVtoDatabase(db, csvPath, models.Matching{})
+	// user file
+	csvPath = getFilePath("../models/init-data/users.csv")
+	LoadCSVtoDatabase(db, csvPath, models.User{})
 
 	// matchings file
 	csvPath = getFilePath("../models/init-data/matchings.csv")
 	LoadCSVtoDatabase(db, csvPath, models.Matching{})
+
+	// preferences file
+	csvPath = getFilePath("../models/init-data/preferences.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Preferences{})
 
 }
 
