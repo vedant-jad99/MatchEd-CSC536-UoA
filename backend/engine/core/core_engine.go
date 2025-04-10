@@ -13,7 +13,7 @@ type pMatchingInput struct {
 	faculty_ids    []IDType
 	course_s_ids   []IDType
 	preferences    []Preferences
-	fc_map         map[IDType]IDType
+	fc_map         map[IDType]*[2]IDType
 	c_map          map[IDType]bool
 	preference_map map[IDType]map[int64][]IDType //FacultyID --> preference (3,2,1) --> courseSemID[]
 }
@@ -92,13 +92,13 @@ func StartMatching(matchingIter IDType) (Matching, error) {
 
 func preprocessMatchingInput(mI MatchingInput) (pMatchingInput, error) {
 	var preprocessInput pMatchingInput
-	preprocessInput.fc_map = make(map[IDType]IDType)
+	preprocessInput.fc_map = make(map[IDType]*[2]IDType)
 	preprocessInput.c_map = make(map[IDType]bool)
 	preprocessInput.preference_map = make(map[IDType]map[int64][]IDType)
 
 	for _, value := range mI.faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
-		preprocessInput.fc_map[value.UserID] = -1
+		preprocessInput.fc_map[value.UserID] = &([2]IDType{-1, -1})
 	}
 	for _, value := range mI.course_s {
 		preprocessInput.course_s_ids = append(preprocessInput.course_s_ids, value.CourseSemID)
@@ -125,28 +125,34 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 	rand.Shuffle(len(pI.faculty_ids), func(i, j int) {
 		pI.faculty_ids[i], pI.faculty_ids[j] = pI.faculty_ids[j], pI.faculty_ids[i]
 	})
-	for _, value := range pI.faculty_ids {
-		for i := PreferenceLevelGreen; i < PreferenceLevelEnd; i++ {
-			_, exists := pI.preference_map[value][i]
-			if !exists {
-				continue
-			}
+	for iter := 0; iter < 2; iter++ {
+		for _, value := range pI.faculty_ids {
+			for i := PreferenceLevelGreen; i < PreferenceLevelEnd; i++ {
+				_, exists := pI.preference_map[value][i]
+				if !exists {
+					continue
+				}
 
-			length, j, flag := len(pI.preference_map[value][i]), 0, false
-			for j < length {
-				courseSemId := pI.preference_map[value][i][j]
-				j++
-				if !pI.c_map[courseSemId] { // If course is not assigned
-					pI.fc_map[value] = courseSemId
-					pI.c_map[courseSemId] = true
-					flag = true
+				length, j, flag := len(pI.preference_map[value][i]), 0, false
+				for j < length {
+					courseSemId := pI.preference_map[value][i][j]
+					j++
+					if !pI.c_map[courseSemId] { // If course is not assigned
+						if pI.fc_map[value][0] == -1 {
+							pI.fc_map[value][0] = courseSemId
+						} else {
+							pI.fc_map[value][1] = courseSemId
+						}
+						pI.c_map[courseSemId] = true
+						flag = true
+						break
+					}
+				}
+
+				pI.preference_map[value][i] = slices.Delete(pI.preference_map[value][i], 0, j)
+				if flag {
 					break
 				}
-			}
-
-			pI.preference_map[value][i] = slices.Delete(pI.preference_map[value][i], 0, j)
-			if flag {
-				break
 			}
 		}
 	}
@@ -161,11 +167,23 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 			MatchingID:          -1,
 			MatchingIterationID: matchingIter,
 			UserID:              key,
-			CourseSemID:         value,
+			CourseSemID:         value[0],
 			MatchingScore:       1.0,
 		}
 
 		matching.Matchings = append(matching.Matchings, matchingElement)
+
+		if value[1] != -1 {
+			matchingElement2 := MatchingElement{
+				MatchingID:          -1,
+				MatchingIterationID: matchingIter,
+				UserID:              key,
+				CourseSemID:         value[1],
+				MatchingScore:       1.0,
+			}
+
+			matching.Matchings = append(matching.Matchings, matchingElement2)
+		}
 	}
 
 	return matching, nil
