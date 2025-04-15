@@ -13,7 +13,7 @@ func GetAllUsers(c *gin.Context) {
 	var users []models.User
 
 	// Mock fetching users from a database
-	// models.DB.Find(&users)
+	models.DB.Find(&users)
 
 	c.JSON(http.StatusOK, users)
 }
