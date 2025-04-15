@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { Card, CardProps } from '../people/Card';
+import { Card, CardProps } from './Card';
 import { cn } from '@/lib/utils';
 
 interface RoleBoardProps {

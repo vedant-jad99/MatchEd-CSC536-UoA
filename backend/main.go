@@ -26,10 +26,13 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
+	// initialize the tables
+	//controllers.InitializeTables(models.DB)
+
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
+		port = "8080"
 	}
 
 	// Start the server
@@ -37,6 +40,7 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
+
 }
 
 // Handler function placeholders - implement these in separate controller files

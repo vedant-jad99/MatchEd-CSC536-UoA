@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useDragContext } from './DragContext';
-import { Card } from '../people/Card';
+import { Card } from './Card';
 
 // COMMENT: For Go migration, this component will need to be refactored
 // to make API calls instead of using context state

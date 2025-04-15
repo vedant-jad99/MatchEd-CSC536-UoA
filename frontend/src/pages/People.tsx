@@ -6,7 +6,7 @@ import { DragProvider, useDragContext } from '@/components/dragdrop/DragContext'
 import { Users, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CardProps } from '@/components/people/Card';
+import { CardProps } from '@/components/dragdrop/Card';
 
 // Mock data for people
 const initialRoles = [
