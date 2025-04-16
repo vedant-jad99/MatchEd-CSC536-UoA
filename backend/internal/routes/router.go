@@ -1,12 +1,11 @@
 package routes
 
 import (
-	"net/http"
 	"os"
 
-	"backend/controllers" // Import your controllers
+	"backend/internal/controllers" // Import your controllers
 
-	"github.com/gin-contrib/static"
+	// "github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,20 +27,7 @@ func SetupRouter() *gin.Engine {
 	setApiHandlers(r)
 
 	// Serve static files from the React app build directory in production
-	r.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
-
-	// Handle all routes for SPA (forward to index.html)
-	// This should be after all API routes
-	r.NoRoute(func(c *gin.Context) {
-		// Check if the request path is an API route
-		if c.Request.URL.Path[:4] == "/api" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
-			return
-		}
-
-		// Otherwise, serve the SPA
-		c.File("./static/index.html")
-	})
+	// r.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
 
 	return r
 }
@@ -52,17 +38,6 @@ func SetupRouter() *gin.Engine {
 func setApiHandlers(r *gin.Engine) {
 	api := r.Group("/api")
 	{
-
-		// People routes
-		people := api.Group("/people")
-		{
-			people.GET("/", controllers.GetAllPeople)
-			people.GET("/:id", controllers.GetPersonById)
-			people.POST("/", controllers.CreatePerson)
-			people.PUT("/:id", controllers.UpdatePerson)
-			people.DELETE("/:id", controllers.DeletePerson)
-		}
-
 		// User routes
 		users := api.Group("/users")
 		{

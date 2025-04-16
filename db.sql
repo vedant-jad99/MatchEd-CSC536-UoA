@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS match_schema.preferences (
     semester VARCHAR NOT NULL,
     user_id INT NOT NULL,
     course_sem_id INT NOT NULL ,
-    preference_level INT NOT NULL
+    preference_level VARCHAR NOT NULL,
+    preference_weight INT NOT NULL
 );
 
 -- Matching Iteration Table
@@ -68,7 +69,7 @@ CREATE TABLE IF NOT EXISTS match_schema.matching_iterations (
 );
 
 -- Matching Table
-CREATE TABLE IF NOT EXISTS match_schema.matching (
+CREATE TABLE IF NOT EXISTS match_schema.matchings (
     id SERIAL PRIMARY KEY,
     matching_iteration_id INT NOT NULL,
     user_id INT NOT NULL,
