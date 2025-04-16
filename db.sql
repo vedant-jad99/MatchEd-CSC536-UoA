@@ -13,19 +13,19 @@ CREATE TABLE IF NOT EXISTS match_schema.users (
     id SERIAL PRIMARY KEY,
     name VARCHAR,
     email VARCHAR,
-    num_req_courses INT,
+    num_req_courses INT
 );
 
 -- User Role Table
 CREATE TABLE IF NOT EXISTS match_schema.roles (
-    user_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
     role VARCHAR NOT NULL
 );
 
 -- Authentication Table
 CREATE TABLE IF NOT EXISTS match_schema.auth (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES match_schema.roles(user_id),
+    user_id INT NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP,
     auth_token VARCHAR NOT NULL UNIQUE
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS match_schema.courses (
 -- Course Semester Table
 CREATE TABLE IF NOT EXISTS match_schema.course_sem (
     id SERIAL PRIMARY KEY,
-    course_id INT NOT NULL REFERENCES match_schema.courses(id),
+    course_id INT NOT NULL,
     semester VARCHAR NOT NULL,
     mandatory_level VARCHAR,
     timeslot VARCHAR
@@ -70,9 +70,9 @@ CREATE TABLE IF NOT EXISTS match_schema.matching_iterations (
 -- Matching Table
 CREATE TABLE IF NOT EXISTS match_schema.matching (
     id SERIAL PRIMARY KEY,
-    matching_iteration_id INT NOT NULL REFERENCES match_schema.matching_iterations(id),
-    user_id INT NOT NULL REFERENCES match_schema.roles(user_id),
-    course_sem_id INT NOT NULL REFERENCES match_schema.course_sem(id),
+    matching_iteration_id INT NOT NULL,
+    user_id INT NOT NULL,
+    course_sem_id INT NOT NULL,
     score DECIMAL NOT NULL
 );
 
