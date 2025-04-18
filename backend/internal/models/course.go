@@ -13,6 +13,7 @@ type CourseSem struct {
 	CourseId       uint   `json:"course_id"`
 	Semester       string `json:"semester"`
 	MandatoryLevel string `json:"mandatory_level"`
+	Section        string `json:"section"`
 	Timeslot       string `json:"timeslot"`
 }
 
