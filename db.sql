@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS match_schema.course_sem (
     course_id INT NOT NULL,
     semester VARCHAR NOT NULL,
     mandatory_level VARCHAR,
+    section VARCHAR,
     timeslot VARCHAR
 );
 
