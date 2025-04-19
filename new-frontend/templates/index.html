@@ -30,6 +30,7 @@
           </thead>
           <tbody id="facultyTableBody"></tbody>
         </table>
+        
         <!-- Faculty Push Button -->
         <div id="faculty-change-controls" style="margin-top: 20px; text-align: center;">
           <button id="pushFacultyChangesBtn" class="disabled" disabled>Push Changes</button>
@@ -126,15 +127,27 @@
         </form>
     </div>  
     
-    <!-- Sidebar Overlay -->
+    <div id="editFacultySidebar" class="edit-sidebar">
+      <h2>Edit Faculty</h2>
+      <form id="editFacultyForm">
+        <label for="editfacultyName">Name:</label>
+        <input type="text" id="editfacultyName" required />
+    
+        <div class="sidebar-buttons">
+          <button type="submit">Save Changes</button>
+          <button type="button" onclick="closeFacultySidebar()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
     <div id="editSidebar" class="edit-sidebar">
         <h2>Edit Entry</h2>
         <form id="editForm">
-        <label for="editType">Type:</label>
-        <input type="text" id="editType" readonly />
+        <!-- <label for="editType">Type:</label>
+        <input type="text" id="editType" readonly /> -->
     
         <label for="editName">Name:</label>
-        <input type="text" id="editName" required />
+        <input type="text" id="editName" readonly />
     
         <div id="editSectionGroup" >
             <label for="editSection">Sections:</label>
@@ -150,20 +163,6 @@
         </div>
         </form>
     </div>
-
-    <div id="editFacultySidebar" class="edit-sidebar">
-      <h2>Edit Faculty</h2>
-      <form id="editFacultyForm">
-        <label for="facultyName">Name:</label>
-        <input type="text" id="facultyName" required />
-    
-        <div class="sidebar-buttons">
-          <button type="submit">Save Changes</button>
-          <button type="button" onclick="closeSidebar('editFacultySidebar')">Cancel</button>
-        </div>
-      </form>
-    </div>
-    
   </div>
 
 
