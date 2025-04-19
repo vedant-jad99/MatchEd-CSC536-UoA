@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Course Assignment</title>
+  <link rel="stylesheet" href="D:\Projects\MatchEd-CSC536-UoA\new-frontend\static\style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Faculty Course Assignment</h1>
+    <div class="tabs">
+      <button class="tab-button active" data-tab="faculty">Faculty</button>
+      <button class="tab-button" data-tab="courses">Courses</button>
+      <button class="tab-button" data-tab="preferences">View Preferences</button>
+      <button class="tab-button" data-tab="outputs">View Outputs</button>
+    </div>
+
+    <!-- Faculty Tab -->
+    <div class="tab-content active" id="faculty">
+        <div class="form">
+          <input type="text" id="facultyName" placeholder="Enter Faculty Name">
+          <button onclick="addFaculty()">Add</button>
+        </div>
+        <table class="modern-table">
+          <thead>
+              <tr>
+              <th>Name</th>
+              <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody id="facultyTableBody"></tbody>
+        </table>
+        <!-- Faculty Push Button -->
+        <div id="faculty-change-controls" style="margin-top: 20px; text-align: center;">
+          <button id="pushFacultyChangesBtn" class="disabled" disabled>Push Changes</button>
+        </div>
+    </div>
+    
+    <!-- Courses Tab -->
+    <div class="tab-content" id="courses">
+        <div class="form">
+          <input type="text" id="courseName" placeholder="Enter Course Name">
+          <select id="sectionCount">
+              <option value="1">1 Section</option>
+              <option value="2">2 Sections</option>
+          </select>
+          <button onclick="addCourse()">Add</button>
+        </div>
+        <table class="modern-table">
+          <thead>
+              <tr>
+              <th>Course Name</th>
+              <th>Sections</th>
+              <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody id="courseTableBody"></tbody>
+        </table>
+        <!-- Courses Push Button -->
+        <div id="courses-change-controls" style="margin-top: 20px; text-align: center;">
+          <button id="pushCourseChangesBtn" class="disabled" disabled>Push Changes</button>
+        </div>
+      </div> 
+
+    <!-- View Preferences Tab -->
+    <div class="tab-content" id="preferences">
+        <table class="modern-table" id="preferencesTable">
+        <thead>
+            <tr>
+            <th>Course</th>
+            <th>Faculty</th>
+            <th>Preference</th>
+            <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="preferencesTableBody" >
+        </tbody>
+        </table>
+
+        <div id="change-controls" style="margin-top: 20px; text-align: center;">
+            <button id="pushChangesBtn" class="disabled" disabled>Push Changes</button>
+        </div>
+    </div>
+    <div id="confirmationModal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Confirm Your Changes</h3>
+        <div id="changeSummary">
+        </div>
+        <div class="modal-actions">
+          <button id="confirmBtn">Confirm</button>
+          <button id="cancelBtn">Take Me Back</button>
+        </div>
+      </div>
+      <!-- <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h2 class="text-xl font-semibold mb-4">Confirm Push</h2>
+            <p class="mb-4">Are you sure you want to push these changes?</p>
+            <div class="flex justify-end gap-2">
+                <button id="cancelBtn" class="px-4 py-2 rounded border">Cancel</button>
+                <button id="confirmPushBtn" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Confirm</button>
+            </div>
+        </div> -->
+    </div>
+    
+    <!-- Edit Preference Sidebar -->
+    <div id="editPreferenceSidebar" class="edit-sidebar">
+        <h2>Edit Preference</h2>
+        <form id="editPreferenceForm"> 
+        <label for="editCourse">Course:</label>
+        <input type="text" id="editCourse" readonly />
+        
+        <label for="editFaculty">Faculty:</label>
+        <input type="text" id="editFaculty" readonly />
+        
+        <label for="editPreference">Preference:</label>
+        <select id="editPreference">
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+            <option value="red">Red</option>
+        </select>
+        
+        <div class="sidebar-buttons">
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="closePreferenceSidebar()">Cancel</button>
+        </div>
+        </form>
+    </div>  
+    
+    <!-- Sidebar Overlay -->
+    <div id="editSidebar" class="edit-sidebar">
+        <h2>Edit Entry</h2>
+        <form id="editForm">
+        <label for="editType">Type:</label>
+        <input type="text" id="editType" readonly />
+    
+        <label for="editName">Name:</label>
+        <input type="text" id="editName" required />
+    
+        <div id="editSectionGroup" >
+            <label for="editSection">Sections:</label>
+            <select id="editSection">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            </select>
+        </div>
+    
+        <div class="sidebar-buttons">
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="closeSidebar()">Cancel</button>
+        </div>
+        </form>
+    </div>
+
+    <div id="editFacultySidebar" class="edit-sidebar">
+      <h2>Edit Faculty</h2>
+      <form id="editFacultyForm">
+        <label for="facultyName">Name:</label>
+        <input type="text" id="facultyName" required />
+    
+        <div class="sidebar-buttons">
+          <button type="submit">Save Changes</button>
+          <button type="button" onclick="closeSidebar('editFacultySidebar')">Cancel</button>
+        </div>
+      </form>
+    </div>
+    
+  </div>
+
+
+<script src="D:\Projects\MatchEd-CSC536-UoA\new-frontend\static\script.js"></script>
+</body>
+</html>
