@@ -13,5 +13,5 @@ type MatchingIteration struct {
 }
 
 func (MatchingIteration) TableName() string {
-	return `"match_schema"."matching_iteration"`
+	return `"match_schema"."matching_iterations"`
 }

@@ -1,7 +1,6 @@
-package controllers
+package models
 
 import (
-	"backend/internal/models"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
@@ -22,35 +21,35 @@ func InitializeTables(db *gorm.DB) {
 
 	// auth file
 	csvPath := getFilePath("../models/init-data/auth.csv")
-	LoadCSVtoDatabase(db, csvPath, models.Auth{})
+	LoadCSVtoDatabase(db, csvPath, Auth{})
 
 	// roles file
 	csvPath = getFilePath("../models/init-data/roles.csv")
-	LoadCSVtoDatabase(db, csvPath, models.Role{})
+	LoadCSVtoDatabase(db, csvPath, Role{})
 
 	// matching iterations file
 	csvPath = getFilePath("../models/init-data/matching_iterations.csv")
-	LoadCSVtoDatabase(db, csvPath, models.MatchingIteration{})
+	LoadCSVtoDatabase(db, csvPath, MatchingIteration{})
 
 	// courses file
 	csvPath = getFilePath("../models/init-data/courses.csv")
-	LoadCSVtoDatabase(db, csvPath, models.Course{})
+	LoadCSVtoDatabase(db, csvPath, Course{})
 
 	// course semesters file
 	csvPath = getFilePath("../models/init-data/course_semester.csv")
-	LoadCSVtoDatabase(db, csvPath, models.CourseSemester{})
+	LoadCSVtoDatabase(db, csvPath, CourseSemester{})
 
 	// user file
 	csvPath = getFilePath("../models/init-data/users.csv")
-	LoadCSVtoDatabase(db, csvPath, models.User{})
+	LoadCSVtoDatabase(db, csvPath, User{})
 
 	// matchings file
 	csvPath = getFilePath("../models/init-data/matchings.csv")
-	LoadCSVtoDatabase(db, csvPath, models.Matching{})
+	LoadCSVtoDatabase(db, csvPath, Matching{})
 
 	// preferences file
 	csvPath = getFilePath("../models/init-data/preferences.csv")
-	LoadCSVtoDatabase(db, csvPath, models.Preferences{})
+	LoadCSVtoDatabase(db, csvPath, Preferences{})
 
 }
 

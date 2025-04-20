@@ -5,7 +5,6 @@ import (
 	"os"
 
 	// "fmt"
-	"backend/internal/controllers"
 	"backend/internal/models"
 	"backend/internal/routes"
 
@@ -29,12 +28,7 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
-<<<<<<< HEAD
-	// initialize the tables
-	//controllers.InitializeTables(models.DB)
-=======
-	controllers.InitializeTables()
->>>>>>> b85926a (added column tags, testing, and a few api calls)
+	models.InitializeTables(models.DB)
 
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")

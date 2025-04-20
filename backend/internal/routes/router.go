@@ -82,12 +82,14 @@ func setApiHandlers(r *gin.Engine) {
 				c.Status(http.StatusOK)
 			})
 		*/
-		r.OPTIONS("/*path", func(c *gin.Context) {
-			c.Header("Access-Control-Allow-Origin", "*")
-			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
-			c.Status(http.StatusOK)
-		})
+		/*
+			r.OPTIONS("/*path", func(c *gin.Context) {
+				c.Header("Access-Control-Allow-Origin", "*")
+				c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+				c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
+				c.Status(http.StatusOK)
+			})
+		*/
 
 		// Course routes
 		courses := api.Group("/courses")
@@ -104,17 +106,17 @@ func setApiHandlers(r *gin.Engine) {
 		{
 			matchings.GET("/", models.GetAllMatchPairs)
 		}
-
-		// User routes
-		users := api.Group("/users")
-		{
-			users.GET("/", models.GetAllUsers)
-			users.GET("/:id", models.GetUserById)
-			users.POST("/", models.CreateUser)
-			users.PUT("/:id", models.UpdateUser)
-			users.DELETE("/:id", models.DeleteUser)
-		}
-
+		/*
+			// User routes
+			users := api.Group("/users")
+			{
+				users.GET("/", models.GetAllUsers)
+				users.GET("/:id", models.GetUserById)
+				users.POST("/", models.CreateUser)
+				users.PUT("/:id", models.UpdateUser)
+				users.DELETE("/:id", models.DeleteUser)
+			}
+		*/
 		// ping the server
 		// TODO, this should have a handler defined in controllers
 		// if you want to keep it
