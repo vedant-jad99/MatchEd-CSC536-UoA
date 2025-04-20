@@ -3,9 +3,12 @@ package main
 import (
 	"log"
 	"os"
+
 	// "fmt"
+	"backend/internal/controllers"
 	"backend/internal/models"
 	"backend/internal/routes"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -26,8 +29,12 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
+<<<<<<< HEAD
 	// initialize the tables
 	//controllers.InitializeTables(models.DB)
+=======
+	controllers.InitializeTables()
+>>>>>>> b85926a (added column tags, testing, and a few api calls)
 
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")

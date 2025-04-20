@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ID,Type,Name
 1,101,Introduction to Computer Science
 2,110,Introduction to Computer Programming I
@@ -110,3 +111,117 @@ ID,Type,Name
 109,900,Research
 110,910,Thesis
 111,920,Dissertation
+=======
+ID,Type,Name,Campus
+1,101,Introduction to Computer Science,Main Campus
+2,110,Introduction to Computer Programming I,Main Campus
+3,120,Introduction to Computer Programming II,Main Campus
+4,144,Discrete Mathematics for Computer Science I,Main Campus
+5,199,Independent Study,Main Campus
+6,199H,Honors Independent Study,Main Campus
+7,210,Software Development,Main Campus
+8,244,Discrete Mathematics for Computer Science II,Main Campus
+9,252,Computer Organization,Main Campus
+10,296,Special Topics in Computer Science Seminar,Main Campus
+11,296B,Seminar in Bioinformatics,Main Campus
+12,299,Independent Study,Main Campus
+13,299H,Honors Independent Study,Main Campus
+14,317,Mobile Application Programming,Main Campus
+15,335,Object-Oriented Programming and Design,Main Campus
+16,337,Web Programming,Main Campus
+17,343,Human Computer Interaction,Main Campus
+18,345,Analysis of Discrete Structures,Main Campus
+19,346,Cloud Computing,Main Campus
+20,350,Fundamentals of Computer Science Theory,Main Campus
+21,352,Systems Programming and Unix,Main Campus
+22,355,Discrete Structures and Basic Algorithms,Main Campus
+23,355,Discrete Structures and Basic Algorithms,Main Campus
+24,372,Comparative Programming Languages,Main Campus
+25,380,Principles of Data Science,Main Campus
+26,382,Software Development in C++,Main Campus
+27,391,Preceptorship,Main Campus
+28,392,Directed Research,Main Campus
+29,396,Special Topics in Computer Science Seminar,Main Campus
+30,399,Independent Study,Main Campus
+31,399H,Honors Independent Study,Main Campus
+32,401A,Symbolic Logic,Main Campus
+33,401B,Symbolic Logic,Main Campus
+34,422,Introduction to Parallel and Distributed Programming,Main Campus
+35,425,Computer Networking,Main Campus
+36,433,Computer Graphics,Main Campus
+37,436,Software Engineering,Main Campus
+38,437,Geometric Algorithms,Main Campus
+39,438,Computational Linguistics,Main Campus
+40,439,Statistical Natural Language Processing,Main Campus
+41,444,Data Visualization,Main Campus
+42,445,Algorithms,Main Campus
+43,447,Green Computing,Main Campus
+44,450,Algorithms in Bioinformatics,Main Campus
+45,452,Principles of Operating Systems,Main Campus
+46,453,Compilers and Systems Software,Main Campus
+47,455,Philosophy and Artificial Intelligence,Main Campus
+48,460,Database Design,Main Campus
+49,465,Reverse Engineering vs. Software Protection,Main Campus
+50,466,Computer Security,Main Campus
+51,473,"Automata, Grammars and Languages",Main Campus
+52,474A,Computer-Aided Logic Design,Main Campus
+53,477,Introduction to Computer Vision,Main Campus
+54,480,Principles of Machine Learning,Main Campus
+55,483,Text Retrieval and Web Search,Main Campus
+56,492,Directed Research,Main Campus
+57,493,Internship,Main Campus
+58,496,Special Topics in Computer Science Seminar,Main Campus
+59,498H,Honors Thesis,Main Campus
+60,499,Independent Study,Main Campus
+61,499H,Honors Independent Study,Main Campus
+62,501A,Symbolic Logic,Main Campus
+63,501B,Symbolic Logic,Main Campus
+64,502,Mathematical Logic,Main Campus
+65,520,Principles of Programming Languages,Main Campus
+66,522,Parallel and Distributed Computing,Main Campus
+67,525,Principles of Computer Networking,Main Campus
+68,533,Computer Graphics,Main Campus
+69,535,Probabilistic Graphical Models,Main Campus
+70,536,Software Engineering,Main Campus
+71,537,Geometric Algorithms,Main Campus
+72,538,Computational Linguistics,Main Campus
+73,539,Statistical Natural Language Processing,Main Campus
+74,543,Theory of Graphs and Networks,Main Campus
+75,544,Advanced Data Visualization,Main Campus
+76,545,Design and Analysis of Algorithms,Main Campus
+77,547,Green Computing,Main Campus
+78,550,Algorithms in Bioinformatics,Main Campus
+79,552,Advanced Operating Systems,Main Campus
+80,553,Principles of Compilation,Main Campus
+81,555,Philosophy and Artificial Intelligence,Main Campus
+82,560,Database Systems Implementation,Main Campus
+83,566,Computer Security,Main Campus
+84,573,Theory of Computation,Main Campus
+85,574A,Computer-Aided Logic Design,Main Campus
+86,576,Computer Architecture,Main Campus
+87,577,Introduction to Computer Vision,Main Campus
+88,580,Principles of Machine Learning,Main Campus
+89,581,Advanced Computational Linguistics,Main Campus
+90,583,Text Retrieval and Web Search,Main Campus
+91,585,Algorithms for Natural Language Processing,Main Campus
+92,588,Machine Learning Theory,Main Campus
+93,593,Internship,Main Campus
+94,596,Special Topics in Computer Science Seminar,Main Campus
+95,599,Independent Study,Main Campus
+96,695A,Graduate Colloquium,Main Campus
+97,696A,Advanced Topics in Programming Languages and Compilers,Main Campus
+98,696B,"Advanced Topics in Parallel, Distributed, and High-Performance Computing",Main Campus
+99,696C,Advanced Topics in Computer Science,Main Campus
+100,696D,Advanced Topics in Visualization and Graphics,Main Campus
+101,696E,Advanced Topics in Algorithms,Main Campus
+102,696F,Advanced Topics in Computer Systems,Main Campus
+103,696G,Topics in Computational Linguistics,Main Campus
+104,696H,Advanced Topics in Artificial Intelligence,Main Campus
+105,696I,Advanced Topics in Security,Main Campus
+106,696J,Advanced Topics in Data Systems,Main Campus
+107,699,Independent Study,Main Campus
+108,799,Independent Study,Main Campus
+109,900,Research,Main Campus
+110,910,Thesis,Main Campus
+111,920,Dissertation,Main Campus
+>>>>>>> b85926a (added column tags, testing, and a few api calls)

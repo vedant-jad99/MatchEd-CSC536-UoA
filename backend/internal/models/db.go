@@ -11,7 +11,9 @@ import (
 
 // the name of the database.
 // call it from other packages with models.DB
-var db *gorm.DB
+// capitalized because it is a global export
+// local db variables are lowercase
+var DB *gorm.DB
 
 // TODO initialize gorm with postgres using real dbname
 func InitDB() error {
@@ -19,8 +21,8 @@ func InitDB() error {
 
 	var err error
 	// try to connect to database with gorm
-	db, err = gorm.Open(postgres.New(postgres.Config{DSN: dsn}), &gorm.Config{})
-	return err;
+	DB, err = gorm.Open(postgres.New(postgres.Config{DSN: dsn}), &gorm.Config{})
+	return err
 }
 
 func getDSN() string {
