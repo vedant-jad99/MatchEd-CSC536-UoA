@@ -129,7 +129,6 @@ func AddFromJSON(db *gorm.DB, jsonData []map[string]string, modelType interface{
 				processedEntry[key] = value
 				continue
 			}
-
 			switch field.Type.Kind() {
 			case reflect.Uint, reflect.Uint32, reflect.Uint64:
 				num, err := strconv.ParseUint(value, 10, 64)
@@ -141,6 +140,12 @@ func AddFromJSON(db *gorm.DB, jsonData []map[string]string, modelType interface{
 				num, err := strconv.Atoi(value)
 				if err != nil {
 					return errors.New("invalid number format for field: " + key)
+				}
+				processedEntry[key] = num
+			case reflect.Float32, reflect.Float64:
+				num, err := strconv.ParseFloat(value, 64)
+				if err != nil {
+					return errors.New("invalid float format for field: " + key)
 				}
 				processedEntry[key] = num
 			default:

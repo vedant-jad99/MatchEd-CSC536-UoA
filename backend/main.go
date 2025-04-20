@@ -33,7 +33,7 @@ func main() {
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 	}
 
 	// Start the server
