@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"net/http"
+	// "net/http"
 	"os"
 	"time"
 
@@ -62,10 +62,10 @@ func SetupRouter() *gin.Engine {
 	// This should be after all API routes
 	r.NoRoute(func(c *gin.Context) {
 		// Check if the request path is an API route
-		if c.Request.URL.Path[:4] == "/api" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
-			return
-		}
+		// if c.Request.URL.Path[:4] == "/api" {
+		// 	c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
+		// 	return
+		// }
 
 		// Otherwise, serve the SPA
 		// c.File("./static/index.html")
