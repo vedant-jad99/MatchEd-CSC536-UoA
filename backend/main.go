@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 	// "fmt"
-	"backend/models"
-	"backend/routes"
+	"backend/internal/models"
+	"backend/internal/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )

@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+data
 
 # Editor directories and files
 .vscode/*
@@ -62,5 +63,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+
 # other files
 db2.sql
+
+old_backend
+

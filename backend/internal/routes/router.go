@@ -10,8 +10,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 
-	// local models
-	"backend/models"
+	"backend/internal/controllers"
 )
 
 func SetupRouter() *gin.Engine {
@@ -36,7 +35,23 @@ func SetupRouter() *gin.Engine {
 	// Middleware
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	// Configure CORS middleware
+	r.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization, Accept, User-Agent, Cache-Control, Pragma, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Accept-Encoding, Accept-Language, Content-Length")
+		c.Header("Access-Control-Expose-Headers", "Content-Length")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Max-Age", "43200")
 
+		// Handle OPTIONS preflight
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
 	// "/api" routes
 	setApiHandlers(r)
 
@@ -56,7 +71,7 @@ func SetupRouter() *gin.Engine {
 		}
 
 		// Otherwise, serve the SPA
-		c.File("./static/index.html")
+		// c.File("./static/index.html")
 	})
 
 	return r
@@ -68,42 +83,14 @@ func SetupRouter() *gin.Engine {
 func setApiHandlers(r *gin.Engine) {
 	api := r.Group("/api")
 	{
-		/*
-			api.OPTIONS("/*path", func(c *gin.Context) {
-				c.Status(http.StatusOK)
-			})
-		*/
-		r.OPTIONS("/*path", func(c *gin.Context) {
-			c.Header("Access-Control-Allow-Origin", "*")
-			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
-			c.Status(http.StatusOK)
-		})
-
-		// Course routes
-		courses := api.Group("/courses")
-		{
-			courses.GET("/", models.GetAllCourses)
-			courses.GET("/:id", models.GetCourseById)
-			courses.POST("/", models.CreateCourse)
-			courses.PUT("/:id", models.UpdateCourse)
-			courses.DELETE("/:id", models.DeleteCourse)
-		}
-
-		// Matching routes
-		matchings := api.Group("/matchings")
-		{
-			matchings.GET("/", models.GetAllMatchPairs)
-		}
-
 		// User routes
 		users := api.Group("/users")
 		{
-			users.GET("/", models.GetAllUsers)
-			users.GET("/:id", models.GetUserById)
-			users.POST("/", models.CreateUser)
-			users.PUT("/:id", models.UpdateUser)
-			users.DELETE("/:id", models.DeleteUser)
+			users.GET("/", controllers.GetAllUsers)
+			users.GET("/:id", controllers.GetUserById)
+			users.POST("/", controllers.CreateUser)
+			users.PUT("/:id", controllers.UpdateUser)
+			users.DELETE("/:id", controllers.DeleteUser)
 		}
 
 		// ping the server
