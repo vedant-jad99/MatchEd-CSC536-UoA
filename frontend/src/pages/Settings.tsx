@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useTheme } from '@/hooks/use-theme';
+import PingComponent from '@/components/api/Ping';
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -21,7 +22,7 @@ const Settings = () => {
           <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
           <p className="text-muted-foreground">Manage your application preferences</p>
         </div>
-
+        
         <Tabs defaultValue="appearance" className="space-y-4">
           <TabsList>
             <TabsTrigger value="appearance">Appearance</TabsTrigger>

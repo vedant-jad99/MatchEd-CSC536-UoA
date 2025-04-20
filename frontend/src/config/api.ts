@@ -58,25 +58,33 @@ export const createHeaders = (token?: string) => {
   return headers;
 };
 
-// Example API client functions
-export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
-  // Get token from localStorage or other auth state management
-  const token = localStorage.getItem('authToken');
-  
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...createHeaders(token),
-      ...options.headers,
-    },
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: 'An unknown error occurred',
-    }));
-    throw new Error(error.message || `Request failed with status ${response.status}`);
+// Fetch with authentication function for API requests
+export const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<any> => {
+  try {
+    // Get auth token from localStorage (adjust based on your auth implementation)
+    const token = localStorage.getItem('authToken');
+    
+    // Merge default headers with provided options
+    const fetchOptions: RequestInit = {
+      ...options,
+      headers: {
+        ...createHeaders(token),
+        ...(options.headers || {})
+      }
+    };
+    
+    const response = await fetch(url, fetchOptions);
+    
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    
+    // Parse JSON response
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('API fetch error:', error);
+    throw error;
   }
-  
-  return response.json();
 };

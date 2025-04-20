@@ -25,15 +25,16 @@ data
 *.sw?
 
 # Ignore node_modules in frontend directory
-frontend/node_modules/
+*/node_modules/
+temp_matched_ui/
 
-# Ignore build directory and other artifacts in frontend (React-related)
-frontend/build/
-frontend/dist/
-frontend/.env
-frontend/.env.local
-frontend/.env.development
-frontend/.env.production
+# Ignore build directory and other artifacts in * (React-related)
+*/build/
+*/dist/
+*/.env
+*/.env.local
+*/.env.development
+*/.env.production
 
 # Ignore go dependencies and build artifacts in backend directory
 backend/.env
@@ -61,4 +62,10 @@ Thumbs.db
 *.sublime-project
 .vscode/
 .idea/
+
+
+# other files
+db2.sql
+
+old_backend
 

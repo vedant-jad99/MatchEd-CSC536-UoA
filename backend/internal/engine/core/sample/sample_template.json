@@ -1,0 +1,26 @@
+{   
+    "user": {
+        "1": "diazh",
+        "2": "johndoe"
+    },
+    "faculty": [1,2],
+    "course_sem_ids": [
+        544, 480
+    ],
+    "preferences": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "course_sem_id": 480,
+            "sem" : "",
+            "level": "r"
+        },
+        {
+            "id": 2,
+            "user_id": 2,
+            "course_sem_id": 544,
+            "sem" : "",
+            "level": "y"
+        }
+    ]
+}
