@@ -13,12 +13,13 @@ type pData struct {
 }
 
 type pMatchingInput struct {
-	faculty_ids    []IDType
-	course_s_ids   []IDType
-	preferences    []Preferences
-	fc_map         map[IDType]*[2]IDType
-	c_map          map[IDType]bool
-	preference_map map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
+	faculty_ids    	[]IDType
+	course_s_ids   	[]IDType
+	preferences    	[]Preferences
+	fc_map         	map[IDType]*[2]IDType
+	c_map          	map[IDType]bool
+	f2rc_map		map[IDType]int				 //FacultyID --> number of required courses to teach
+	preference_map	map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
 }
 
 /*
@@ -91,11 +92,13 @@ func preprocessMatchingInput(mI MatchingInput) pMatchingInput {
 	var preprocessInput pMatchingInput
 	preprocessInput.fc_map = make(map[IDType]*[2]IDType)
 	preprocessInput.c_map = make(map[IDType]bool)
+	preprocessInput.f2rc_map = make(map[IDType]int)
 	preprocessInput.preference_map = make(map[IDType]map[int64][]pData)
 
 	for _, value := range mI.faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
 		preprocessInput.fc_map[value.UserID] = &([2]IDType{-1, -1})
+		preprocessInput.f2rc_map[value.UserID] = value.NumReqCourses
 	}
 	for _, value := range mI.course_s {
 		preprocessInput.course_s_ids = append(preprocessInput.course_s_ids, value.CourseSemID)
@@ -128,8 +131,11 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 	rand.Shuffle(len(pI.faculty_ids), func(i, j int) {
 		pI.faculty_ids[i], pI.faculty_ids[j] = pI.faculty_ids[j], pI.faculty_ids[i]
 	})
-	for iter := 0; iter < 2; iter++ {
+	for iter := 0; iter < 4; iter++ {
 		for _, value := range pI.faculty_ids {
+			if iter >= pI.f2rc_map[value] {
+				continue
+			}
 			for i := PreferenceLevelGreen; i < PreferenceLevelEnd; i++ {
 				_, exists := pI.preference_map[value][i]
 				if !exists {

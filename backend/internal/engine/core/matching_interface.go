@@ -33,16 +33,17 @@ type Preferences struct {
 }
 
 type CourseSems struct {
-	CourseSemID    IDType
-	CourseID       IDType
-	Semester       string
-	Section 	   string
-	MandatoryLevel int    // TODO: Custom mandatory type
-	TimeSlot       string // TODO: Custom time slot type or timestamp?
+	CourseSemID	IDType
+	CourseID	IDType
+	Semester	string
+	Section		string
+	MandatoryLevel	int    // TODO: Custom mandatory type
+	TimeSlot	string // TODO: Custom time slot type or timestamp?
 }
 
 type Faculty struct {
-	UserID IDType
+	UserID 		IDType
+	NumReqCourses	int
 }
 
 type MatchingInput struct {

@@ -24,8 +24,8 @@ func TestTriggerMatching(t *testing.T) {
 	matchingIter := IDType(1)
 	input := MatchingInput{
 		faculty: []Faculty{
-			{UserID: 1},
-			{UserID: 2},
+			{UserID: 1, NumReqCourses: 2},
+			{UserID: 2, NumReqCourses: 2},
 		},
 		course_s: []CourseSems{
 			{CourseSemID: 101},
@@ -52,8 +52,8 @@ func TestTriggerMatching(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if len(matching.Matchings) != 3 {
-		t.Errorf("Expected 2 matchings, got %d", len(matching.Matchings))
+	if len(matching.Matchings) != len(expected.Matchings)  {
+		t.Errorf("Expected %d matchings, got %d", len(expected.Matchings), len(matching.Matchings))
 	}
 
 	for _, match := range matching.Matchings {
