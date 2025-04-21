@@ -27,7 +27,7 @@ func GetAllMatchings(c *gin.Context) {
 	var matchings []Matching
 
 	// Fetch courses from the database
-	result := DB.Find(&matchings)
+	result := db.Find(&matchings)
 	if result.Error != nil {
 		log.Println("Error fetching matchings:", result.Error)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch matchings"})
@@ -45,7 +45,7 @@ func GetAllMatchings(c *gin.Context) {
 
 func GetAllMatchPairs(c *gin.Context) {
 	var matchings []Matching
-	if err := DB.Find(&matchings).Error; err != nil {
+	if err := db.Find(&matchings).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch matchings"})
 		return
 	}
@@ -60,18 +60,18 @@ func GetAllMatchPairs(c *gin.Context) {
 		var course Course
 
 		// role -> user
-		if err := DB.First(&role, m.UserID).Error; err != nil {
+		if err := db.First(&role, m.UserID).Error; err != nil {
 			continue
 		}
-		if err := DB.First(&user, m.UserID).Error; err != nil {
+		if err := db.First(&user, m.UserID).Error; err != nil {
 			continue
 		}
 
 		// course sem -> course
-		if err := DB.First(&course_sem, m.CourseSemID).Error; err != nil {
+		if err := db.First(&course_sem, m.CourseSemID).Error; err != nil {
 			continue
 		}
-		if err := DB.First(&course, course_sem.CourseID).Error; err != nil {
+		if err := db.First(&course, course_sem.CourseID).Error; err != nil {
 			continue
 		}
 
@@ -87,7 +87,7 @@ func GetAllMatchPairs(c *gin.Context) {
 				"number":    course.Number,
 				"name":      course.Name,
 				"campus":    "Main Campus",
-				"semesters": strings.Split(course_sem.Semester, ","), // assuming comma-separated in DB
+				"semesters": strings.Split(course_sem.Semester, ","), // assuming comma-separated in db
 			},
 			"status":     "confirmed", // hardcoded or derive from Score
 			"confidence": m.Score,

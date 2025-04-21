@@ -1,6 +1,7 @@
-package models
+package scripts
 
 import (
+	"backend/internal/models"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
@@ -20,36 +21,36 @@ func InitializeTables(db *gorm.DB) {
 	// ORDER MATTERS HERE, because of database contstraints
 
 	// auth file
-	csvPath := getFilePath("../models/init-data/auth.csv")
-	LoadCSVtoDatabase(db, csvPath, Auth{})
+	csvPath := getFilePath("/init-data/auth.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Auth{})
 
 	// roles file
-	csvPath = getFilePath("../models/init-data/roles.csv")
-	LoadCSVtoDatabase(db, csvPath, Role{})
+	csvPath = getFilePath("/init-data/roles.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Role{})
 
 	// matching iterations file
-	csvPath = getFilePath("../models/init-data/matching_iterations.csv")
-	LoadCSVtoDatabase(db, csvPath, MatchingIteration{})
+	csvPath = getFilePath("/init-data/matching_iterations.csv")
+	LoadCSVtoDatabase(db, csvPath, models.MatchingIteration{})
 
 	// courses file
-	csvPath = getFilePath("../models/init-data/courses.csv")
-	LoadCSVtoDatabase(db, csvPath, Course{})
+	csvPath = getFilePath("/init-data/courses.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Course{})
 
 	// course semesters file
-	csvPath = getFilePath("../models/init-data/course_semester.csv")
-	LoadCSVtoDatabase(db, csvPath, CourseSemester{})
+	csvPath = getFilePath("/init-data/course_semester.csv")
+	LoadCSVtoDatabase(db, csvPath, models.CourseSemester{})
 
 	// user file
-	csvPath = getFilePath("../models/init-data/users.csv")
-	LoadCSVtoDatabase(db, csvPath, User{})
+	csvPath = getFilePath("/init-data/users.csv")
+	LoadCSVtoDatabase(db, csvPath, models.User{})
 
 	// matchings file
-	csvPath = getFilePath("../models/init-data/matchings.csv")
-	LoadCSVtoDatabase(db, csvPath, Matching{})
+	csvPath = getFilePath("/init-data/matchings.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Matching{})
 
 	// preferences file
-	csvPath = getFilePath("../models/init-data/preferences.csv")
-	LoadCSVtoDatabase(db, csvPath, Preferences{})
+	csvPath = getFilePath("/init-data/preferences.csv")
+	LoadCSVtoDatabase(db, csvPath, models.Preferences{})
 
 }
 

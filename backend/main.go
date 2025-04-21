@@ -5,6 +5,7 @@ import (
 	"os"
 
 	// "fmt"
+
 	"backend/internal/models"
 	"backend/internal/routes"
 
@@ -28,7 +29,7 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
-	models.InitializeTables(models.DB)
+	//scripts.InitializeTables(models.DB)
 
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
