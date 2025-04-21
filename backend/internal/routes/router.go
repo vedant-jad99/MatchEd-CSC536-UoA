@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"net/http"
+	// "net/http"
 	"os"
 
 	// Import your controllers
@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	// local models
+	"backend/internal/controllers"
 	"backend/internal/models"
 )
 
@@ -51,20 +52,7 @@ func SetupRouter() *gin.Engine {
 
 	// Serve static files from the React app build directory in production
 	// alternative frontend
-	r.Use(static.Serve("/", static.LocalFile("../match-view/dist", false)))
-
-	// Handle all routes for SPA (forward to index.html)
-	// This should be after all API routes
-	r.NoRoute(func(c *gin.Context) {
-		// Check if the request path is an API route
-		if c.Request.URL.Path[:4] == "/api" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
-			return
-		}
-
-		// Otherwise, serve the SPA
-		c.File("./static/index.html")
-	})
+	r.Use(static.Serve("/", static.LocalFile("../new-frontend/", false)))
 
 	return r
 }
@@ -77,20 +65,8 @@ func setApiHandlers(r *gin.Engine) {
 	// otherwise 301 redirect response will be sent without CORS headers.
 	api := r.Group("/api")
 	{
-		/*
-			api.OPTIONS("/*path", func(c *gin.Context) {
-				c.Status(http.StatusOK)
-			})
-		*/
-		/*
-			r.OPTIONS("/*path", func(c *gin.Context) {
-				c.Header("Access-Control-Allow-Origin", "*")
-				c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-				c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
-				c.Status(http.StatusOK)
-			})
-		*/
-
+		// Matching engine routes
+		api.POST("/trigger-matching", controllers.TriggerMatchingEngine)
 		// Course routes
 		courses := api.Group("/courses")
 		{

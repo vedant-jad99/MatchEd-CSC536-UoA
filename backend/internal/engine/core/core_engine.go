@@ -95,16 +95,16 @@ func preprocessMatchingInput(mI MatchingInput) pMatchingInput {
 	preprocessInput.f2rc_map = make(map[IDType]int)
 	preprocessInput.preference_map = make(map[IDType]map[int64][]pData)
 
-	for _, value := range mI.faculty {
+	for _, value := range mI.Faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
 		preprocessInput.fc_map[value.UserID] = &([2]IDType{-1, -1})
 		preprocessInput.f2rc_map[value.UserID] = value.NumReqCourses
 	}
-	for _, value := range mI.course_s {
+	for _, value := range mI.Course_s {
 		preprocessInput.course_s_ids = append(preprocessInput.course_s_ids, value.CourseSemID)
 		preprocessInput.c_map[value.CourseSemID] = false
 	}
-	for _, value := range mI.preferences {
+	for _, value := range mI.Preferences {
 		userId, courseSemId, level, weight := value.UserID, value.CourseSemID, value.PreferenceLevel, value.PreferenceWeight
 		preprocessInput.preferences = append(preprocessInput.preferences, value)
 		data := pData{courseSemId, weight}

@@ -13,3 +13,10 @@ type CourseSemester struct {
 func (CourseSemester) TableName() string {
 	return `"match_schema"."course_sem"`
 }
+
+func FetchAllCourseSemesters() ([]CourseSemester, error) {
+	var courseSemesters []CourseSemester
+	txn := DB.Find(&courseSemesters)
+
+	return courseSemesters, txn.Error
+}

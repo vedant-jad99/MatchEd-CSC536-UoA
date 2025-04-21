@@ -8,16 +8,16 @@ import (
 
 func TestPreprocessMatchingInput(t *testing.T) {
 	input := MatchingInput{
-		faculty: []Faculty{
+		Faculty: []Faculty{
 			{UserID: 1, NumReqCourses: 1},
 			{UserID: 2, NumReqCourses: 2},
 		},
-		course_s: []CourseSems{
+		Course_s: []CourseSems{
 			{CourseSemID: 101},
 			{CourseSemID: 102},
 			{CourseSemID: 103},
 		},
-		preferences: []Preferences{
+		Preferences: []Preferences{
 			{UserID: 1, CourseSemID: 101, PreferenceLevel: 1, PreferenceWeight: 2},
 			{UserID: 1, CourseSemID: 103, PreferenceLevel: 1, PreferenceWeight: 4},
 			{UserID: 1, CourseSemID: 102, PreferenceLevel: 1, PreferenceWeight: 1},
@@ -131,15 +131,15 @@ func TestMatchingEngine(t *testing.T) {
 
 func TestRunMatching(t *testing.T) {
 	input := MatchingInput{
-		faculty: []Faculty{
+		Faculty: []Faculty{
 			{UserID: 1, NumReqCourses: 2},
 			{UserID: 2, NumReqCourses: 2},
 		},
-		course_s: []CourseSems{
+		Course_s: []CourseSems{
 			{CourseSemID: 101},
 			{CourseSemID: 102},
 		},
-		preferences: []Preferences{
+		Preferences: []Preferences{
 			{UserID: 1, CourseSemID: 101, PreferenceLevel: 1, PreferenceWeight: 2},
 			{UserID: 1, CourseSemID: 103, PreferenceLevel: 1, PreferenceWeight: 4},
 			{UserID: 1, CourseSemID: 102, PreferenceLevel: 1, PreferenceWeight: 1},
@@ -190,15 +190,15 @@ func TestRunMatching(t *testing.T) {
 func TestCoreStartMatching(t *testing.T) {
 	matchingIter := IDType(1)
 	input := MatchingInput{
-		faculty: []Faculty{
+		Faculty: []Faculty{
 			{UserID: 1, NumReqCourses: 1},
 			{UserID: 2, NumReqCourses: 1},
 		},
-		course_s: []CourseSems{
+		Course_s: []CourseSems{
 			{CourseSemID: 101},
 			{CourseSemID: 102},
 		},
-		preferences: []Preferences{
+		Preferences: []Preferences{
 			{UserID: 1, CourseSemID: 101, PreferenceLevel: 1, PreferenceWeight: 2},
 			{UserID: 1, CourseSemID: 103, PreferenceLevel: 1, PreferenceWeight: 4},
 			{UserID: 1, CourseSemID: 102, PreferenceLevel: 1, PreferenceWeight: 1},

@@ -12,6 +12,11 @@ const (
 	PreferenceLevelYellow  int64 = 2
 	PreferenceLevelEnd     int64 = 3
 	PreferenceLevelRed     int64 = 4
+	PreferenceLevelInvalidString string = "invalid"
+	PreferenceLevelGreenString   string = "green"
+	PreferenceLevelYellowString  string = "yellow"
+	PreferenceLevelEndString     string = "end"
+	PreferenceLevelRedString     string = "red"
 )
 
 const (
@@ -47,9 +52,9 @@ type Faculty struct {
 }
 
 type MatchingInput struct {
-	faculty     []Faculty
-	course_s    []CourseSems
-	preferences []Preferences
+	Faculty     []Faculty
+	Course_s    []CourseSems
+	Preferences []Preferences
 }
 
 type MatchingElement struct {
@@ -61,15 +66,15 @@ type MatchingElement struct {
 }
 
 type Matching struct {
-	Matchings []MatchingElement
+	Matchings []MatchingElement `json:"matchings"`
 }
 
 type MatchingInterface struct {
-	m_StatusMap map[IDType]string
+	M_StatusMap map[IDType]string
 }
 
 func NewMatchingInterface() *MatchingInterface {
-	return &MatchingInterface{m_StatusMap: make(map[IDType]string)}
+	return &MatchingInterface{M_StatusMap: make(map[IDType]string)}
 }
 
 func (m_Interface *MatchingInterface) TriggerMatching(matchingIterID IDType, input MatchingInput) (Matching, error) {
@@ -78,13 +83,26 @@ func (m_Interface *MatchingInterface) TriggerMatching(matchingIterID IDType, inp
 		return Matching{}, fmt.Errorf("invalid matching iteration ID")
 	}
 
-	m_Interface.m_StatusMap[matchingIterID] = MatchingIterationStatusInitialized
+	m_Interface.M_StatusMap[matchingIterID] = MatchingIterationStatusInitialized
 	matching, err := StartMatching(matchingIterID, input);
 	if err != nil {
-		m_Interface.m_StatusMap[matchingIterID] = MatchingIterationStatusError;
+		m_Interface.M_StatusMap[matchingIterID] = MatchingIterationStatusError;
 		return Matching{}, err
 	}
 
-	m_Interface.m_StatusMap[matchingIterID] = MatchingIterationStatusCompleted; 
+	m_Interface.M_StatusMap[matchingIterID] = MatchingIterationStatusCompleted; 
 	return matching, nil
+}
+
+func ConvertPreferenceLevel(level string) int64 {
+	switch level {
+	case PreferenceLevelRedString:
+		return PreferenceLevelRed
+	case PreferenceLevelYellowString:
+		return PreferenceLevelYellow
+	case PreferenceLevelGreenString:
+		return PreferenceLevelGreen
+	default:
+		return PreferenceLevelInvalid
+	}
 }

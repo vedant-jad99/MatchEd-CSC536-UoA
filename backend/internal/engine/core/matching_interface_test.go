@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewMatchingInterface(t *testing.T) {
-	expected :=  MatchingInterface{m_StatusMap: make(map[IDType]string)}
+	expected :=  MatchingInterface{M_StatusMap: make(map[IDType]string)}
 	result := NewMatchingInterface()
 
 	if !reflect.DeepEqual(*result, expected) {
@@ -23,15 +23,15 @@ func TestTriggerMatching(t *testing.T) {
 
 	matchingIter := IDType(1)
 	input := MatchingInput{
-		faculty: []Faculty{
+		Faculty: []Faculty{
 			{UserID: 1, NumReqCourses: 2},
 			{UserID: 2, NumReqCourses: 2},
 		},
-		course_s: []CourseSems{
+		Course_s: []CourseSems{
 			{CourseSemID: 101},
 			{CourseSemID: 102},
 		},
-		preferences: []Preferences{
+		Preferences: []Preferences{
 			{UserID: 1, CourseSemID: 101, PreferenceLevel: 1, PreferenceWeight: 2},
 			{UserID: 1, CourseSemID: 103, PreferenceLevel: 1, PreferenceWeight: 4},
 			{UserID: 1, CourseSemID: 102, PreferenceLevel: 1, PreferenceWeight: 1},

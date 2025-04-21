@@ -12,3 +12,10 @@ type Preferences struct {
 func (Preferences) TableName() string {
 	return "match_schema.preferences"
 }
+
+func FetchAllPreferences() ([]Preferences, error) {
+	var preferences []Preferences
+	txn := DB.Find(&preferences)
+
+	return preferences, txn.Error
+}

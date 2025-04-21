@@ -15,3 +15,15 @@ type MatchingIteration struct {
 func (MatchingIteration) TableName() string {
 	return `"match_schema"."matching_iterations"`
 }
+
+func CreateMatchingIteration(matchingIteration MatchingIteration) (MatchingIteration, error) {
+	txn := DB.Create(&matchingIteration)
+
+	return matchingIteration, txn.Error
+}
+
+func UpdateMatchingIteration(matchingIteration MatchingIteration) (MatchingIteration, error) {
+	txn := DB.Save(&matchingIteration)
+
+	return matchingIteration, txn.Error
+}
