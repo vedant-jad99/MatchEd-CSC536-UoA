@@ -1,13 +1,16 @@
 package matching
 
 import (
-	"encoding/json"
-	"fmt"
 	"math/rand"
-	"os"
+	"sort"
 	"slices"
 	"time"
 )
+
+type pData struct {
+	courseSID	IDType
+	prefWeight	int64
+}
 
 type pMatchingInput struct {
 	faculty_ids    []IDType
@@ -15,10 +18,10 @@ type pMatchingInput struct {
 	preferences    []Preferences
 	fc_map         map[IDType]*[2]IDType
 	c_map          map[IDType]bool
-	preference_map map[IDType]map[int64][]IDType //FacultyID --> preference (3,2,1) --> courseSemID[]
+	preference_map map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
 }
 
-// TODO: Get the input from the database. Communicates to the matching interface
+/*
 func GetInput(file string) (MatchingInput, error) {
 	// Open the JSON file
 	data, err := os.ReadFile(file)
@@ -74,27 +77,21 @@ func GetInput(file string) (MatchingInput, error) {
 	}
 
 	return matchingInput, nil
-}
+}*/
 
-func StartMatching(matchingIter IDType) (Matching, error) {
-	preferences, err := GetInput("sample/preferences_clean.json")
-	if err != nil {
-		return Matching{}, err // TODO: Custom error type?
-	}
-	fmt.Println("Preferences: ", preferences)
-	//UpdateMatchingIterStatus(matchingIter);
-	matching, err := runMatching(preferences, matchingIter)
+func StartMatching(matchingIter IDType, input MatchingInput) (Matching, error) {
+	matching, err := runMatching(input, matchingIter)
 	if err != nil {
 		return Matching{}, err
 	}
 	return matching, nil
 }
 
-func preprocessMatchingInput(mI MatchingInput) (pMatchingInput, error) {
+func preprocessMatchingInput(mI MatchingInput) pMatchingInput {
 	var preprocessInput pMatchingInput
 	preprocessInput.fc_map = make(map[IDType]*[2]IDType)
 	preprocessInput.c_map = make(map[IDType]bool)
-	preprocessInput.preference_map = make(map[IDType]map[int64][]IDType)
+	preprocessInput.preference_map = make(map[IDType]map[int64][]pData)
 
 	for _, value := range mI.faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
@@ -105,19 +102,25 @@ func preprocessMatchingInput(mI MatchingInput) (pMatchingInput, error) {
 		preprocessInput.c_map[value.CourseSemID] = false
 	}
 	for _, value := range mI.preferences {
-		userId, courseSemId, level := value.UserID, value.CourseSemID, value.PreferenceLevel
+		userId, courseSemId, level, weight := value.UserID, value.CourseSemID, value.PreferenceLevel, value.PreferenceWeight
 		preprocessInput.preferences = append(preprocessInput.preferences, value)
+		data := pData{courseSemId, weight}
 
 		_, exists := preprocessInput.preference_map[userId]
 		if exists {
-			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], courseSemId)
+			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], data)
+			/* Store in sorted order */
+			sort.Slice(preprocessInput.preference_map[userId][level], func(i, j int) bool {
+				return preprocessInput.preference_map[userId][level][i].prefWeight > 
+				preprocessInput.preference_map[userId][level][j].prefWeight 
+			})
 		} else {
-			preprocessInput.preference_map[userId] = make(map[int64][]IDType)
-			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], courseSemId)
+			preprocessInput.preference_map[userId] = make(map[int64][]pData)
+			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], data)
 		}
 	}
 
-	return preprocessInput, nil
+	return preprocessInput
 }
 
 func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
@@ -135,7 +138,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 
 				length, j, flag := len(pI.preference_map[value][i]), 0, false
 				for j < length {
-					courseSemId := pI.preference_map[value][i][j]
+					courseSemId := pI.preference_map[value][i][j].courseSID
 					j++
 					if !pI.c_map[courseSemId] { // If course is not assigned
 						if pI.fc_map[value][0] == -1 {
@@ -156,10 +159,6 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 			}
 		}
 	}
-
-	// TODO: Big todo! Can make or break the algo
-	// for f_id, c_id := range pI.fc_map {
-	// }
 
 	var matching Matching
 	for key, value := range pI.fc_map {
@@ -190,11 +189,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 }
 
 func runMatching(mI MatchingInput, matchingIter IDType) (Matching, error) {
-	preprocessInput, err := preprocessMatchingInput(mI)
-	if err != nil {
-		return Matching{}, err // TODO: Custom error type
-	}
-
+	preprocessInput := preprocessMatchingInput(mI)
 	matching, err := matchingEngine(preprocessInput, matchingIter)
 	if err != nil {
 		return Matching{}, err // TODO: Custom error type
