@@ -82,17 +82,15 @@ func setApiHandlers(r *gin.Engine) {
 		{
 			matchings.GET("/", models.GetAllMatchPairs)
 		}
-		/*
-			// User routes
-			users := api.Group("/users")
-			{
-				users.GET("/", models.GetAllUsers)
-				users.GET("/:id", models.GetUserById)
-				users.POST("/", models.CreateUser)
-				users.PUT("/:id", models.UpdateUser)
-				users.DELETE("/:id", models.DeleteUser)
-			}
-		*/
+		// User routes
+		users := api.Group("/users")
+		{
+			users.GET("/", controllers.GetAllUsers)
+			users.GET("/:id", controllers.GetUserById)
+			users.POST("/", controllers.UpsertUser)
+			users.DELETE("/:id", controllers.DeleteUser)
+		}
+
 		// ping the server
 		// TODO, this should have a handler defined in controllers
 		// if you want to keep it

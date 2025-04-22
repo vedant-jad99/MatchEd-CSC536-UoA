@@ -36,7 +36,7 @@ services:
       - .:/app/
     environment:
       PORT: 3000
-      DB_HOST: host.docker.internal
+      DB_HOST: db
       DB_PORT: 5432
       DB_USER: match_user
       DB_PASSWORD: swifty
