@@ -12,7 +12,7 @@ import (
 
 type Matching struct {
 	ID                  uint    `json:"id" gorm:"primaryKey"`
-	MatchingIterationId uint    `json:"matching_iteration_id" gorm:"column:matching_iteration_id;not null"`
+	MatchingIterationID uint    `json:"matching_iteration_id" gorm:"column:matching_iteration_id;not null"`
 	UserID              uint    `json:"user_id" gorm:"column:user_id;not null"`
 	CourseSemID         uint    `json:"course_sem_id" gorm:"column:course_sem_id;not null"`
 	Score               float64 `json:"score" gorm:"not null"`
