@@ -12,7 +12,7 @@ import (
 
 type Matching struct {
 	ID                  uint    `json:"id" gorm:"primaryKey"`
-	MatchingIterationId uint    `json:"matching_iteration_id" gorm:"column:matching_iteration_id;not null"`
+	MatchingIterationID uint    `json:"matching_iteration_id" gorm:"column:matching_iteration_id;not null"`
 	UserID              uint    `json:"user_id" gorm:"column:user_id;not null"`
 	CourseSemID         uint    `json:"course_sem_id" gorm:"column:course_sem_id;not null"`
 	Score               float64 `json:"score" gorm:"not null"`
@@ -22,12 +22,36 @@ func (Matching) TableName() string {
 	return "match_schema.matchings"
 }
 
+type MatchingIteration struct {
+	ID          uint      `json:"id" gorm:"primaryKey"`
+	TriggeredBy uint      `json:"triggered_by" gorm:"column:triggered_by;not null"`
+	Status      string    `json:"status" gorm:"column:status;type:varchar;not null"`
+	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at;not null"`
+	UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at;not null"`
+}
+
+func (MatchingIteration) TableName() string {
+	return `"match_schema"."matching_iterations"`
+}
+
+var CreateMatchingIteration = func (matchingIteration MatchingIteration) (MatchingIteration, error) {
+	txn := db.Create(&matchingIteration)
+
+	return matchingIteration, txn.Error
+}
+
+var UpdateMatchingIteration = func (matchingIteration MatchingIteration) (MatchingIteration, error) {
+	txn := db.Save(&matchingIteration)
+
+	return matchingIteration, txn.Error
+}
+
 // GetAllCourses handles GET requests to fetch all courses
 func GetAllMatchings(c *gin.Context) {
 	var matchings []Matching
 
 	// Fetch courses from the database
-	result := DB.Find(&matchings)
+	result := db.Find(&matchings)
 	if result.Error != nil {
 		log.Println("Error fetching matchings:", result.Error)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch matchings"})
@@ -45,7 +69,7 @@ func GetAllMatchings(c *gin.Context) {
 
 func GetAllMatchPairs(c *gin.Context) {
 	var matchings []Matching
-	if err := DB.Find(&matchings).Error; err != nil {
+	if err := db.Find(&matchings).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch matchings"})
 		return
 	}
@@ -60,18 +84,18 @@ func GetAllMatchPairs(c *gin.Context) {
 		var course Course
 
 		// role -> user
-		if err := DB.First(&role, m.UserID).Error; err != nil {
+		if err := db.First(&role, m.UserID).Error; err != nil {
 			continue
 		}
-		if err := DB.First(&user, m.UserID).Error; err != nil {
+		if err := db.First(&user, m.UserID).Error; err != nil {
 			continue
 		}
 
 		// course sem -> course
-		if err := DB.First(&course_sem, m.CourseSemID).Error; err != nil {
+		if err := db.First(&course_sem, m.CourseSemID).Error; err != nil {
 			continue
 		}
-		if err := DB.First(&course, course_sem.CourseID).Error; err != nil {
+		if err := db.First(&course, course_sem.CourseID).Error; err != nil {
 			continue
 		}
 
@@ -87,7 +111,7 @@ func GetAllMatchPairs(c *gin.Context) {
 				"number":    course.Number,
 				"name":      course.Name,
 				"campus":    "Main Campus",
-				"semesters": strings.Split(course_sem.Semester, ","), // assuming comma-separated in DB
+				"semesters": strings.Split(course_sem.Semester, ","), // assuming comma-separated in db
 			},
 			"status":     "confirmed", // hardcoded or derive from Score
 			"confidence": m.Score,

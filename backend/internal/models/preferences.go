@@ -13,9 +13,19 @@ func (Preferences) TableName() string {
 	return "match_schema.preferences"
 }
 
-func FetchAllPreferences() ([]Preferences, error) {
-	var preferences []Preferences
-	txn := DB.Find(&preferences)
+var FetchAllPreferences = func() ([]Preferences, error) {
+	var prefs []Preferences
+	err := db.Find(&prefs).Error
+	return prefs, err
+}
 
-	return preferences, txn.Error
+var FetchPreferences = func(userID uint) ([]Preferences, error) {
+	var prefs []Preferences
+	err := db.Where("user_id = ?", userID).Find(&prefs).Error
+	return prefs, err
+}
+var FetchPreferencesBySemester = func(semester string) ([]Preferences, error) {
+	var prefs []Preferences
+	err := db.Where("semester = ?", semester).Find(&prefs).Error
+	return prefs, err
 }

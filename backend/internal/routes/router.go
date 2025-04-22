@@ -68,20 +68,14 @@ func setApiHandlers(r *gin.Engine) {
 		// Matching engine routes
 		api.POST("/trigger-matching", controllers.TriggerMatchingEngine)
 		// Course routes
-		courses := api.Group("/courses")
-		{
-			courses.GET("/", models.GetAllCourses)
-			courses.GET("/:id", models.GetCourseById)
-			courses.POST("/", models.CreateCourse)
-			courses.PUT("/:id", models.UpdateCourse)
-			courses.DELETE("/:id", models.DeleteCourse)
-		}
-
-		// Matching routes
-		matchings := api.Group("/matchings")
-		{
-			matchings.GET("/", models.GetAllMatchPairs)
-		}
+		// courses := api.Group("/courses")
+		// {
+		// 	courses.GET("/", models.GetAllCourses)
+		// 	courses.GET("/:id", models.GetCourseById)
+		// 	courses.POST("/", models.CreateCourse)
+		// 	courses.PUT("/:id", models.UpdateCourse)
+		// 	courses.DELETE("/:id", models.DeleteCourse)
+		// }
 		// User routes
 		users := api.Group("/users")
 		{
@@ -91,9 +85,35 @@ func setApiHandlers(r *gin.Engine) {
 			users.DELETE("/:id", controllers.DeleteUser)
 		}
 
-		// ping the server
-		// TODO, this should have a handler defined in controllers
-		// if you want to keep it
+
+		courseSemesters := api.Group("/course_semester")
+		{
+			courseSemesters.GET("/fetch", controllers.HandleFetchCourseSemesters())
+			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester())
+			courseSemesters.POST("/add", controllers.HandleAddCourseSemester())
+			courseSemesters.DELETE("/remove", controllers.HandleRemoveCourseSemester())
+			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester())
+		}
+
+		faculty := api.Group("/faculty")
+		{
+			faculty.GET("/fetch", controllers.HandleFetchAllFaculty())
+			faculty.DELETE("/remove", controllers.HandleRemoveFaculty())
+			faculty.POST("/create", controllers.HandleCreateUser())
+		}
+
+		preferences := api.Group("/preferences")
+		{
+			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences())
+			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences())
+		}
+
+		matchings := api.Group("/matchings")
+		{
+			matchings.GET("/latest", controllers.HandleFetchLatestMatchings())
+			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID())
+			matchings.GET("/pairs", models.GetAllMatchPairs)
+		}
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "pong"})
 		})
