@@ -29,3 +29,24 @@ var FetchPreferencesBySemester = func(semester string) ([]Preferences, error) {
 	err := db.Where("semester = ?", semester).Find(&prefs).Error
 	return prefs, err
 }
+
+var BulkUpsertPreferences = func(prefs []Preferences) ([]Preferences, error) {
+	err := db.Save(&prefs).Error
+	return prefs, err
+}
+
+var BulkDeletePreferences = func(ids []uint) error {
+	var prefs []Preferences
+	err := db.Where("id IN ?", ids).Delete(&prefs).Error
+	return err
+}
+var DeletePreferences = func(id uint) error {
+	var prefs Preferences
+	err := db.Delete(&prefs, id).Error
+	return err
+}
+var DeletePreferencesByUserID = func(userID uint) error {
+	var prefs Preferences
+	err := db.Where("user_id = ?", userID).Delete(&prefs).Error
+	return err
+}

@@ -20,14 +20,12 @@ func HandleFetchAllCourseSemesters(c *gin.Context) {
 
 // fetches semester by id {id: }
 func HandleFetchCourseSemester(c *gin.Context) {
-	var input struct {
-		ID uint `json:"id"`
-	}
-	if err := c.ShouldBindJSON(&input); err != nil {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	result, err := models.FetchCourseSemester(input.ID)
+	result, err := models.FetchCourseSemester(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -50,19 +48,17 @@ func HandleAddCourseSemester(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"status": "created"})
+	c.JSON(http.StatusOK, gin.H{"status": "created"})
 }
 
 // Removes CourseSemester with the given context {id: }
 func HandleRemoveCourseSemester(c *gin.Context) {
-	var input struct {
-		ID uint `json:"id"`
-	}
-	if err := c.ShouldBindJSON(&input); err != nil {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := models.RemoveCourseSemester(input.ID)
+	err = models.RemoveCourseSemester(uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -84,6 +80,38 @@ func HandleUpdateCourseSemester(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
+}
+
+func HandleBulkUpsertCourseSemesters(c *gin.Context) {
+	var input struct {
+		CourseSemesters []models.CourseSemester `json:"course_semesters"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	results, err := models.BulkUpsertCourseSemester(input.CourseSemesters)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "updated", "course_semesters": results})
+}
+
+func HandleBulkDeleteCourseSemesters(c *gin.Context) {
+	var input struct {
+		IDs []uint `json:"ids"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := models.BulkDeleteCourseSemesters(input.IDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 }
 
 // fetches all courses

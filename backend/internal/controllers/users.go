@@ -16,6 +16,7 @@ func GetAllUsers(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, users)
 }
+
 func GetUserById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
