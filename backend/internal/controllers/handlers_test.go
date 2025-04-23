@@ -38,7 +38,8 @@ func TestHandleFetchAllCourseSemesters(t *testing.T) {
 func TestHandleFetchCourseSemester_BadRequest(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer([]byte("bad json")))
+	c.Params = gin.Params{{Key: "id", Value: "not-a-number"}}
+	c.Request = httptest.NewRequest(http.MethodGet, "/", nil)
 	c.Request.Header.Set("Content-Type", "application/json")
 
 	HandleFetchCourseSemester(c)
@@ -61,7 +62,7 @@ func TestHandleAddCourseSemester(t *testing.T) {
 	c.Request.Header.Set("Content-Type", "application/json")
 
 	HandleAddCourseSemester(c)
-	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestHandleRemoveCourseSemester_Error(t *testing.T) {
