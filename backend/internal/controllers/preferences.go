@@ -33,3 +33,35 @@ func HandleFetchPreferences(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, prefs)
 }
+
+func HandleBulkUpsertPreferences(c *gin.Context) {
+	var input struct {
+		Preferences []models.Preferences `json:"preferences"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	result, err := models.BulkUpsertPreferences(input.Preferences)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "updated", "preferences": result})
+}
+
+func HandleBulkDeletePreferences(c *gin.Context) {
+	var input struct {
+		IDs []uint `json:"ids"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := models.BulkDeletePreferences(input.IDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
+}

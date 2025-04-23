@@ -71,12 +71,10 @@ func TestHandleRemoveCourseSemester_Error(t *testing.T) {
 	}
 	defer func() { models.RemoveCourseSemester = original }()
 
-	payload := map[string]interface{}{"id": 1}
-	b, _ := json.Marshal(payload)
-
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(b))
+	c.Params = gin.Params{{Key: "id", Value: "1"}}
+	c.Request = httptest.NewRequest(http.MethodDelete, "/1", nil)
 	c.Request.Header.Set("Content-Type", "application/json")
 
 	HandleRemoveCourseSemester(c)
