@@ -4,13 +4,9 @@ import (
 	// "net/http"
 	"os"
 
-	// Import your controllers
-
-	// "github.com/gin-contrib/static"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 
-	// local models
 	"backend/internal/controllers"
 )
 
@@ -67,14 +63,13 @@ func setApiHandlers(r *gin.Engine) {
 		// Matching engine routes
 		api.POST("/trigger-matching", controllers.TriggerMatchingEngine)
 		// Course routes
-		// courses := api.Group("/courses")
-		// {
-		// 	courses.GET("/", models.GetAllCourses)
-		// 	courses.GET("/:id", models.GetCourseById)
-		// 	courses.POST("/", models.CreateCourse)
-		// 	courses.PUT("/:id", models.UpdateCourse)
-		// 	courses.DELETE("/:id", models.DeleteCourse)
-		// }
+		courses := api.Group("/course")
+		{
+			courses.GET("/", controllers.HandleFetchAllCourses)
+			courses.GET("/:id", controllers.HandleFetchCourseById)
+			courses.POST("/", controllers.HandleUpsertCourse)
+			courses.DELETE("/:id", controllers.HandleDeleteCourse)
+		}
 		// User routes
 		users := api.Group("/users")
 		{
@@ -86,7 +81,7 @@ func setApiHandlers(r *gin.Engine) {
 
 		courseSemesters := api.Group("/course_semester")
 		{
-			courseSemesters.GET("/fetch", controllers.HandleFetchCourseSemesters)
+			courseSemesters.GET("/", controllers.HandleFetchAllCourseSemesters)
 			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester)
 			courseSemesters.POST("/add", controllers.HandleAddCourseSemester)
 			courseSemesters.DELETE("/remove", controllers.HandleRemoveCourseSemester)

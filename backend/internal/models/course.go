@@ -52,6 +52,10 @@ var RemoveCourseSemester = func(id uint) error {
 	return db.Delete(&CourseSemester{}, id).Error
 }
 
+var RemoveCourseSemesters = func(courseID uint) error {
+	return db.Where("course_id = ?", courseID).Delete(&CourseSemester{}).Error
+}
+
 var UpdateCourseSemester = func(id uint, courseID uint, semester string, mandatoryLevel string, timeslot string) error {
 	updates := map[string]interface{}{
 		"course_id":       courseID,
@@ -60,4 +64,27 @@ var UpdateCourseSemester = func(id uint, courseID uint, semester string, mandato
 		"timeslot":        timeslot,
 	}
 	return db.Model(&CourseSemester{}).Where("id = ?", id).Updates(updates).Error
+}
+
+var FetchAllCourses = func() ([]Course, error) {
+	var courses []Course
+	err := db.Find(&courses).Error
+	return courses, err
+}
+var FetchCourseById = func(id uint) (Course, error) {
+	var course Course
+	err := db.First(&course, id).Error
+	return course, err
+}
+var UpsertCourse = func(course Course) (Course, error) {
+	txn := db.Save(&course)
+	return course, txn.Error
+}
+var DeleteCourse = func(id uint) error {
+	var course Course
+	if err := RemoveCourseSemesters(id); err != nil {
+		return err
+	}
+	txn := db.Delete(&course, id)
+	return txn.Error
 }

@@ -31,7 +31,7 @@ func TestHandleFetchCourseSemesters(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
 
-	HandleFetchCourseSemesters(c)
+	HandleFetchAllCourseSemesters(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 

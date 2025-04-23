@@ -3,12 +3,13 @@ package controllers
 import (
 	"backend/internal/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 // fetches semesters with the context value {semester: }
-func HandleFetchCourseSemesters(c *gin.Context) {
+func HandleFetchAllCourseSemesters(c *gin.Context) {
 	results, err := models.FetchCourseSemesters()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -83,4 +84,59 @@ func HandleUpdateCourseSemester(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
+}
+
+// fetches all courses
+func HandleFetchAllCourses(c *gin.Context) {
+	results, err := models.FetchAllCourses()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, results)
+}
+
+// fetches course by id {id: }
+func HandleFetchCourseById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		return
+	}
+	result, err := models.FetchCourseById(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+// Upsert Course
+func HandleUpsertCourse(c *gin.Context) {
+	var input models.Course
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	course, err := models.UpsertCourse(input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "created", "course": course})
+}
+
+// deletes a course with the given id {id: }
+func HandleDeleteCourse(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+		return
+	}
+	err = models.DeleteCourse(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 }
