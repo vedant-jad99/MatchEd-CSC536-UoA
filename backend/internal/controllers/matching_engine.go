@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"backend/internal/engine/core"
+	matching "backend/internal/engine/core"
 	"backend/internal/models"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -28,26 +29,26 @@ func getMatchingInput(matchingInput *matching.MatchingInput) error {
 
 	for _, user := range users {
 		matchingInput.Faculty = append(matchingInput.Faculty, matching.Faculty{
-			UserID:         matching.IDType(user.ID),
-			NumReqCourses:  user.NumReqCourses,
+			UserID:        matching.IDType(user.ID),
+			NumReqCourses: user.NumReqCourses,
 		})
 	}
 	for _, courseSemester := range courseSemesters {
 		matchingInput.Course_s = append(matchingInput.Course_s, matching.CourseSems{
-			CourseSemID:    matching.IDType(courseSemester.ID),
-			CourseID:       matching.IDType(courseSemester.CourseID),
-			Semester:       courseSemester.Semester,
-			TimeSlot:       courseSemester.Timeslot,
+			CourseSemID: matching.IDType(courseSemester.ID),
+			CourseID:    matching.IDType(courseSemester.CourseID),
+			Semester:    courseSemester.Semester,
+			TimeSlot:    courseSemester.Timeslot,
 		})
 	}
 
 	for _, preference := range preferences {
 		matchingInput.Preferences = append(matchingInput.Preferences, matching.Preferences{
-			PreferenceID:   matching.IDType(preference.ID),
-			UserID:         matching.IDType(preference.UserID),
-			CourseSemID:    matching.IDType(preference.CourseSemesterID),
-			Semester:       preference.Semester,
-			PreferenceLevel: matching.ConvertPreferenceLevel(preference.PreferenceLevel),
+			PreferenceID:     matching.IDType(preference.ID),
+			UserID:           matching.IDType(preference.UserID),
+			CourseSemID:      matching.IDType(preference.CourseSemesterID),
+			Semester:         preference.Semester,
+			PreferenceLevel:  matching.ConvertPreferenceLevel(preference.PreferenceLevel),
 			PreferenceWeight: int64(preference.PreferenceWeight),
 		})
 	}
@@ -62,9 +63,9 @@ func TriggerMatchingEngine(c *gin.Context) {
 	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to trigger matching engine"})
 	// 	return
 	// }
-	
+
 	mIteration := models.MatchingIteration{
-		TriggeredBy: 1, // Assuming 1 is the ID of the user triggering the matching
+		TriggeredBy: uint(rand.Uint32()),
 		Status:      matching.MatchingIterationStatusInitialized,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
@@ -75,8 +76,8 @@ func TriggerMatchingEngine(c *gin.Context) {
 		return
 	}
 	mInput := matching.MatchingInput{
-		Faculty: []matching.Faculty{},
-		Course_s: []matching.CourseSems{},
+		Faculty:     []matching.Faculty{},
+		Course_s:    []matching.CourseSems{},
 		Preferences: []matching.Preferences{},
 	}
 	err = getMatchingInput(&mInput)
@@ -107,6 +108,6 @@ func TriggerMatchingEngine(c *gin.Context) {
 		return
 	}
 	// Save the matching output to the database
-	
+
 	c.JSON(http.StatusOK, gin.H{"message": "Matching engine triggered successfully", "data": matchingOutput})
 }

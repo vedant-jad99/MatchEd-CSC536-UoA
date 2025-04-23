@@ -19,12 +19,12 @@ func init() {
 }
 
 // mock DB responses (you can overwrite models.* with stubs)
-func TestHandleFetchCourseSemesters(t *testing.T) {
-	original := models.FetchCourseSemesters
-	models.FetchCourseSemesters = func() ([]models.CourseSemester, error) {
+func TestHandleFetchAllCourseSemesters(t *testing.T) {
+	original := models.FetchAllCourseSemesters
+	models.FetchAllCourseSemesters = func() ([]models.CourseSemester, error) {
 		return []models.CourseSemester{}, nil
 	}
-	defer func() { models.FetchCourseSemesters = original }()
+	defer func() { models.FetchAllCourseSemesters = original }()
 
 	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()

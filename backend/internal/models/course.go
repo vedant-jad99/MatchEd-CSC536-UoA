@@ -26,11 +26,6 @@ func (CourseSemester) TableName() string {
 	return `"match_schema"."course_sem"`
 }
 
-var FetchCourseSemesters = func() ([]CourseSemester, error) {
-	var courseSemesters []CourseSemester
-	err := db.Find(&courseSemesters).Error
-	return courseSemesters, err
-}
 var FetchAllCourseSemesters = func() ([]CourseSemester, error) {
 	var courseSemesters []CourseSemester
 	err := db.Find(&courseSemesters).Error

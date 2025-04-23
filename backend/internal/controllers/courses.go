@@ -10,7 +10,7 @@ import (
 
 // fetches semesters with the context value {semester: }
 func HandleFetchAllCourseSemesters(c *gin.Context) {
-	results, err := models.FetchCourseSemesters()
+	results, err := models.FetchAllCourseSemesters()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

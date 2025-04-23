@@ -43,7 +43,7 @@ func TestAddAndFetchCourseSemester(t *testing.T) {
 	err := AddCourseSemester(1, "Fall")
 	assert.Nil(t, err)
 
-	results, err := FetchCourseSemesters()
+	results, err := FetchAllCourseSemesters()
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(results))
 	assert.Equal(t, "Fall", results[0].Semester)
@@ -62,6 +62,7 @@ func TestFetchCourseSemester(t *testing.T) {
 	fetched, err := FetchCourseSemester(cs.ID)
 	assert.Nil(t, err)
 	assert.Equal(t, cs.ID, fetched.ID)
+	clearDB(t)
 }
 
 func TestUpdateCourseSemester(t *testing.T) {
@@ -79,6 +80,7 @@ func TestUpdateCourseSemester(t *testing.T) {
 	assert.Equal(t, "Spring", updated.Semester)
 	assert.Equal(t, "High", updated.MandatoryLevel)
 	assert.Equal(t, "MWF", updated.Timeslot)
+	clearDB(t)
 }
 
 func TestRemoveCourseSemester(t *testing.T) {
@@ -93,6 +95,7 @@ func TestRemoveCourseSemester(t *testing.T) {
 	var check CourseSemester
 	result := db.First(&check, cs.ID)
 	assert.Error(t, result.Error)
+	clearDB(t)
 }
 
 func TestCreateUserAndFetchAllUsers(t *testing.T) {
@@ -104,6 +107,7 @@ func TestCreateUserAndFetchAllUsers(t *testing.T) {
 	users, err := FetchAllUsers()
 	assert.Nil(t, err)
 	assert.Len(t, users, 2)
+	clearDB(t)
 }
 
 func TestRemoveUser(t *testing.T) {
@@ -118,6 +122,7 @@ func TestRemoveUser(t *testing.T) {
 	var u User
 	result := db.First(&u, user.ID)
 	assert.Error(t, result.Error)
+	clearDB(t)
 }
 
 func TestFetchPreferences(t *testing.T) {
@@ -131,6 +136,7 @@ func TestFetchPreferences(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, prefs, 1)
 	assert.Equal(t, "Fall", prefs[0].Semester)
+	clearDB(t)
 }
 
 func TestFetchAllPreferences(t *testing.T) {
@@ -142,6 +148,7 @@ func TestFetchAllPreferences(t *testing.T) {
 	prefs, err := FetchAllPreferences()
 	assert.Nil(t, err)
 	assert.Len(t, prefs, 2)
+	clearDB(t)
 }
 
 func TestFetchMatchingsByIterationID(t *testing.T) {
@@ -154,6 +161,7 @@ func TestFetchMatchingsByIterationID(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, result, 1)
 	assert.Equal(t, uint(7), result[0].MatchingIterationID)
+	clearDB(t)
 }
 
 func TestFetchLatestMatchings(t *testing.T) {
@@ -168,4 +176,5 @@ func TestFetchLatestMatchings(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, latest, 1)
 	assert.Equal(t, iter.ID, latest[0].MatchingIterationID)
+	clearDB(t)
 }
