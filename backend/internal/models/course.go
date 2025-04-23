@@ -26,9 +26,9 @@ func (CourseSemester) TableName() string {
 	return `"match_schema"."course_sem"`
 }
 
-var FetchCourseSemesters = func(semester string) ([]CourseSemester, error) {
+var FetchCourseSemesters = func() ([]CourseSemester, error) {
 	var courseSemesters []CourseSemester
-	err := db.Where("semester = ?", semester).Find(&courseSemesters).Error
+	err := db.Find(&courseSemesters).Error
 	return courseSemesters, err
 }
 var FetchAllCourseSemesters = func() ([]CourseSemester, error) {
@@ -60,20 +60,4 @@ var UpdateCourseSemester = func(id uint, courseID uint, semester string, mandato
 		"timeslot":        timeslot,
 	}
 	return db.Model(&CourseSemester{}).Where("id = ?", id).Updates(updates).Error
-}
-
-
-var FetchMatchingsByIterationID = func(id uint) ([]Matching, error) {
-	var matches []Matching
-	err := db.Where("matching_iteration_id = ?", id).Find(&matches).Error
-	return matches, err
-}
-
-var FetchLatestMatchings = func() ([]Matching, error) {
-	var latestIteration MatchingIteration
-	err := db.Order("updated_at DESC").First(&latestIteration).Error
-	if err != nil {
-		return nil, err
-	}
-	return FetchMatchingsByIterationID(latestIteration.ID)
 }

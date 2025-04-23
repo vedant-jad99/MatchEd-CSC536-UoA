@@ -8,7 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
 func setupTestDB(t *testing.T) {
 	dsn := "host=localhost user=match_user password=swifty dbname=match_db_test port=5432 sslmode=disable search_path=match_schema"
 	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -29,9 +28,9 @@ func setupTestDB(t *testing.T) {
 
 func clearDB(t *testing.T) {
 	// Clear the database
-	err := db.Exec("TRUNCATE TABLE match_schema.course_sem, "+
-		"match_schema.users, match_schema.preferences, match_schema.matchings,"+
-		" match_schema.roles, match_schema.auth,"+
+	err := db.Exec("TRUNCATE TABLE match_schema.course_sem, " +
+		"match_schema.users, match_schema.preferences, match_schema.matchings," +
+		" match_schema.roles, match_schema.auth," +
 		" match_schema.matching_iterations, match_schema.courses CASCADE").Error
 	if err != nil {
 		t.Fatalf("Failed to truncate tables: %v", err)
@@ -44,7 +43,7 @@ func TestAddAndFetchCourseSemester(t *testing.T) {
 	err := AddCourseSemester(1, "Fall")
 	assert.Nil(t, err)
 
-	results, err := FetchCourseSemesters("Fall")
+	results, err := FetchCourseSemesters()
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(results))
 	assert.Equal(t, "Fall", results[0].Semester)
@@ -96,24 +95,24 @@ func TestRemoveCourseSemester(t *testing.T) {
 	assert.Error(t, result.Error)
 }
 
-func TestCreateUserAndFetchAllFaculty(t *testing.T) {
+func TestCreateUserAndFetchAllUsers(t *testing.T) {
 	setupTestDB(t)
 
 	UpsertUser(User{Name: "Alice", Email: "alice@test.com", NumReqCourses: 3})
 	UpsertUser(User{Name: "Bob", Email: "bob@test.com", NumReqCourses: 2})
 
-	users, err := FetchAllFaculty()
+	users, err := FetchAllUsers()
 	assert.Nil(t, err)
 	assert.Len(t, users, 2)
 }
 
-func TestRemoveFaculty(t *testing.T) {
+func TestRemoveUser(t *testing.T) {
 	setupTestDB(t)
 
 	user := User{Name: "Temp", Email: "temp@test.com", NumReqCourses: 1}
 	db.Create(&user)
 
-	err := RemoveFaculty(user.ID)
+	err := DeleteUser(user.ID)
 	assert.Nil(t, err)
 
 	var u User

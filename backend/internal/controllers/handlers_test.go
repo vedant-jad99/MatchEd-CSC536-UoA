@@ -21,12 +21,12 @@ func init() {
 // mock DB responses (you can overwrite models.* with stubs)
 func TestHandleFetchCourseSemesters(t *testing.T) {
 	original := models.FetchCourseSemesters
-	models.FetchCourseSemesters = func(s string) ([]models.CourseSemester, error) {
-		return []models.CourseSemester{{Semester: s}}, nil
+	models.FetchCourseSemesters = func() ([]models.CourseSemester, error) {
+		return []models.CourseSemester{}, nil
 	}
 	defer func() { models.FetchCourseSemesters = original }()
 
-	req, _ := http.NewRequest(http.MethodGet, "/?semester=Fall", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
@@ -115,39 +115,36 @@ func TestHandleCreateUser(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleCreateUser(c)
+	UpsertUser(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestHandleFetchAllFaculty(t *testing.T) {
-	original := models.FetchAllFaculty
-	models.FetchAllFaculty = func() ([]models.User, error) {
+	original := models.FetchAllUsers
+	models.FetchAllUsers = func() ([]models.User, error) {
 		return []models.User{{Name: "Alice"}}, nil
 	}
-	defer func() { models.FetchAllFaculty = original }()
+	defer func() { models.FetchAllUsers = original }()
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest(http.MethodGet, "/", nil)
 
-	HandleFetchAllFaculty(c)
+	GetAllUsers(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestHandleRemoveFaculty(t *testing.T) {
-	original := models.RemoveFaculty
-	models.RemoveFaculty = func(id uint) error { return nil }
-	defer func() { models.RemoveFaculty = original }()
-
-	user := models.User{ID: 1}
-	b, _ := json.Marshal(user)
+	original := models.DeleteUser
+	models.DeleteUser = func(id uint) error { return nil }
+	defer func() { models.DeleteUser = original }()
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(b))
-	c.Request.Header.Set("Content-Type", "application/json")
+	c.Params = gin.Params{{Key: "id", Value: "1"}}
+	c.Request = httptest.NewRequest(http.MethodDelete, "/1", nil)
 
-	HandleRemoveFaculty(c)
+	DeleteUser(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 

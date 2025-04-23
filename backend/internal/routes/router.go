@@ -12,7 +12,6 @@ import (
 
 	// local models
 	"backend/internal/controllers"
-	"backend/internal/models"
 )
 
 func SetupRouter() *gin.Engine {
@@ -85,7 +84,6 @@ func setApiHandlers(r *gin.Engine) {
 			users.DELETE("/:id", controllers.DeleteUser)
 		}
 
-
 		courseSemesters := api.Group("/course_semester")
 		{
 			courseSemesters.GET("/fetch", controllers.HandleFetchCourseSemesters)
@@ -93,13 +91,6 @@ func setApiHandlers(r *gin.Engine) {
 			courseSemesters.POST("/add", controllers.HandleAddCourseSemester)
 			courseSemesters.DELETE("/remove", controllers.HandleRemoveCourseSemester)
 			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester)
-		}
-
-		faculty := api.Group("/faculty")
-		{
-			faculty.GET("/fetch", controllers.HandleFetchAllFaculty)
-			faculty.DELETE("/remove", controllers.HandleRemoveFaculty)
-			faculty.POST("/create", controllers.HandleCreateUser)
 		}
 
 		preferences := api.Group("/preferences")
@@ -112,7 +103,6 @@ func setApiHandlers(r *gin.Engine) {
 		{
 			matchings.GET("/latest", controllers.HandleFetchLatestMatchings)
 			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID)
-			matchings.GET("/pairs", models.GetAllMatchPairs)
 		}
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "pong"})

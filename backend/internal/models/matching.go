@@ -1,13 +1,7 @@
 package models
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"strings"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Matching struct {
@@ -34,92 +28,29 @@ func (MatchingIteration) TableName() string {
 	return `"match_schema"."matching_iterations"`
 }
 
-var CreateMatchingIteration = func (matchingIteration MatchingIteration) (MatchingIteration, error) {
+var CreateMatchingIteration = func(matchingIteration MatchingIteration) (MatchingIteration, error) {
 	txn := db.Create(&matchingIteration)
 
 	return matchingIteration, txn.Error
 }
 
-var UpdateMatchingIteration = func (matchingIteration MatchingIteration) (MatchingIteration, error) {
+var UpdateMatchingIteration = func(matchingIteration MatchingIteration) (MatchingIteration, error) {
 	txn := db.Save(&matchingIteration)
 
 	return matchingIteration, txn.Error
 }
 
-// GetAllCourses handles GET requests to fetch all courses
-func GetAllMatchings(c *gin.Context) {
-	var matchings []Matching
-
-	// Fetch courses from the database
-	result := db.Find(&matchings)
-	if result.Error != nil {
-		log.Println("Error fetching matchings:", result.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch matchings"})
-		return
-	}
-
-	// Log the response
-	log.Printf("Fetched %d Matchings\n", len(matchings))
-
-	// Return JSON response (wrapper transforms it from Matchings[] to matching: Matchings[])
-	c.JSON(http.StatusOK, gin.H{
-		"matchings": matchings,
-	})
+var FetchMatchingsByIterationID = func(id uint) ([]Matching, error) {
+	var matches []Matching
+	err := db.Where("matching_iteration_id = ?", id).Find(&matches).Error
+	return matches, err
 }
 
-func GetAllMatchPairs(c *gin.Context) {
-	var matchings []Matching
-	if err := db.Find(&matchings).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch matchings"})
-		return
+var FetchLatestMatchings = func() ([]Matching, error) {
+	var latestIteration MatchingIteration
+	err := db.Order("updated_at DESC").First(&latestIteration).Error
+	if err != nil {
+		return nil, err
 	}
-
-	// build a response json to match the frontend interface
-	var results []map[string]interface{}
-
-	for _, m := range matchings {
-		var role Role
-		var user User
-		var course_sem CourseSemester
-		var course Course
-
-		// role -> user
-		if err := db.First(&role, m.UserID).Error; err != nil {
-			continue
-		}
-		if err := db.First(&user, m.UserID).Error; err != nil {
-			continue
-		}
-
-		// course sem -> course
-		if err := db.First(&course_sem, m.CourseSemID).Error; err != nil {
-			continue
-		}
-		if err := db.First(&course, course_sem.CourseID).Error; err != nil {
-			continue
-		}
-
-		result := map[string]interface{}{
-			"id": m.ID,
-			"user": map[string]interface{}{
-				"ID":    fmt.Sprint(user.ID),
-				"name":  user.Name,
-				"email": user.Email,
-			},
-			"course": map[string]interface{}{
-				"ID":        fmt.Sprint(course.ID),
-				"number":    course.Number,
-				"name":      course.Name,
-				"campus":    "Main Campus",
-				"semesters": strings.Split(course_sem.Semester, ","), // assuming comma-separated in db
-			},
-			"status":     "confirmed", // hardcoded or derive from Score
-			"confidence": m.Score,
-			"timestamp":  time.Now().Format(time.RFC3339), // real timestamp if you add one
-		}
-
-		results = append(results, result)
-	}
-
-	c.JSON(http.StatusOK, gin.H{"matchings": results})
+	return FetchMatchingsByIterationID(latestIteration.ID)
 }
