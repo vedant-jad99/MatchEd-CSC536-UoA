@@ -88,30 +88,30 @@ func setApiHandlers(r *gin.Engine) {
 
 		courseSemesters := api.Group("/course_semester")
 		{
-			courseSemesters.GET("/fetch", controllers.HandleFetchCourseSemesters())
-			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester())
-			courseSemesters.POST("/add", controllers.HandleAddCourseSemester())
-			courseSemesters.DELETE("/remove", controllers.HandleRemoveCourseSemester())
-			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester())
+			courseSemesters.GET("/fetch", controllers.HandleFetchCourseSemesters)
+			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester)
+			courseSemesters.POST("/add", controllers.HandleAddCourseSemester)
+			courseSemesters.DELETE("/remove", controllers.HandleRemoveCourseSemester)
+			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester)
 		}
 
 		faculty := api.Group("/faculty")
 		{
-			faculty.GET("/fetch", controllers.HandleFetchAllFaculty())
-			faculty.DELETE("/remove", controllers.HandleRemoveFaculty())
-			faculty.POST("/create", controllers.HandleCreateUser())
+			faculty.GET("/fetch", controllers.HandleFetchAllFaculty)
+			faculty.DELETE("/remove", controllers.HandleRemoveFaculty)
+			faculty.POST("/create", controllers.HandleCreateUser)
 		}
 
 		preferences := api.Group("/preferences")
 		{
-			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences())
-			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences())
+			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences)
+			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences)
 		}
 
 		matchings := api.Group("/matchings")
 		{
-			matchings.GET("/latest", controllers.HandleFetchLatestMatchings())
-			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID())
+			matchings.GET("/latest", controllers.HandleFetchLatestMatchings)
+			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID)
 			matchings.GET("/pairs", models.GetAllMatchPairs)
 		}
 		api.GET("/ping", func(c *gin.Context) {

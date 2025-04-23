@@ -31,7 +31,7 @@ func TestHandleFetchCourseSemesters(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
 
-	HandleFetchCourseSemesters()(c)
+	HandleFetchCourseSemesters(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -41,7 +41,7 @@ func TestHandleFetchCourseSemester_BadRequest(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer([]byte("bad json")))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleFetchCourseSemester()(c)
+	HandleFetchCourseSemester(c)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
 
@@ -60,7 +60,7 @@ func TestHandleAddCourseSemester(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleAddCourseSemester()(c)
+	HandleAddCourseSemester(c)
 	assert.Equal(t, http.StatusCreated, w.Code)
 }
 
@@ -79,7 +79,7 @@ func TestHandleRemoveCourseSemester_Error(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleRemoveCourseSemester()(c)
+	HandleRemoveCourseSemester(c)
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
@@ -98,7 +98,7 @@ func TestHandleUpdateCourseSemester(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleUpdateCourseSemester()(c)
+	HandleUpdateCourseSemester(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -115,7 +115,7 @@ func TestHandleCreateUser(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleCreateUser()(c)
+	HandleCreateUser(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -130,7 +130,7 @@ func TestHandleFetchAllFaculty(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest(http.MethodGet, "/", nil)
 
-	HandleFetchAllFaculty()(c)
+	HandleFetchAllFaculty(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -147,7 +147,7 @@ func TestHandleRemoveFaculty(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleRemoveFaculty()(c)
+	HandleRemoveFaculty(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -163,7 +163,7 @@ func TestHandleFetchAllPreferences(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = req
 
-	HandleFetchAllPreferences()(c)
+	HandleFetchAllPreferences(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -181,7 +181,7 @@ func TestHandleFetchPreferences(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleFetchPreferences()(c)
+	HandleFetchPreferences(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -199,7 +199,7 @@ func TestHandleFetchMatchingsByIterationID(t *testing.T) {
 	c.Request = httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer(b))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	HandleFetchMatchingsByIterationID()(c)
+	HandleFetchMatchingsByIterationID(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -214,6 +214,6 @@ func TestHandleFetchLatestMatchings(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest(http.MethodGet, "/", nil)
 
-	HandleFetchLatestMatchings()(c)
+	HandleFetchLatestMatchings(c)
 	assert.Equal(t, http.StatusOK, w.Code)
 }

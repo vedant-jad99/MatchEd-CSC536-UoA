@@ -8,8 +8,7 @@ import (
 )
 
 // fetches semesters with the context value {semester: }
-func HandleFetchCourseSemesters() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleFetchCourseSemesters(c *gin.Context) {
 		semester := c.Query("semester")
 		results, err := models.FetchCourseSemesters(semester)
 		if err != nil {
@@ -18,11 +17,9 @@ func HandleFetchCourseSemesters() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, results)
 	}
-}
 
 // fetches semester by id {id: }
-func HandleFetchCourseSemester() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleFetchCourseSemester(c *gin.Context) {
 		var input struct {
 			ID uint `json:"id"`
 		}
@@ -37,11 +34,9 @@ func HandleFetchCourseSemester() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, result)
 	}
-}
 
 // creates a new CourseSemester with from context {course_id: , semester: }
-func HandleAddCourseSemester() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleAddCourseSemester(c *gin.Context) {
 		var input struct {
 			CourseID uint   `json:"course_id"`
 			Semester string `json:"semester"`
@@ -57,11 +52,9 @@ func HandleAddCourseSemester() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusCreated, gin.H{"status": "created"})
 	}
-}
 
 // Removes CourseSemester with the given context {id: }
-func HandleRemoveCourseSemester() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleRemoveCourseSemester(c *gin.Context) {
 		var input struct {
 			ID uint `json:"id"`
 		}
@@ -76,12 +69,10 @@ func HandleRemoveCourseSemester() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 	}
-}
 
 // Updates a CourseSemester from context
 // {id:i, course_id:ci, semester:s, mandatory_level:ml, timeslot:ts}
-func HandleUpdateCourseSemester() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleUpdateCourseSemester(c *gin.Context) {
 		var cs models.CourseSemester
 		if err := c.ShouldBindJSON(&cs); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -94,12 +85,10 @@ func HandleUpdateCourseSemester() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{"status": "updated"})
 	}
-}
 
 // creates a new user from context:
 // "{name:n, email:e, num_req_courses:nrq}"
-func HandleCreateUser() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleCreateUser(c *gin.Context) {
 		var user models.User
 		if err := c.ShouldBindJSON(&user); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -112,23 +101,19 @@ func HandleCreateUser() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{"status": "created", "user": user})
 	}
-}
 
 // fetches a list of all users
-func HandleFetchAllFaculty() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		faculty, err := models.FetchAllFaculty()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		c.JSON(http.StatusOK, faculty)
+func HandleFetchAllFaculty(c *gin.Context) {
+	faculty, err := models.FetchAllFaculty()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
+	c.JSON(http.StatusOK, faculty)
 }
 
 // handles removal of user by id {id:id}
-func HandleRemoveFaculty() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleRemoveFaculty(c *gin.Context) {
 		var user models.User
 		if err := c.ShouldBindJSON(&user); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -141,11 +126,9 @@ func HandleRemoveFaculty() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 	}
-}
 
 // gets all preferences for the given semester {semester:semester}
-func HandleFetchAllPreferences() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleFetchAllPreferences(c *gin.Context) {
 		prefs, err := models.FetchAllPreferences()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -153,11 +136,9 @@ func HandleFetchAllPreferences() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, prefs)
 	}
-}
 
 // gets all preferences by the user_id {user_id:id}
-func HandleFetchPreferences() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleFetchPreferences(c *gin.Context) {
 		var input struct {
 			UserID uint `json:"user_id"`
 		}
@@ -172,11 +153,9 @@ func HandleFetchPreferences() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, prefs)
 	}
-}
 
 // Get matchings with MatchIterationID equal to id,{id:id}
-func HandleFetchMatchingsByIterationID() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleFetchMatchingsByIterationID(c *gin.Context) {
 		var input struct {
 			ID uint `json:"id"`
 		}
@@ -191,11 +170,9 @@ func HandleFetchMatchingsByIterationID() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, matches)
 	}
-}
 
 // get matchings with the most recent updated_at field
-func HandleFetchLatestMatchings() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HandleFetchLatestMatchings(c *gin.Context) {
 		matches, err := models.FetchLatestMatchings()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -203,4 +180,3 @@ func HandleFetchLatestMatchings() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, matches)
 	}
-}

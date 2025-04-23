@@ -9,13 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// the name of the database.
-// call it from other packages with models.DB
-// capitalized because it is a global export
-// local db variables are lowercase
 var db *gorm.DB
 
-// TODO initialize gorm with postgres using real dbname
 func InitDB() error {
 	dsn := getDSN()
 

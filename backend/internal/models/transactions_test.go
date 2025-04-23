@@ -8,17 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func setupTestDB(t *testing.T) *gorm.DB {
-	dsn := "host=localhost user=match_user password=swifty dbname=match_db port=5432 sslmode=disable search_path=match_schema"
+
+func setupTestDB(t *testing.T) {
+	dsn := "host=localhost user=match_user password=swifty dbname=match_db_test port=5432 sslmode=disable search_path=match_schema"
 	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("Failed to connect to test DB: %v", err)
-	}
-
-	// Optional safety check
-	err = dbConn.Exec("CREATE SCHEMA IF NOT EXISTS match_schema").Error
-	if err != nil {
-		t.Fatalf("Failed to ensure schema: %v", err)
 	}
 
 	// Point Gorm to use the schema explicitly
@@ -29,17 +24,22 @@ func setupTestDB(t *testing.T) *gorm.DB {
 
 	// Repoint your global `db`
 	db = dbConn
-	return db
+	clearDB(t)
+}
+
+func clearDB(t *testing.T) {
+	// Clear the database
+	err := db.Exec("TRUNCATE TABLE match_schema.course_sem, "+
+		"match_schema.users, match_schema.preferences, match_schema.matchings,"+
+		" match_schema.roles, match_schema.auth,"+
+		" match_schema.matching_iterations, match_schema.courses CASCADE").Error
+	if err != nil {
+		t.Fatalf("Failed to truncate tables: %v", err)
+	}
 }
 
 func TestAddAndFetchCourseSemester(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	err := AddCourseSemester(1, "Fall")
 	assert.Nil(t, err)
@@ -48,33 +48,25 @@ func TestAddAndFetchCourseSemester(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(results))
 	assert.Equal(t, "Fall", results[0].Semester)
+
+	clearDB(t)
 }
 
 func TestFetchCourseSemester(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	cs := CourseSemester{CourseID: 1, Semester: "Fall"}
-	db.Create(&cs)
-
+	txn := db.Create(&cs)
+	if txn.Error != nil {
+		t.Fatalf("Failed to create course semester: %v", txn.Error)
+	}
 	fetched, err := FetchCourseSemester(cs.ID)
 	assert.Nil(t, err)
 	assert.Equal(t, cs.ID, fetched.ID)
 }
 
 func TestUpdateCourseSemester(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	cs := CourseSemester{CourseID: 1, Semester: "Fall", MandatoryLevel: "Low", Timeslot: "TTh"}
 	db.Create(&cs)
@@ -91,13 +83,7 @@ func TestUpdateCourseSemester(t *testing.T) {
 }
 
 func TestRemoveCourseSemester(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	cs := CourseSemester{CourseID: 1, Semester: "Fall"}
 	db.Create(&cs)
@@ -111,13 +97,7 @@ func TestRemoveCourseSemester(t *testing.T) {
 }
 
 func TestCreateUserAndFetchAllFaculty(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	UpsertUser(User{Name: "Alice", Email: "alice@test.com", NumReqCourses: 3})
 	UpsertUser(User{Name: "Bob", Email: "bob@test.com", NumReqCourses: 2})
@@ -128,13 +108,7 @@ func TestCreateUserAndFetchAllFaculty(t *testing.T) {
 }
 
 func TestRemoveFaculty(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	user := User{Name: "Temp", Email: "temp@test.com", NumReqCourses: 1}
 	db.Create(&user)
@@ -148,31 +122,20 @@ func TestRemoveFaculty(t *testing.T) {
 }
 
 func TestFetchPreferences(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	p := Preferences{UserID: 1, Semester: "Fall"}
 	db.Create(&p)
 
 	prefs, err := FetchPreferences(1)
+	println(len(prefs))
 	assert.Nil(t, err)
 	assert.Len(t, prefs, 1)
 	assert.Equal(t, "Fall", prefs[0].Semester)
 }
 
 func TestFetchAllPreferences(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	db.Create(&Preferences{UserID: 1, Semester: "Spring"})
 	db.Create(&Preferences{UserID: 2, Semester: "Spring"})
@@ -183,13 +146,7 @@ func TestFetchAllPreferences(t *testing.T) {
 }
 
 func TestFetchMatchingsByIterationID(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	m := Matching{MatchingIterationID: 7}
 	db.Create(&m)
@@ -201,13 +158,7 @@ func TestFetchMatchingsByIterationID(t *testing.T) {
 }
 
 func TestFetchLatestMatchings(t *testing.T) {
-	db := setupTestDB(t)
-
-	tx := db.Begin()
-	defer tx.Rollback()
-
-	// temporarily redirect global `db` to transaction
-	db = tx
+	setupTestDB(t)
 
 	iter := MatchingIteration{}
 	db.Create(&iter)
