@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"backend/internal/engine/core"
+	matching "backend/internal/engine/core"
 	"backend/internal/models"
 	"bytes"
 	"encoding/json"
@@ -13,17 +13,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
-		"bou.ke/monkey"
-	)
-	
-	type mockMatchingInterface struct {
-		TriggerMatchingFunc func(iterationID matching.IDType, input matching.MatchingInput) (matching.Matching, error)
-	}
-	
-	func (m *mockMatchingInterface) TriggerMatching(iterationID matching.IDType, input matching.MatchingInput) (matching.Matching, error) {
-		return m.TriggerMatchingFunc(iterationID, input)
-	}
+)
 
+// mock setup
+func init() {
+	gin.SetMode(gin.TestMode)
+}
 
 func TestTriggerMatchingEngine_Success(t *testing.T) {
 	gin.SetMode(gin.TestMode)
@@ -45,32 +40,34 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
-	// mockMatchingOutput := matching.Matching{}
+	originalFetchAllPreferences := models.FetchAllPreferences
+	defer func() { models.FetchAllPreferences = originalFetchAllPreferences }()
+	originalFetchAllUsers := models.FetchAllUsers
+	defer func() { models.FetchAllUsers = originalFetchAllUsers }()
+	originalFetchAllCourseSemesters := models.FetchAllCourseSemesters
+	defer func() { models.FetchAllCourseSemesters = originalFetchAllCourseSemesters }()
+	originalCreateMatchingIteration := models.CreateMatchingIteration
+	defer func() { models.CreateMatchingIteration = originalCreateMatchingIteration }()
+	originalUpdateMatchingIteration := models.UpdateMatchingIteration
+	defer func() { models.UpdateMatchingIteration = originalUpdateMatchingIteration }()
 
-	// Monkey patching
-	monkey.Patch(models.FetchAllPreferences, func() ([]models.Preferences, error) {
+	// Mocking the functions
+	models.FetchAllPreferences = func() ([]models.Preferences, error) {
 		return mockPreferences, nil
-	})
-	monkey.Patch(models.FetchAllUsers, func() ([]models.User, error) {
+	}
+	models.FetchAllUsers = func() ([]models.User, error) {
 		return mockUsers, nil
-	})
-	monkey.Patch(models.FetchAllCourseSemesters, func() ([]models.CourseSemester, error) {
+	}
+	models.FetchAllCourseSemesters = func() ([]models.CourseSemester, error) {
 		return mockCourseSemesters, nil
-	})
-	monkey.Patch(models.CreateMatchingIteration, func(iteration models.MatchingIteration) (models.MatchingIteration, error) {
+	}
+	models.CreateMatchingIteration = func(iteration models.MatchingIteration) (models.MatchingIteration, error) {
 		return mockIteration, nil
-	})
-	monkey.Patch(models.UpdateMatchingIteration, func(iteration models.MatchingIteration) (models.MatchingIteration, error) {
-		return mockIteration, nil
-	})
-	// monkey.Patch(matching.NewMatchingInterface, func() matching.MatchingInterface {
-	// 	return &mockMatchingInterface{
-	// 		TriggerMatchingFunc: func(iterationID matching.IDType, input matching.MatchingInput) (matching.Matching, error) {
-	// 			return mockMatchingOutput, nil
-	// 		},
-	// 	}
-	// })
-
+	}
+	models.UpdateMatchingIteration = func(iteration models.MatchingIteration) (models.MatchingIteration, error) {
+		iteration.Status = matching.MatchingIterationStatusCompleted
+		return iteration, nil
+	}
 	// Create a test request
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -88,13 +85,24 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 }
 
 func TestTriggerMatchingEngine_FetchPreferencesError(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	mockIteration := models.MatchingIteration{
+		ID:          1,
+		TriggeredBy: 1,
+		Status:      matching.MatchingIterationStatusInitialized,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	originalCreateMatchingIteration := models.CreateMatchingIteration
+	defer func() { models.CreateMatchingIteration = originalCreateMatchingIteration }()
+	originalFetchAllPreferences := models.FetchAllPreferences
+	defer func() { models.FetchAllPreferences = originalFetchAllPreferences }()
 
-	// Monkey patching
-	monkey.Patch(models.FetchAllPreferences, func() ([]models.Preferences, error) {
+	models.FetchAllPreferences = func() ([]models.Preferences, error) {
 		return nil, errors.New("failed to fetch preferences")
-	})
-
+	}
+	models.CreateMatchingIteration = func(iteration models.MatchingIteration) (models.MatchingIteration, error) {
+		return mockIteration, nil
+	}
 	// Create a test request
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
