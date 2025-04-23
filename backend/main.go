@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 	"os"
+
 	// "fmt"
+
 	"backend/internal/models"
 	"backend/internal/routes"
-	"github.com/gin-gonic/gin"
+
 	"github.com/joho/godotenv"
 )
 
@@ -26,13 +28,10 @@ func main() {
 	// assign handlers to API routes
 	router := routes.SetupRouter()
 
-	// initialize the tables
-	//controllers.InitializeTables(models.DB)
-
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 	}
 
 	// Start the server
@@ -42,14 +41,3 @@ func main() {
 	}
 
 }
-
-// Handler function placeholders - implement these in separate controller files
-func loginHandler(c *gin.Context) {
-	// Implementation
-}
-
-func registerHandler(c *gin.Context) {
-	// Implementation
-}
-
-// ... implement other handler functions

@@ -10,8 +10,13 @@ const (
 	PreferenceLevelInvalid int64 = -1
 	PreferenceLevelGreen   int64 = 1
 	PreferenceLevelYellow  int64 = 2
-	PreferenceLevelRed     int64 = 3
-	PreferenceLevelEnd     int64 = 4
+	PreferenceLevelEnd     int64 = 3
+	PreferenceLevelRed     int64 = 4
+	PreferenceLevelInvalidString string = "invalid"
+	PreferenceLevelGreenString   string = "green"
+	PreferenceLevelYellowString  string = "yellow"
+	PreferenceLevelEndString     string = "end"
+	PreferenceLevelRedString     string = "red"
 )
 
 const (
@@ -24,29 +29,32 @@ const (
 )
 
 type Preferences struct {
-	PreferenceID    IDType
-	UserID          IDType
-	CourseSemID     IDType
-	Semester        string
-	PreferenceLevel int64
+	PreferenceID    	IDType
+	UserID          	IDType
+	CourseSemID     	IDType
+	Semester        	string
+	PreferenceLevel 	int64
+	PreferenceWeight	int64
 }
 
 type CourseSems struct {
-	CourseSemID    IDType
-	CourseID       IDType
-	Semester       string
-	MandatoryLevel int    // TODO: Custom mandatory type
-	TimeSlot       string // TODO: Custom time slot type or timestamp?
+	CourseSemID	IDType
+	CourseID	IDType
+	Semester	string
+	Section		string
+	MandatoryLevel	int    // TODO: Custom mandatory type
+	TimeSlot	string // TODO: Custom time slot type or timestamp?
 }
 
 type Faculty struct {
-	UserID IDType
+	UserID 		IDType
+	NumReqCourses	int
 }
 
 type MatchingInput struct {
-	faculty     []Faculty
-	course_s    []CourseSems
-	preferences []Preferences
+	Faculty     []Faculty
+	Course_s    []CourseSems
+	Preferences []Preferences
 }
 
 type MatchingElement struct {
@@ -58,54 +66,43 @@ type MatchingElement struct {
 }
 
 type Matching struct {
-	Matchings []MatchingElement
-}
-
-type MatchingQueue struct {
-	m_IterQ []IDType
+	Matchings []MatchingElement `json:"matchings"`
 }
 
 type MatchingInterface struct {
-	m_Queue     MatchingQueue
-	m_StatusMap map[IDType]string // TODO: Custom status type
+	M_StatusMap map[IDType]string
 }
 
 func NewMatchingInterface() *MatchingInterface {
-	return &MatchingInterface{m_Queue: MatchingQueue{m_IterQ: []IDType{}}, m_StatusMap: make(map[IDType]string)}
+	return &MatchingInterface{M_StatusMap: make(map[IDType]string)}
 }
 
-func (m_Interface *MatchingInterface) TriggerMatching(matchingIterID IDType) error {
+func (m_Interface *MatchingInterface) TriggerMatching(matchingIterID IDType, input MatchingInput) (Matching, error) {
 	if matchingIterID == -1 {
 		// TODO: Return custom error type
-		return fmt.Errorf("invalid matching iteration ID")
+		return Matching{}, fmt.Errorf("invalid matching iteration ID")
 	}
 
-	m_Interface.m_Queue.m_IterQ = append(m_Interface.m_Queue.m_IterQ, matchingIterID)
-	m_Interface.m_StatusMap[matchingIterID] = MatchingIterationStatusInitialized
-	return nil
-}
-
-// TODO: Function to fetch the input from the database to run the engine
-func (m_Interface *MatchingInterface) GetInput() error {
-	return nil
-}
-
-// TODO: Store the matching result to database
-func (m_Interface *MatchingInterface) StoreMatchingResult(matching Matching) error {
-	return nil
-}
-
-func (m_Interface *MatchingInterface) UpdateStatus(matchingIterID IDType) (string, error) {
-	if matchingIterID == -1 {
-		// TODO: Return custom error type
-		return "Error", fmt.Errorf("invalid matching iteration ID")
+	m_Interface.M_StatusMap[matchingIterID] = MatchingIterationStatusInitialized
+	matching, err := StartMatching(matchingIterID, input);
+	if err != nil {
+		m_Interface.M_StatusMap[matchingIterID] = MatchingIterationStatusError;
+		return Matching{}, err
 	}
-	/*
-		TODO: Some code goes here. Get the status
-	*/
 
-	currentStatus := m_Interface.m_StatusMap[matchingIterID]
-	// update status in db
+	m_Interface.M_StatusMap[matchingIterID] = MatchingIterationStatusCompleted; 
+	return matching, nil
+}
 
-	return currentStatus, nil
+func ConvertPreferenceLevel(level string) int64 {
+	switch level {
+	case PreferenceLevelRedString:
+		return PreferenceLevelRed
+	case PreferenceLevelYellowString:
+		return PreferenceLevelYellow
+	case PreferenceLevelGreenString:
+		return PreferenceLevelGreen
+	default:
+		return PreferenceLevelInvalid
+	}
 }
