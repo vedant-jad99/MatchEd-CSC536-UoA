@@ -2,24 +2,24 @@ package matching
 
 import (
 	"math/rand"
-	"sort"
 	"slices"
+	"sort"
 	"time"
 )
 
 type pData struct {
-	courseSID	IDType
-	prefWeight	int64
+	courseSID  IDType
+	prefWeight int64
 }
 
 type pMatchingInput struct {
-	faculty_ids    	[]IDType
-	course_s_ids   	[]IDType
-	preferences    	[]Preferences
-	fc_map         	map[IDType]*[2]IDType
-	c_map          	map[IDType]bool
-	f2rc_map		map[IDType]int				 //FacultyID --> number of required courses to teach
-	preference_map	map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
+	faculty_ids    []IDType
+	course_s_ids   []IDType
+	preferences    []Preferences
+	fc_map         map[IDType]*[2]IDType
+	c_map          map[IDType]bool
+	f2rc_map       map[IDType]int               //FacultyID --> number of required courses to teach
+	preference_map map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
 }
 
 /*
@@ -114,8 +114,8 @@ func preprocessMatchingInput(mI MatchingInput) pMatchingInput {
 			preprocessInput.preference_map[userId][level] = append(preprocessInput.preference_map[userId][level], data)
 			/* Store in sorted order */
 			sort.Slice(preprocessInput.preference_map[userId][level], func(i, j int) bool {
-				return preprocessInput.preference_map[userId][level][i].prefWeight > 
-				preprocessInput.preference_map[userId][level][j].prefWeight 
+				return preprocessInput.preference_map[userId][level][i].prefWeight >
+					preprocessInput.preference_map[userId][level][j].prefWeight
 			})
 		} else {
 			preprocessInput.preference_map[userId] = make(map[int64][]pData)
@@ -146,7 +146,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 				for j < length {
 					courseSemId := pI.preference_map[value][i][j].courseSID
 					j++
-					if !pI.c_map[courseSemId] { // If course is not assigned
+					if !pI.c_map[courseSemId] { // If course is not assigned, TODO: check if course exists
 						if pI.fc_map[value][0] == -1 {
 							pI.fc_map[value][0] = courseSemId
 						} else {
