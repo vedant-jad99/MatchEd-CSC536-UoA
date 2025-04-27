@@ -418,85 +418,138 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFacultyPushState();
     updateCoursePushState();
 
-    document.getElementById("confirmationModal").classList.remove("active");
-    document.getElementById("confirmationModal").classList.add("hidden");
+      document.getElementById("confirmationModal").classList.remove("active");
+      document.getElementById("confirmationModal").classList.add("hidden");
+    });
+    
+    document.getElementById("cancelBtn").addEventListener("click", function () {
+      const modal = document.getElementById("confirmationModal");
+      modal.classList.remove("active");
+      modal.classList.add("hidden");
+    });    
   });
 
-  document.getElementById("cancelBtn").addEventListener("click", function () {
-    const modal = document.getElementById("confirmationModal");
-    modal.classList.remove("active");
-    modal.classList.add("hidden");
-  });    
-});
-  
-// Close sidebars when clicking outside of them
-document.addEventListener('click', function(event) {
-  const prefSidebar = document.getElementById('editPreferenceSidebar');
-  const courseSidebar = document.getElementById('editSidebar');
-  const facultySidebar = document.getElementById('editFacultySidebar');
-  const isButton = event.target.closest('button');
-
-  if (!isButton) {
-    if (prefSidebar.classList.contains('active') && !prefSidebar.contains(event.target)) {
-      closePreferenceSidebar();
+  document.getElementById("pushFacultyChangesBtn").addEventListener("click", function () {
+    const summary = document.getElementById("changeSummary");
+    if (facultyChanges.length === 0) {
+      summary.innerHTML = "<em>No faculty changes found.</em>";
+    } else {
+      summary.innerHTML = facultyChanges.map(change => {
+        if (change.type === 'add') {
+          return `<div>Added Faculty: <strong>${change.name}</strong></div>`;
+        } else if (change.type === 'edit') {
+          return `<div>Edited Faculty: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span></div>`;
+        }
+        else if (change.type === 'remove') {
+          return `<div style="color: red">Deleted Faculty: <strong>${change.name}</strong></div>`;
+        }
+      }).join('');
     }
-
-    if (courseSidebar.classList.contains('active') && !courseSidebar.contains(event.target)) {
-      closeSidebar();
-    }
-
-    if (facultySidebar.classList.contains('active') && !facultySidebar.contains(event.target)) {
-      closeFacultySidebar();
-    }
-  }
-});
-
-// Handle Sidebar Form Submission
-document.getElementById("editForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const newName = document.getElementById("editName").value.trim();
-  const oldName = editRow.children[0].textContent.trim();
-
-  if (!newName) return;
-
-  editRow.children[0].textContent = newName;
-
-  if (editMode === 'faculty') {
-    if (newName !== oldName) {
-      facultyChanges.push({ type: "edit", oldName, newName });
-      updateFacultyPushState();
-    }
-  } else if (editMode === 'course') {
-    const newSection = document.getElementById("editSection").value;
-    const sectionCell = editRow.children[1];
-    const oldSection = sectionCell.textContent.trim();
-    sectionCell.textContent = newSection;
-
-    courseChanges.push({ type: "edit", oldName, newName, oldSection, newSection });
-    updateCoursePushState();
-  }
-
-  closeSidebar();
-});
-  
-// Close sidebar when clicking outside of it
-document.addEventListener('click', function(event) {
-  const sidebar = document.getElementById('editSidebar');
-  if (
-    sidebar.classList.contains('active') &&
-    !sidebar.contains(event.target) &&
-    !event.target.closest('button') 
-  ) {
-    closeSidebar();
-  }
-});
-
-// Tab navigation functionality
-document.querySelectorAll('.tab-button').forEach(button => {
-  button.addEventListener('click', () => {
-    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    button.classList.add('active');
-    document.getElementById(button.dataset.tab).classList.add('active');
+    document.getElementById("confirmationModal").classList.remove("hidden");
+    document.getElementById("confirmationModal").classList.add("active");
   });
-});
+  
+  document.getElementById("pushCourseChangesBtn").addEventListener("click", function () {
+    const summary = document.getElementById("changeSummary");
+    if (courseChanges.length === 0) {
+      summary.innerHTML = "<em>No course changes found.</em>";
+    } else {
+      summary.innerHTML = courseChanges.map(change => {
+        if (change.type === 'add') {
+          return `<div>Added Course: <strong>${change.name}</strong></div>`;
+        } else if (change.type === 'edit') {
+          return `<div>Edited Course: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span> (Section: ${change.oldSection} → ${change.newSection})</div>`;
+        } else if (change.type === 'remove') {
+          return `<div style="color: red">Deleted Course: <strong>${change.name}</strong></div>`;
+        }
+      }).join('');
+    }
+    document.getElementById("confirmationModal").classList.remove("hidden");
+    document.getElementById("confirmationModal").classList.add("active");
+  });
+  
+  document.addEventListener('click', function(event) {
+    const prefSidebar = document.getElementById('editPreferenceSidebar');
+    const courseSidebar = document.getElementById('editSidebar');
+    const facultySidebar = document.getElementById('editFacultySidebar');
+  
+    const isButton = event.target.closest('button');
+  
+    // Only close if sidebar is open, click is outside the sidebar, and not on a button
+    if (!isButton) {
+      if (prefSidebar.classList.contains('active') && !prefSidebar.contains(event.target)) {
+        closePreferenceSidebar();
+      }
+  
+      if (courseSidebar.classList.contains('active') && !courseSidebar.contains(event.target)) {
+        closeSidebar();
+      }
+  
+      if (facultySidebar.classList.contains('active') && !facultySidebar.contains(event.target)) {
+        closeFacultySidebar();
+      }
+    }
+  });
+  
+
+//submit faculty form
+function submitForm() {
+  const facultyName = document.getElementById('facultyName').value;
+  const facultyEmail = document.getElementById('facultyEmail').value;
+  const courseNames = document.querySelectorAll('.courseName');
+  const coursePreferences = document.querySelectorAll('.coursePreference');
+
+  let allValid = true;
+
+  if (!facultyName || !facultyEmail) {
+    alert('Please fill in the Faculty Name and Email!');
+    allValid = false;
+  }
+
+  // Check if all course fields are filled
+  courseNames.forEach((course, index) => {
+    if (!course.value || !coursePreferences[index].value) {
+      allValid = false;
+      alert('Please fill in all course details!');
+    }
+  });
+
+  if (allValid) {
+    document.getElementById('confirmation').style.display = 'block';
+  }
+}
+
+
+function addFormCourse() {
+  const coursesContainer = document.getElementById('coursesContainer');
+  
+  // Create new course input fields
+  const newCourseGroup = document.createElement('div');
+  newCourseGroup.classList.add('course-group');
+  
+  const courseNameLabel = document.createElement('label');
+  courseNameLabel.textContent = 'Course Name:';
+  const courseNameInput = document.createElement('input');
+  courseNameInput.type = 'text';
+  courseNameInput.classList.add('courseName');
+  courseNameInput.placeholder = 'Enter Course Name';
+  
+  const preferenceLabel = document.createElement('label');
+  preferenceLabel.textContent = 'Course Preference Level:';
+  const preferenceSelect = document.createElement('select');
+  preferenceSelect.classList.add('coursePreference');
+  preferenceSelect.innerHTML = `
+    <option value="green">Green</option>
+    <option value="yellow">Yellow</option>
+    <option value="red">Red</option>
+  `;
+  
+  // Append new elements to the new course group
+  newCourseGroup.appendChild(courseNameLabel);
+  newCourseGroup.appendChild(courseNameInput);
+  newCourseGroup.appendChild(preferenceLabel);
+  newCourseGroup.appendChild(preferenceSelect);
+  
+  // Append new course group to courses container
+  coursesContainer.appendChild(newCourseGroup);
+}
