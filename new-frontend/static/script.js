@@ -209,328 +209,327 @@ const preferencesData = [
 ];
 
 function loadPreferences() {
-    const tableBody = document.getElementById('preferencesTableBody');
-    tableBody.innerHTML = '';  // Clear any existing rows
-    preferencesData.forEach((pref, index) => {
-      const row = document.createElement('tr');
-      const isEdited = editedRows.some(r => r.rowIndex === index);
+  const tableBody = document.getElementById('preferencesTableBody');
+  tableBody.innerHTML = '';  // Clear any existing rows
+  preferencesData.forEach((pref, index) => {
+    const row = document.createElement('tr');
+    const isEdited = editedRows.some(r => r.rowIndex === index);
 
-      row.innerHTML = `
-        <td>${pref.course}</td>
-        <td>${pref.faculty}</td>
-        <td><span class="preference ${pref.preference}">${pref.preference}</span></td>
-        <td>
-          <button onclick="editPreference(${index})">Edit</button>
-          <button onclick="removePreference(${index})" style="display: none;">Remove</button>
-        </td>
-      `;
-      if (isEdited) {
-        row.style.backgroundColor = '#f0f8ff'; 
-      }
-      tableBody.appendChild(row);
-    });
-  }
-  
-  // Load preferences on page load
-  document.addEventListener('DOMContentLoaded', loadPreferences);
-  
-  // Open sidebar to edit preference
-  function editPreference(index) {
-    editPreferenceRow = index;
-    const preference = preferencesData[index];
-  
-    document.getElementById('editCourse').value = preference.course;
-    document.getElementById('editFaculty').value = preference.faculty;
-    document.getElementById('editPreference').value = preference.preference;
-  
-    openPreferenceSidebar();
-  }
-  
-  // Open sidebar
-  function openPreferenceSidebar() {
-    document.getElementById('editPreferenceSidebar').classList.add('active');
-    document.body.classList.add('sidebar-open');
-
-  }
-  
-  // Close sidebar
-  function closePreferenceSidebar() {
-    document.getElementById('editPreferenceSidebar').classList.remove('active');
-    document.body.classList.remove('sidebar-open');
-  }
-  
-  // Save edited preference
-  document.getElementById('editPreferenceForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    
-    const updatedPreference = document.getElementById('editPreference').value;
-    const currentpref = preferencesData[editPreferenceRow];
-    const oldpref = currentpref.preference;
-    preferencesData[editPreferenceRow].preference = updatedPreference;
-    
-    if(updatedPreference !== oldpref) {
-      trackEdit(editPreferenceRow, 'Preference', oldpref, updatedPreference);
-      console.log("Tracking edit:", { rowIndex: editPreferenceRow, column: 'Preference', oldValue: oldpref, newValue: updatedPreference });
-
+    row.innerHTML = `
+      <td>${pref.course}</td>
+      <td>${pref.faculty}</td>
+      <td><span class="preference ${pref.preference}">${pref.preference}</span></td>
+      <td>
+        <button onclick="editPreference(${index})">Edit</button>
+        <button onclick="removePreference(${index})" style="display: none;">Remove</button>
+      </td>
+    `;
+    if (isEdited) {
+      row.style.backgroundColor = '#f0f8ff'; 
     }
-    loadPreferences();
-    closePreferenceSidebar();
+    tableBody.appendChild(row);
   });
+}
+  
+// Load preferences on page load
+document.addEventListener('DOMContentLoaded', loadPreferences);
 
-  document.getElementById("editFacultyForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevents page reload
+// Open sidebar to edit preference
+function editPreference(index) {
+  editPreferenceRow = index;
+  const preference = preferencesData[index];
+
+  document.getElementById('editCourse').value = preference.course;
+  document.getElementById('editFaculty').value = preference.faculty;
+  document.getElementById('editPreference').value = preference.preference;
+
+  openPreferenceSidebar();
+}
+
+// Open sidebar
+function openPreferenceSidebar() {
+  document.getElementById('editPreferenceSidebar').classList.add('active');
+  document.body.classList.add('sidebar-open');
+
+}
+
+// Close sidebar
+function closePreferenceSidebar() {
+  document.getElementById('editPreferenceSidebar').classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+}
+
+// Save edited preference
+document.getElementById('editPreferenceForm').addEventListener('submit', function (e) {
+  e.preventDefault();
   
-    const newName = document.getElementById("editfacultyName").value.trim();
-    if (!newName || !editRow) return;
+  const updatedPreference = document.getElementById('editPreference').value;
+  const currentpref = preferencesData[editPreferenceRow];
+  const oldpref = currentpref.preference;
+  preferencesData[editPreferenceRow].preference = updatedPreference;
   
-    const oldName = editRow.children[0].textContent.trim();
-    editRow.children[0].textContent = newName;
-  
-    if (newName !== oldName) {
-      facultyChanges.push({ type: "edit", oldName, newName });
-      updateFacultyPushState();
-    }
-    
-    closeFacultySidebar();
-  });
-  
-  
-  // Remove preference
-  function removePreference(index) {
-    preferencesData.splice(index, 1);
-    loadPreferences();
+  if(updatedPreference !== oldpref) {
+    trackEdit(editPreferenceRow, 'Preference', oldpref, updatedPreference);
+    console.log("Tracking edit:", { rowIndex: editPreferenceRow, column: 'Preference', oldValue: oldpref, newValue: updatedPreference });
+
   }
+  loadPreferences();
+  closePreferenceSidebar();
+});
 
-  let editedRows = [];
+document.getElementById("editFacultyForm").addEventListener("submit", function (e) {
+  e.preventDefault(); // Prevents page reload
 
+  const newName = document.getElementById("editfacultyName").value.trim();
+  if (!newName || !editRow) return;
 
-  function trackEdit(rowIndex, column, oldValue, newValue) {
-    const existingIndex = editedRows.findIndex(
-      row => row.rowIndex === rowIndex && row.column === column
-    );
+  const oldName = editRow.children[0].textContent.trim();
+  editRow.children[0].textContent = newName;
 
-    if (existingIndex !== -1) {
-      if (oldValue === newValue) {
-        editedRows.splice(existingIndex, 1);
-      } else {
-        editedRows[existingIndex].newValue = newValue;
-      }
-    } else if (oldValue !== newValue) {
-      editedRows.push({ rowIndex, column, oldValue, newValue });
-    }
-    console.log("Edited Rows:", JSON.stringify(editedRows, null, 2));
-    updatePushButtonState();
+  if (newName !== oldName) {
+    facultyChanges.push({ type: "edit", oldName, newName });
+    updateFacultyPushState();
   }
+  
+  closeFacultySidebar();
+});
 
-  function updatePushButtonState() {
-    const btn = document.getElementById("pushChangesBtn");
-    if (editedRows.length > 0) {
-      btn.disabled = false;
-      btn.classList.add("active");
+
+// Remove preference
+function removePreference(index) {
+  preferencesData.splice(index, 1);
+  loadPreferences();
+}
+
+let editedRows = [];
+
+
+function trackEdit(rowIndex, column, oldValue, newValue) {
+  const existingIndex = editedRows.findIndex(
+    row => row.rowIndex === rowIndex && row.column === column
+  );
+
+  if (existingIndex !== -1) {
+    if (oldValue === newValue) {
+      editedRows.splice(existingIndex, 1);
     } else {
-      btn.disabled = true;
-      btn.classList.remove("active");
+      editedRows[existingIndex].newValue = newValue;
     }
+  } else if (oldValue !== newValue) {
+    editedRows.push({ rowIndex, column, oldValue, newValue });
   }
+  console.log("Edited Rows:", JSON.stringify(editedRows, null, 2));
+  updatePushButtonState();
+}
 
-  function setupCellListeners() {
-    const table = document.getElementById("preferencesTable");
-    console.log(table);
-    const headers = [...table.querySelectorAll("thead th")];
+function updatePushButtonState() {
+  const btn = document.getElementById("pushChangesBtn");
+  if (editedRows.length > 0) {
+    btn.disabled = false;
+    btn.classList.add("active");
+  } else {
+    btn.disabled = true;
+    btn.classList.remove("active");
+  }
+}
 
-    table.querySelectorAll("tbody tr").forEach((row, rowIndex) => {
-      row.querySelectorAll("td").forEach((cell, colIndex) => {
-        if (cell.getAttribute("contenteditable") === "true") {
-          let oldValue = cell.innerText.trim();
+function setupCellListeners() {
+  const table = document.getElementById("preferencesTable");
+  console.log(table);
+  const headers = [...table.querySelectorAll("thead th")];
 
-          cell.addEventListener("blur", () => {
-            const newValue = cell.innerText.trim();
-            const columnName = headers[colIndex].innerText;
-            trackEdit(rowIndex, columnName, oldValue, newValue);
-            oldValue = newValue; // update after blur
-          });
-        }
-      });
+  table.querySelectorAll("tbody tr").forEach((row, rowIndex) => {
+    row.querySelectorAll("td").forEach((cell, colIndex) => {
+      if (cell.getAttribute("contenteditable") === "true") {
+        let oldValue = cell.innerText.trim();
+
+        cell.addEventListener("blur", () => {
+          const newValue = cell.innerText.trim();
+          const columnName = headers[colIndex].innerText;
+          trackEdit(rowIndex, columnName, oldValue, newValue);
+          oldValue = newValue; // update after blur
+        });
+      }
     });
-  }
+  });
+}
 
-  function showModal() {
+function showModal() {
+  const modal = document.getElementById("confirmationModal");
+  const summary = document.getElementById("changeSummary");
+  let content = [];
+
+// Preferences changes
+if (editedRows.length > 0) {
+  const preferenceEdits = editedRows.map(edit => {
+    const pref = preferencesData[edit.rowIndex];
+    const label = pref ? `(${pref.course} - ${pref.faculty})` : `Row ${edit.rowIndex + 1}`;
+    return `<div>${label} — <strong>${edit.column}</strong>: "<span style="color: red">${edit.oldValue}</span>" → "<span style="color: green">${edit.newValue}</span>"</div>`;
+  });
+  content.push(...preferenceEdits);
+}
+
+// Faculty changes
+if (facultyChanges.length > 0) {
+  const facultyEdits = facultyChanges.map(change => {
+    if (change.type === "edit") {
+      return `<div><strong>Faculty</strong> "${change.oldName}" → "<span style="color: green">${change.newName}</span>"</div>`;
+    } else if (change.type === "remove") {
+      return `<div style="color: red">Deleted faculty: <strong>${change.name}</strong></div>`;
+    } else if (change.type === "add") {
+      return `<div style="color: green">Added faculty: <strong>${change.name}</strong></div>`;
+    }
+  });
+  content.push(...facultyEdits);
+}
+
+// Course changes
+if (courseChanges.length > 0) {
+  const courseEdits = courseChanges.map(change => {
+    if (change.type === "edit") {
+      const nameChange = change.oldName !== change.newName 
+        ? `Name: "<span style="color: red">${change.oldName}</span>" → "<span style="color: green">${change.newName}</span>"`
+        : '';
+      const sectionChange = change.oldSection !== change.newSection 
+        ? `Sections: "<span style="color: red">${change.oldSection}</span>" → "<span style="color: green">${change.newSection}</span>"`
+        : '';
+      return `<div><strong>Course</strong> ${nameChange} ${nameChange && sectionChange ? '<br>' : ''} ${sectionChange}</div>`;
+    } else if (change.type === "remove") {
+      return `<div style="color: red">Deleted course: <strong>${change.name}</strong></div>`;
+    } else if (change.type === "add") {
+      return `<div style="color: green">Added course: <strong>${change.name}</strong> (Sections: ${change.section})</div>`;
+    }
+  });
+  content.push(...courseEdits);
+}
+
+// Default message
+summary.innerHTML = content.length > 0 ? content.join('') : "<em>No changes found.</em>";
+modal.classList.remove("hidden");
+
+  // if (editedRows.length === 0) {
+  //   summary.innerHTML = "<em>No changes found.</em>";
+  // } else {
+  //   summary.innerHTML = editedRows.map(edit => {
+  //     const pref = preferencesData[edit.rowIndex];
+  //     const label = pref ? `(${pref.course} - ${pref.faculty})` : `Row ${edit.rowIndex + 1}`;
+  //     return `<div>${label} — <strong>${edit.column}</strong>: "<span style="color: red">${edit.oldValue}</span>" → "<span style="color: green">${edit.newValue}</span>"</div>`;
+  //         }).join("");
+  // }
+
+  // modal.classList.add("active");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupCellListeners();
+
+  document.getElementById("pushChangesBtn").addEventListener("click", function () {
+    // alert("Button clicked");
+    // showModal();
     const modal = document.getElementById("confirmationModal");
     const summary = document.getElementById("changeSummary");
-    let content = [];
-
-  // Preferences changes
-  if (editedRows.length > 0) {
-    const preferenceEdits = editedRows.map(edit => {
-      const pref = preferencesData[edit.rowIndex];
-      const label = pref ? `(${pref.course} - ${pref.faculty})` : `Row ${edit.rowIndex + 1}`;
-      return `<div>${label} — <strong>${edit.column}</strong>: "<span style="color: red">${edit.oldValue}</span>" → "<span style="color: green">${edit.newValue}</span>"</div>`;
-    });
-    content.push(...preferenceEdits);
-  }
-
-  // Faculty changes
-  if (facultyChanges.length > 0) {
-    const facultyEdits = facultyChanges.map(change => {
-      if (change.type === "edit") {
-        return `<div><strong>Faculty</strong> "${change.oldName}" → "<span style="color: green">${change.newName}</span>"</div>`;
-      } else if (change.type === "remove") {
-        return `<div style="color: red">Deleted faculty: <strong>${change.name}</strong></div>`;
-      } else if (change.type === "add") {
-        return `<div style="color: green">Added faculty: <strong>${change.name}</strong></div>`;
-      }
-    });
-    content.push(...facultyEdits);
-  }
-
-  // Course changes
-  if (courseChanges.length > 0) {
-    const courseEdits = courseChanges.map(change => {
-      if (change.type === "edit") {
-        const nameChange = change.oldName !== change.newName 
-          ? `Name: "<span style="color: red">${change.oldName}</span>" → "<span style="color: green">${change.newName}</span>"`
-          : '';
-        const sectionChange = change.oldSection !== change.newSection 
-          ? `Sections: "<span style="color: red">${change.oldSection}</span>" → "<span style="color: green">${change.newSection}</span>"`
-          : '';
-        return `<div><strong>Course</strong> ${nameChange} ${nameChange && sectionChange ? '<br>' : ''} ${sectionChange}</div>`;
-      } else if (change.type === "remove") {
-        return `<div style="color: red">Deleted course: <strong>${change.name}</strong></div>`;
-      } else if (change.type === "add") {
-        return `<div style="color: green">Added course: <strong>${change.name}</strong> (Sections: ${change.section})</div>`;
-      }
-    });
-    content.push(...courseEdits);
-  }
-
-  // Default message
-  summary.innerHTML = content.length > 0 ? content.join('') : "<em>No changes found.</em>";
-  modal.classList.remove("hidden");
-
-    // if (editedRows.length === 0) {
-    //   summary.innerHTML = "<em>No changes found.</em>";
-    // } else {
-    //   summary.innerHTML = editedRows.map(edit => {
-    //     const pref = preferencesData[edit.rowIndex];
-    //     const label = pref ? `(${pref.course} - ${pref.faculty})` : `Row ${edit.rowIndex + 1}`;
-    //     return `<div>${label} — <strong>${edit.column}</strong>: "<span style="color: red">${edit.oldValue}</span>" → "<span style="color: green">${edit.newValue}</span>"</div>`;
-    //         }).join("");
-    // }
-
-    // modal.classList.add("active");
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    setupCellListeners();
-
-    document.getElementById("pushChangesBtn").addEventListener("click", function () {
-      // alert("Button clicked");
-      // showModal();
-      const modal = document.getElementById("confirmationModal");
-      const summary = document.getElementById("changeSummary");
-      if (editedRows.length === 0) {
-        summary.innerHTML = "<em>No changes found.</em>";
-      } else {
-        summary.innerHTML = editedRows.map(edit => {
-          const pref = preferencesData[edit.rowIndex];
-          const label = pref ? `(${pref.course} - ${pref.faculty})` : `Row ${edit.rowIndex + 1}`;
-          return `<div>${label} — <strong>${edit.column}</strong>: "<span style="color: red">${edit.oldValue}</span>" → "<span style="color: green">${edit.newValue}</span>"</div>`;
-        }).join("");
-      }
-      
-      modal.classList.remove("hidden");
-      modal.classList.add("active");
-    });
-    
-    // document.getElementById("confirmBtn").addEventListener("click", function () {
-    //   alert("Changes confirmed!");
-    //   document.getElementById("confirmationModal").classList.add("hidden");
-    //   const pushBtn = document.getElementById("pushChangesBtn");
-    //   pushBtn.classList.remove("active");
-    //   pushBtn.disabled = true;
-    document.getElementById("confirmBtn").addEventListener("click", function () {
-      alert("Changes confirmed!");
-      const modal = document.getElementById("confirmationModal");
-      modal.classList.remove("active");
-      modal.classList.add("hidden");
-      
-      editedRows = [];
-      facultyChanges = [];
-      courseChanges = [];
-      updatePushButtonState();
-      updateFacultyPushState();
-      updateCoursePushState();
-
-      document.getElementById("confirmationModal").classList.remove("active");
-      document.getElementById("confirmationModal").classList.add("hidden");
-    });
-    
-    document.getElementById("cancelBtn").addEventListener("click", function () {
-      const modal = document.getElementById("confirmationModal");
-      modal.classList.remove("active");
-      modal.classList.add("hidden");
-    });    
-  });
-
-  document.getElementById("pushFacultyChangesBtn").addEventListener("click", function () {
-    const summary = document.getElementById("changeSummary");
-    if (facultyChanges.length === 0) {
-      summary.innerHTML = "<em>No faculty changes found.</em>";
+    if (editedRows.length === 0) {
+      summary.innerHTML = "<em>No changes found.</em>";
     } else {
-      summary.innerHTML = facultyChanges.map(change => {
-        if (change.type === 'add') {
-          return `<div>Added Faculty: <strong>${change.name}</strong></div>`;
-        } else if (change.type === 'edit') {
-          return `<div>Edited Faculty: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span></div>`;
-        }
-        else if (change.type === 'remove') {
-          return `<div style="color: red">Deleted Faculty: <strong>${change.name}</strong></div>`;
-        }
-      }).join('');
+      summary.innerHTML = editedRows.map(edit => {
+        const pref = preferencesData[edit.rowIndex];
+        const label = pref ? `(${pref.course} - ${pref.faculty})` : `Row ${edit.rowIndex + 1}`;
+        return `<div>${label} — <strong>${edit.column}</strong>: "<span style="color: red">${edit.oldValue}</span>" → "<span style="color: green">${edit.newValue}</span>"</div>`;
+      }).join("");
     }
-    document.getElementById("confirmationModal").classList.remove("hidden");
-    document.getElementById("confirmationModal").classList.add("active");
+    
+    modal.classList.remove("hidden");
+    modal.classList.add("active");
   });
   
-  document.getElementById("pushCourseChangesBtn").addEventListener("click", function () {
-    const summary = document.getElementById("changeSummary");
-    if (courseChanges.length === 0) {
-      summary.innerHTML = "<em>No course changes found.</em>";
-    } else {
-      summary.innerHTML = courseChanges.map(change => {
-        if (change.type === 'add') {
-          return `<div>Added Course: <strong>${change.name}</strong></div>`;
-        } else if (change.type === 'edit') {
-          return `<div>Edited Course: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span> (Section: ${change.oldSection} → ${change.newSection})</div>`;
-        } else if (change.type === 'remove') {
-          return `<div style="color: red">Deleted Course: <strong>${change.name}</strong></div>`;
-        }
-      }).join('');
-    }
-    document.getElementById("confirmationModal").classList.remove("hidden");
-    document.getElementById("confirmationModal").classList.add("active");
+  // document.getElementById("confirmBtn").addEventListener("click", function () {
+  //   alert("Changes confirmed!");
+  //   document.getElementById("confirmationModal").classList.add("hidden");
+  //   const pushBtn = document.getElementById("pushChangesBtn");
+  //   pushBtn.classList.remove("active");
+  //   pushBtn.disabled = true;
+  document.getElementById("confirmBtn").addEventListener("click", function () {
+    alert("Changes confirmed!");
+    const modal = document.getElementById("confirmationModal");
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+    
+    editedRows = [];
+    facultyChanges = [];
+    courseChanges = [];
+    updatePushButtonState();
+    updateFacultyPushState();
+    updateCoursePushState();
+
+    document.getElementById("confirmationModal").classList.remove("active");
+    document.getElementById("confirmationModal").classList.add("hidden");
   });
   
-  document.addEventListener('click', function(event) {
-    const prefSidebar = document.getElementById('editPreferenceSidebar');
-    const courseSidebar = document.getElementById('editSidebar');
-    const facultySidebar = document.getElementById('editFacultySidebar');
-  
-    const isButton = event.target.closest('button');
-  
-    // Only close if sidebar is open, click is outside the sidebar, and not on a button
-    if (!isButton) {
-      if (prefSidebar.classList.contains('active') && !prefSidebar.contains(event.target)) {
-        closePreferenceSidebar();
+  document.getElementById("cancelBtn").addEventListener("click", function () {
+    const modal = document.getElementById("confirmationModal");
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+  });    
+});
+
+document.getElementById("pushFacultyChangesBtn").addEventListener("click", function () {
+  const summary = document.getElementById("changeSummary");
+  if (facultyChanges.length === 0) {
+    summary.innerHTML = "<em>No faculty changes found.</em>";
+  } else {
+    summary.innerHTML = facultyChanges.map(change => {
+      if (change.type === 'add') {
+        return `<div>Added Faculty: <strong>${change.name}</strong></div>`;
+      } else if (change.type === 'edit') {
+        return `<div>Edited Faculty: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span></div>`;
       }
-  
-      if (courseSidebar.classList.contains('active') && !courseSidebar.contains(event.target)) {
-        closeSidebar();
+      else if (change.type === 'remove') {
+        return `<div style="color: red">Deleted Faculty: <strong>${change.name}</strong></div>`;
       }
-  
-      if (facultySidebar.classList.contains('active') && !facultySidebar.contains(event.target)) {
-        closeFacultySidebar();
+    }).join('');
+  }
+  document.getElementById("confirmationModal").classList.remove("hidden");
+  document.getElementById("confirmationModal").classList.add("active");
+});
+
+document.getElementById("pushCourseChangesBtn").addEventListener("click", function () {
+  const summary = document.getElementById("changeSummary");
+  if (courseChanges.length === 0) {
+    summary.innerHTML = "<em>No course changes found.</em>";
+  } else {
+    summary.innerHTML = courseChanges.map(change => {
+      if (change.type === 'add') {
+        return `<div>Added Course: <strong>${change.name}</strong></div>`;
+      } else if (change.type === 'edit') {
+        return `<div>Edited Course: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span> (Section: ${change.oldSection} → ${change.newSection})</div>`;
+      } else if (change.type === 'remove') {
+        return `<div style="color: red">Deleted Course: <strong>${change.name}</strong></div>`;
       }
+    }).join('');
+  }
+  document.getElementById("confirmationModal").classList.remove("hidden");
+  document.getElementById("confirmationModal").classList.add("active");
+});
+
+document.addEventListener('click', function(event) {
+  const prefSidebar = document.getElementById('editPreferenceSidebar');
+  const courseSidebar = document.getElementById('editSidebar');
+  const facultySidebar = document.getElementById('editFacultySidebar');
+
+  const isButton = event.target.closest('button');
+
+  // Only close if sidebar is open, click is outside the sidebar, and not on a button
+  if (!isButton) {
+    if (prefSidebar.classList.contains('active') && !prefSidebar.contains(event.target)) {
+      closePreferenceSidebar();
     }
-  });
-  
+
+    if (courseSidebar.classList.contains('active') && !courseSidebar.contains(event.target)) {
+      closeSidebar();
+    }
+
+    if (facultySidebar.classList.contains('active') && !facultySidebar.contains(event.target)) {
+      closeFacultySidebar();
+    }
+  }
+});
