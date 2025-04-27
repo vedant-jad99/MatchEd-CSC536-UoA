@@ -1,0 +1,375 @@
+{
+  "Matchings": [
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 6,
+      "course_sem_id": 120,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 6,
+      "course_sem_id": 210,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 11,
+      "course_sem_id": 560,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 22,
+      "course_sem_id": 453,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 22,
+      "course_sem_id": 465,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 34,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 4,
+      "course_sem_id": 588,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 4,
+      "course_sem_id": 477,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 21,
+      "course_sem_id": 436,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 32,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 5,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 18,
+      "course_sem_id": 545,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 18,
+      "course_sem_id": 550,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 23,
+      "course_sem_id": 144,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 23,
+      "course_sem_id": 337,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 26,
+      "course_sem_id": 352,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 26,
+      "course_sem_id": 573,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 27,
+      "course_sem_id": 252,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 27,
+      "course_sem_id": 452,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 28,
+      "course_sem_id": 483,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 7,
+      "course_sem_id": 110,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 10,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 12,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 31,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 33,
+      "course_sem_id": 585,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 14,
+      "course_sem_id": 244,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 14,
+      "course_sem_id": 437,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 19,
+      "course_sem_id": 480,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 29,
+      "course_sem_id": 445,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 9,
+      "course_sem_id": 101,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 9,
+      "course_sem_id": 180,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 24,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 35,
+      "course_sem_id": 473,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 35,
+      "course_sem_id": 520,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 36,
+      "course_sem_id": 466,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 36,
+      "course_sem_id": 536,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 1,
+      "course_sem_id": 422,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 1,
+      "course_sem_id": 522,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 15,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 16,
+      "course_sem_id": 380,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 16,
+      "course_sem_id": 535,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 17,
+      "course_sem_id": 553,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 25,
+      "course_sem_id": 460,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 25,
+      "course_sem_id": 372,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 13,
+      "course_sem_id": 280,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 2,
+      "course_sem_id": 444,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 2,
+      "course_sem_id": 544,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 3,
+      "course_sem_id": 345,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 3,
+      "course_sem_id": 433,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 8,
+      "course_sem_id": -1,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 20,
+      "course_sem_id": 425,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 20,
+      "course_sem_id": 525,
+      "matching_score": 1
+    },
+    {
+      "matching_id": -1,
+      "matching_iteration_id": 1,
+      "user_id": 30,
+      "course_sem_id": -1,
+      "matching_score": 1
+    }
+  ]
+}

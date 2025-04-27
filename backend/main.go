@@ -3,23 +3,24 @@ package main
 import (
 	"log"
 	"os"
+
 	// "fmt"
-	"backend/models"
-	"backend/routes"
-	// "backend/controllers"
-	"github.com/gin-gonic/gin"
-	// "github.com/joho/godotenv"
+
+	"backend/internal/models"
+	"backend/internal/routes"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	// Load environment variables from the .env file
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	// init gorm
-	err := models.InitDB()
+	err = models.InitDB()
 	if err != nil {
 		log.Fatalf("Error connecting to database %v\n", err)
 	}
@@ -38,15 +39,5 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
-}
 
-// Handler function placeholders - implement these in separate controller files
-func loginHandler(c *gin.Context) {
-	// Implementation
 }
-
-func registerHandler(c *gin.Context) {
-	// Implementation
-}
-
-// ... implement other handler functions

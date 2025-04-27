@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/pagination';
 import { Search, ArrowUpAZ, ArrowDownAZ, Upload, Download } from 'lucide-react';
 import { types } from 'util';
+import PingComponent from '@/components/api/Ping';
 
 const All = () => {
   const [preferences, setPreferences] = useState<Preferences[]>([]); // State to hold preferences
@@ -39,10 +40,6 @@ const All = () => {
   };
 
   const handlePagination = (page: number) => {
-    
-    //server call (api/people/get)
-
-
     // COMMENT: This should trigger SQL pagination on the Go backend
     // Example: SELECT * FROM items LIMIT 10 OFFSET (page - 1) * 10
     setCurrentPage(page); // Update current page state
@@ -104,7 +101,7 @@ const All = () => {
             <br />
             The actual data display will be implemented with the Go backend.
           </p>
-          
+          <PingComponent></PingComponent>
           {/* Database Operation Controls */}
           <div className="space-y-6">
             {/* Search */}
