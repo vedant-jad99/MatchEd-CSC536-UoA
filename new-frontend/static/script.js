@@ -140,12 +140,12 @@ function closeSidebar() {
   //   document.getElementById(sidebarId).style.display = "block";
   // }
   
-  function closeFacultySidebar() {
-    document.getElementById("editFacultySidebar").classList.remove("active");
-    document.body.classList.remove("sidebar-open");
-    document.getElementById("editfacultyName").value = '';
-    document.getElementById("facultyName").value = '';
-  }
+function closeFacultySidebar() {
+  document.getElementById("editFacultySidebar").classList.remove("active");
+  document.body.classList.remove("sidebar-open");
+  document.getElementById("editfacultyName").value = '';
+  document.getElementById("facultyName").value = '';
+}
   
 function updateFacultyPushState() {
   const btn = document.getElementById("pushFacultyChangesBtn");
@@ -168,7 +168,7 @@ document.addEventListener('click', function(event) {
     ) {
       closeSidebar();
     }
-  });
+});
   
   
 // Handle Sidebar Form Submission
@@ -449,6 +449,8 @@ document.addEventListener("DOMContentLoaded", () => {
   //   pushBtn.classList.remove("active");
   //   pushBtn.disabled = true;
   document.getElementById("confirmBtn").addEventListener("click", function () {
+    
+    
     alert("Changes confirmed!");
     const modal = document.getElementById("confirmationModal");
     modal.classList.remove("active");
