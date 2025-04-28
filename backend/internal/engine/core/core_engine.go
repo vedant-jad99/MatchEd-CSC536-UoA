@@ -22,64 +22,6 @@ type pMatchingInput struct {
 	preference_map map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
 }
 
-/*
-func GetInput(file string) (MatchingInput, error) {
-	// Open the JSON file
-	data, err := os.ReadFile(file)
-	if err != nil {
-		return MatchingInput{}, fmt.Errorf("failed to read input file: %w", err)
-	}
-
-	// Define a struct to match the JSON structure
-	type rawInput struct {
-		User         map[string]string `json:"user"`
-		Faculty      []int64           `json:"faculty"`
-		CourseSemIDs []int64           `json:"course_sem_ids"`
-		Preferences  []struct {
-			ID          int64  `json:"id"`
-			UserID      int64  `json:"user_id"`
-			CourseSemID int64  `json:"course_sem_id"`
-			Sem         string `json:"sem"`
-			Level       string `json:"level"`
-		} `json:"preferences"`
-	}
-
-	// Parse the JSON data
-	var raw rawInput
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return MatchingInput{}, fmt.Errorf("failed to parse input JSON: %w", err)
-	}
-
-	// Convert raw input to MatchingInput
-	var matchingInput MatchingInput
-	for _, facultyID := range raw.Faculty {
-		matchingInput.faculty = append(matchingInput.faculty, Faculty{UserID: IDType(facultyID)})
-	}
-	for _, courseSemID := range raw.CourseSemIDs {
-		matchingInput.course_s = append(matchingInput.course_s, CourseSems{CourseSemID: IDType(courseSemID)})
-	}
-	for _, pref := range raw.Preferences {
-		level := PreferenceLevelInvalid
-		switch pref.Level {
-		case "r":
-			level = PreferenceLevelRed
-		case "y":
-			level = PreferenceLevelYellow
-		case "g":
-			level = PreferenceLevelGreen
-		}
-		matchingInput.preferences = append(matchingInput.preferences, Preferences{
-			PreferenceID:    IDType(pref.ID),
-			UserID:          IDType(pref.UserID),
-			CourseSemID:     IDType(pref.CourseSemID),
-			Semester:        pref.Sem,
-			PreferenceLevel: level,
-		})
-	}
-
-	return matchingInput, nil
-}*/
-
 func StartMatching(matchingIter IDType, input MatchingInput) (Matching, error) {
 	matching, err := runMatching(input, matchingIter)
 	if err != nil {
@@ -146,7 +88,13 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 				for j < length {
 					courseSemId := pI.preference_map[value][i][j].courseSID
 					j++
-					if !pI.c_map[courseSemId] { // If course is not assigned, TODO: check if course exists
+
+					// Check if the course exists in the course map
+					_, ok := pI.c_map[courseSemId];
+					if !ok {
+						continue
+					}
+					if !pI.c_map[courseSemId] { // If course is not assigned
 						if pI.fc_map[value][0] == -1 {
 							pI.fc_map[value][0] = courseSemId
 						} else {
