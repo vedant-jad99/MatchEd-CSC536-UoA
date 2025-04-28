@@ -46,7 +46,7 @@ func HandleFetchAllPreferencesFormatted(c *gin.Context) {
 
 		// Format the preference data as expected by the frontend
 		formattedPreference := map[string]interface{}{
-			"course":     course.Name,
+			"course":     course.Number,
 			"faculty":    user.Name,
 			"preference": pref.PreferenceLevel, // Assuming you want to return PreferenceLevel
 		}
