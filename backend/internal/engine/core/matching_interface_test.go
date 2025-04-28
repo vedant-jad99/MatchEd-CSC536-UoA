@@ -30,6 +30,7 @@ func TestTriggerMatching(t *testing.T) {
 		Course_s: []CourseSems{
 			{CourseSemID: 101},
 			{CourseSemID: 102},
+			{CourseSemID: 103},
 		},
 		Preferences: []Preferences{
 			{UserID: 1, CourseSemID: 101, PreferenceLevel: 1, PreferenceWeight: 2},
