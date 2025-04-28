@@ -1,3 +1,5 @@
+import { fetchAllPreferences, fetchAllPreferencesFormatted } from "./api.js";
+
 let editRow = null;
 let editMode = ''; 
 let facultyChanges = [];
@@ -215,10 +217,11 @@ const preferencesData = [
   { course: 'CS102', faculty: 'Anson', preference: 'yellow' },
 ];
 
-function loadPreferences() {
+async function loadPreferences() {
   // TODO:
   // Load from database via api call
-  
+  const preferencesData = await fetchAllPreferencesFormatted();
+
   const tableBody = document.getElementById('preferencesTableBody');
   tableBody.innerHTML = '';  // Clear any existing rows
   preferencesData.forEach((pref, index) => {

@@ -97,6 +97,7 @@ func setApiHandlers(r *gin.Engine) {
 		preferences := api.Group("/preferences")
 		{
 			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences)
+			preferences.GET("/fetch_formatted", controllers.HandleFetchAllPreferencesFormatted)
 			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences)
 		}
 
