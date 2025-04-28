@@ -6,6 +6,23 @@ let facultyChanges = [];
 let courseChanges = [];
 let preferenceChanges = [];
 
+// Edit Faculty Entry
+function editFaculty(btn) {
+  editRow = btn.closest('tr');
+  editMode = 'faculty';
+  document.getElementById("editfacultyName").value = editRow.children[0].textContent;
+  openFacultySidebar();
+}
+
+// remove faculty by name
+function removeFaculty(btn) {
+  const row = btn.closest('tr');
+  row.remove();
+  const name = row.children[0].textContent;
+  facultyChanges.push({ type: "remove", name: name });
+  updateFacultyPushState();
+}
+
 // Add Faculty
 function addFaculty() {
   const name = document.getElementById('facultyName').value.trim();
@@ -34,13 +51,27 @@ function addFaculty() {
   }
 }
 
+// Edit Course Entry
+function editCourse(btn) {
+  editRow = btn.closest('tr');
+  editMode = 'course';
 
-function removeFaculty(btn) {
+  // document.getElementById("editType").value = "Course";
+  document.getElementById("editName").value = editRow.children[0].textContent;
+
+  const section = editRow.children[1].textContent.trim();;
+  document.getElementById("editSection").value = section;
+  // document.getElementById("editSectionGroup").classList.remove("hidden");
+
+  openSidebar();
+}
+
+function removeCourse(btn) {
   const row = btn.closest('tr');
   row.remove();
   const name = row.children[0].textContent;
-  facultyChanges.push({ type: "remove", name: name });
-  updateFacultyPushState();
+  courseChanges.push({ type: "remove", name: name });
+  updateCoursePushState();
 }
 
 // Add Course
@@ -78,38 +109,6 @@ function addCourse() {
     courseChanges.push({ type: "add", name: name });
     updateCoursePushState();
   }
-}
-
-function removeCourse(btn) {
-  const row = btn.closest('tr');
-  row.remove();
-  const name = row.children[0].textContent;
-  courseChanges.push({ type: "remove", name: name });
-  updateCoursePushState();
-}
-
-
-// Edit Faculty Entry
-function editFaculty(btn) {
-  editRow = btn.closest('tr');
-  editMode = 'faculty';
-  document.getElementById("editfacultyName").value = editRow.children[0].textContent;
-  openFacultySidebar();
-}
-
-// Edit Course Entry
-function editCourse(btn) {
-  editRow = btn.closest('tr');
-  editMode = 'course';
-
-  // document.getElementById("editType").value = "Course";
-  document.getElementById("editName").value = editRow.children[0].textContent;
-
-  const section = editRow.children[1].textContent.trim();;
-  document.getElementById("editSection").value = section;
-  // document.getElementById("editSectionGroup").classList.remove("hidden");
-
-  openSidebar();
 }
 
 // Tab navigation functionality
@@ -212,11 +211,60 @@ document.getElementById("editForm").addEventListener("submit", function (e) {
 let editPreferenceRow = null;
 
 // to be fetched from db
+/*
 const preferencesData = [
   { course: 'CS101', faculty: 'Diazh', preference: 'green' },
   { course: 'CS102', faculty: 'Anson', preference: 'yellow' },
 ];
+*/
 
+
+// Open sidebar to edit preference
+function editPreference(index) {
+  editPreferenceRow = index;
+  const preference = preferencesData[index];
+
+  document.getElementById('editCourse').value = preference.course;
+  document.getElementById('editFaculty').value = preference.faculty;
+  document.getElementById('editPreference').value = preference.preference;
+
+  openPreferenceSidebar();
+}
+
+
+let preferencesData = [];
+
+async function loadPreferences() {
+  // TODO: Load from database via API call
+  const preferencesData = await fetchAllPreferencesFormatted();
+
+  const tableBody = document.getElementById('preferencesTableBody');
+  tableBody.innerHTML = '';  // Clear any existing rows
+
+  preferencesData.forEach((pref, index) => {
+    const row = document.createElement('tr');
+    const isEdited = editedRows.some(r => r.rowIndex === index);
+
+    row.innerHTML = `
+      <td>${pref.course}</td>
+      <td>${pref.faculty}</td>
+      <td><span class="preference ${pref.preference}">${pref.preference}</span></td>
+      <td>
+        <button class="editButton" data-index="${index}">Edit</button>
+        <button class="removeButton" data-index="${index}" style="display: none;">Remove</button>
+      </td>
+    `;
+    if (isEdited) {
+      row.style.backgroundColor = '#f0f8ff'; 
+    }
+    tableBody.appendChild(row);
+  });
+
+  // After loading preferences, bind event listeners
+  bindTableListeners();
+}
+
+/*
 async function loadPreferences() {
   // TODO:
   // Load from database via api call
@@ -243,21 +291,10 @@ async function loadPreferences() {
     tableBody.appendChild(row);
   });
 }
+  */
   
 // Load preferences on page load
 document.addEventListener('DOMContentLoaded', loadPreferences);
-
-// Open sidebar to edit preference
-function editPreference(index) {
-  editPreferenceRow = index;
-  const preference = preferencesData[index];
-
-  document.getElementById('editCourse').value = preference.course;
-  document.getElementById('editFaculty').value = preference.faculty;
-  document.getElementById('editPreference').value = preference.preference;
-
-  openPreferenceSidebar();
-}
 
 // Open sidebar
 function openPreferenceSidebar() {

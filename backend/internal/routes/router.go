@@ -80,7 +80,7 @@ func setApiHandlers(r *gin.Engine) {
 		users := api.Group("/users")
 		{
 			users.GET("/", controllers.GetAllUsers)
-			users.GET("/fetch_formatted", controllers.GetAllUsersFormatted)
+			//users.GET("/fetch_formatted", controllers.GetAllUsersFormatted)
 			users.GET("/:id", controllers.GetUserById)
 			users.POST("/", controllers.UpsertUser)
 			users.DELETE("/:id", controllers.DeleteUser)
