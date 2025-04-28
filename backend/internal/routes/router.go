@@ -62,6 +62,12 @@ func setApiHandlers(r *gin.Engine) {
 	{
 		// Matching engine routes
 		api.POST("/trigger-matching", controllers.TriggerMatchingEngine)
+
+		batch := api.Group("/batch")
+		{
+			batch.POST("/", controllers.HandleBatchPush)
+		}
+
 		// Course routes
 		courses := api.Group("/course")
 		{

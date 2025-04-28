@@ -2,6 +2,7 @@ let editRow = null;
 let editMode = ''; 
 let facultyChanges = [];
 let courseChanges = [];
+let preferenceChanges = [];
 
 // Add Faculty
 function addFaculty() {
@@ -26,7 +27,7 @@ function addFaculty() {
     `;
     table.appendChild(row);
     document.getElementById('facultyName').value = '';
-    facultyChanges.push({ type: "add", name });
+    facultyChanges.push({ type: "add", name: name });
     updateFacultyPushState();
   }
 }
@@ -36,7 +37,7 @@ function removeFaculty(btn) {
   const row = btn.closest('tr');
   row.remove();
   const name = row.children[0].textContent;
-  facultyChanges.push({ type: "remove", name });
+  facultyChanges.push({ type: "remove", name: name });
   updateFacultyPushState();
 }
 
@@ -72,7 +73,7 @@ function addCourse() {
     table.appendChild(row);
     document.getElementById('courseName').value = '';
     document.getElementById('sectionCount').value = '1';
-    courseChanges.push({ type: "add", name, section });
+    courseChanges.push({ type: "add", name: name });
     updateCoursePushState();
   }
 }
@@ -81,7 +82,7 @@ function removeCourse(btn) {
   const row = btn.closest('tr');
   row.remove();
   const name = row.children[0].textContent;
-  courseChanges.push({ type: "remove", name });
+  courseChanges.push({ type: "remove", name: name });
   updateCoursePushState();
 }
 
@@ -158,6 +159,12 @@ function updateCoursePushState() {
   btn.disabled = courseChanges.length === 0;
   btn.classList.toggle("active", courseChanges.length > 0);
 }
+
+function updatePreferencePushState() {
+  const btn = document.getElementById("pushChangesBtn");
+  btn.disabled = preferenceChanges.length === 0;
+  btn.classList.toggle("active", preferenceChanges.length > 0);
+}
   
 document.addEventListener('click', function(event) {
     const sidebar = document.getElementById('editSidebar');
@@ -183,7 +190,7 @@ document.getElementById("editForm").addEventListener("submit", function (e) {
 
   if (editMode === 'faculty') {
     if (newName !== oldName) {
-      facultyChanges.push({ type: "edit", oldName, newName });
+      facultyChanges.push({ type: "edit", name: oldName, newName: newName });
       updateFacultyPushState();
     }
   } else if (editMode === 'course') {
@@ -193,7 +200,7 @@ document.getElementById("editForm").addEventListener("submit", function (e) {
     sectionCell.textContent = newSection;
 
 
-    courseChanges.push({ type: "edit", oldName, newName, oldSection, newSection });
+    courseChanges.push({ type: "edit", name: oldName, newName: newName });
     updateCoursePushState();
   }
 
@@ -209,6 +216,9 @@ const preferencesData = [
 ];
 
 function loadPreferences() {
+  // TODO:
+  // Load from database via api call
+  
   const tableBody = document.getElementById('preferencesTableBody');
   tableBody.innerHTML = '';  // Clear any existing rows
   preferencesData.forEach((pref, index) => {
@@ -271,7 +281,16 @@ document.getElementById('editPreferenceForm').addEventListener('submit', functio
   if(updatedPreference !== oldpref) {
     trackEdit(editPreferenceRow, 'Preference', oldpref, updatedPreference);
     console.log("Tracking edit:", { rowIndex: editPreferenceRow, column: 'Preference', oldValue: oldpref, newValue: updatedPreference });
+    
+    // update push button
+    updatePreferencePushState();
 
+    // add preference update to changelog
+    currentpref = preferencesData[editPreferenceRow];
+    course = currentpref.course;
+    faculty = currentpref.faculty;
+    preference = currentpref.preference;
+    facultyChanges.push({ type: "edit", courseName: course, facultyName: faculty, newColor: preference});
   }
   loadPreferences();
   closePreferenceSidebar();
@@ -287,7 +306,7 @@ document.getElementById("editFacultyForm").addEventListener("submit", function (
   editRow.children[0].textContent = newName;
 
   if (newName !== oldName) {
-    facultyChanges.push({ type: "edit", oldName, newName });
+    facultyChanges.push({ type: "edit", name: oldName, newName: newName });
     updateFacultyPushState();
   }
   
@@ -420,6 +439,58 @@ modal.classList.remove("hidden");
   // modal.classList.add("active");
 }
 
+// pass the three changelog arrays to the database
+// resets the changelogs if successful
+async function pushBatchChanges() {
+  const changes = {
+    facultyChanges: facultyChanges,
+    courseChanges: courseChanges,
+    preferenceChanges: preferenceChanges
+  };
+
+  // Call the batch handler API
+  const response = await fetch('/api/batch', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(changes)
+  });
+
+  const result = await response.json();
+  
+  if (response.ok) {
+    // If the batch update is successful, show success and reset state
+    alert("Changes confirmed!");
+
+    // Hide the confirmation modal
+    const modal = document.getElementById("confirmationModal");
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+
+    // Reset the changelog and button states
+    editedRows = [];
+    facultyChanges = [];
+    courseChanges = [];
+    preferenceChanges = [];
+
+    updatePushButtonState(); // Reset the push button state
+    updateFacultyPushState(); // Reset faculty push button state
+    updateCoursePushState();  // Reset course push button state
+    updatePreferencePushState(); // Reset preference push button
+  } else {
+    // Handle failure if there was an error
+    alert("Error: " + result.error);
+  }
+}
+
+// Attach the function to the confirm button in the modal
+document.getElementById("confirmBtn").addEventListener("click", function () {
+  confirmBatchChanges();  // Call the function to process the changes
+});
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   setupCellListeners();
 
@@ -442,29 +513,9 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.add("active");
   });
   
-  // document.getElementById("confirmBtn").addEventListener("click", function () {
-  //   alert("Changes confirmed!");
-  //   document.getElementById("confirmationModal").classList.add("hidden");
-  //   const pushBtn = document.getElementById("pushChangesBtn");
-  //   pushBtn.classList.remove("active");
-  //   pushBtn.disabled = true;
+  // Push changes
   document.getElementById("confirmBtn").addEventListener("click", function () {
-    
-    
-    alert("Changes confirmed!");
-    const modal = document.getElementById("confirmationModal");
-    modal.classList.remove("active");
-    modal.classList.add("hidden");
-    
-    editedRows = [];
-    facultyChanges = [];
-    courseChanges = [];
-    updatePushButtonState();
-    updateFacultyPushState();
-    updateCoursePushState();
-
-    document.getElementById("confirmationModal").classList.remove("active");
-    document.getElementById("confirmationModal").classList.add("hidden");
+    pushBatchChanges();
   });
   
   document.getElementById("cancelBtn").addEventListener("click", function () {

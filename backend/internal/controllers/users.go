@@ -8,6 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//********************************************
+// update by name
+
 func GetAllUsers(c *gin.Context) {
 	users, err := models.FetchAllUsers()
 	if err != nil {

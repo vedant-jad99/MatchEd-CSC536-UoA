@@ -1,5 +1,9 @@
 package models
 
+import (
+	"errors"
+)
+
 // TODO change time reprentation of days and times the course section is scheduled for
 type Course struct {
 	ID     uint   `json:"id" gorm:"primaryKey"`
@@ -24,6 +28,76 @@ type CourseSemester struct {
 
 func (CourseSemester) TableName() string {
 	return `"match_schema"."course_sem"`
+}
+
+// Add CourseSemester by Course name
+func AddCourseSemesterByName(courseName, semester, mandatoryLevel, timeslot string) (*CourseSemester, error) {
+	// Check if the course exists
+	var course Course
+	if err := db.Where("name = ?", courseName).First(&course).Error; err != nil {
+		// Course doesn't exist, create it
+		course = Course{Name: courseName}
+		if err := db.Create(&course).Error; err != nil {
+			return nil, err
+		}
+	}
+
+	// Create the CourseSemester
+	courseSemester := CourseSemester{
+		CourseID:       course.ID,
+		Semester:       semester,
+		MandatoryLevel: mandatoryLevel,
+		Timeslot:       timeslot,
+	}
+
+	if err := db.Create(&courseSemester).Error; err != nil {
+		return nil, err
+	}
+	return &courseSemester, nil
+}
+
+// Edit CourseSemester by Course name (update Course)
+func EditCourseSemesterByName(oldCourseName, newCourseName, semester, mandatoryLevel, timeslot string) (*CourseSemester, error) {
+	// Find CourseSemester by old Course name
+	var courseSemester CourseSemester
+	if err := db.Where("course_id IN (SELECT id FROM match_schema.courses WHERE name = ?)", oldCourseName).First(&courseSemester).Error; err != nil {
+		return nil, errors.New("course semester not found")
+	}
+
+	// Find the new Course by name
+	var newCourse Course
+	if err := db.Where("name = ?", newCourseName).First(&newCourse).Error; err != nil {
+		// If the course does not exist, create it
+		newCourse = Course{Name: newCourseName}
+		if err := db.Create(&newCourse).Error; err != nil {
+			return nil, err
+		}
+	}
+
+	// Update CourseSemester with the new Course ID
+	courseSemester.CourseID = newCourse.ID
+	courseSemester.Semester = semester
+	courseSemester.MandatoryLevel = mandatoryLevel
+	courseSemester.Timeslot = timeslot
+	if err := db.Save(&courseSemester).Error; err != nil {
+		return nil, err
+	}
+	return &courseSemester, nil
+}
+
+// Remove CourseSemester by Course name
+func RemoveCourseSemesterByName(courseName string) error {
+	// Find the CourseSemester by course name
+	var courseSemester CourseSemester
+	if err := db.Where("course_id IN (SELECT id FROM match_schema.courses WHERE name = ?)", courseName).First(&courseSemester).Error; err != nil {
+		return errors.New("course semester not found")
+	}
+
+	// Remove the CourseSemester
+	if err := db.Delete(&courseSemester).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 var FetchAllCourseSemesters = func() ([]CourseSemester, error) {
