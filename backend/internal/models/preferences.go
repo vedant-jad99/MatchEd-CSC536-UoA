@@ -31,26 +31,39 @@ func EditPreferenceColorByCourseAndUser(courseName, userName, newPreferenceColor
 		return nil, errors.New("user not found")
 	}
 
-	// todo, more than one CourseSemester per course?
-	// Find the CourseSemester by course name
-	var courseSemester CourseSemester
-	if err := db.Where("course_id IN (SELECT id FROM match_schema.courses WHERE name = ?)", courseName).First(&courseSemester).Error; err != nil {
-		return nil, errors.New("course semester not found")
+	// Fetch all preferences for the user
+	var preferences []Preferences
+	if err := db.Where("user_id = ?", user.ID).Find(&preferences).Error; err != nil {
+		return nil, errors.New("preferences not found")
 	}
 
-	// Find the preference by course ID and user ID
-	var preference Preferences
-	if err := db.Where("course_sem_id = ? AND user_id = ?", courseSemester.ID, user.ID).First(&preference).Error; err != nil {
-		return nil, errors.New("preference not found")
+	// Iterate over all preferences to find the one matching the course
+	var matchingPreference *Preferences
+	for _, pref := range preferences {
+		// Get the CourseSemester for this preference
+		var courseSemester CourseSemester
+		if err := db.Where("id = ?", pref.CourseSemesterID).First(&courseSemester).Error; err != nil {
+			continue
+		}
+
+		// If the course matches, update the preference
+		if courseSemester.CourseID == course.ID {
+			matchingPreference = &pref
+			break
+		}
+	}
+
+	if matchingPreference == nil {
+		return nil, errors.New("preference for the course not found")
 	}
 
 	// Update the preference color
-	preference.PreferenceLevel = newPreferenceColor
-	if err := db.Save(&preference).Error; err != nil {
+	matchingPreference.PreferenceLevel = newPreferenceColor
+	if err := db.Save(matchingPreference).Error; err != nil {
 		return nil, err
 	}
 
-	return &preference, nil
+	return matchingPreference, nil
 }
 
 var FetchAllPreferences = func() ([]Preferences, error) {

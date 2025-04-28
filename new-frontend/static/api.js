@@ -34,6 +34,11 @@ export const fetchAllUsers = async () => {
   return await response.json();
 };
 
+export const fetchAllUsersFormatted = async () => {
+  const response = await fetch('/api/users/fetch_formatted', { method: 'GET' });
+  return await response.json();
+};
+
 export const fetchUserById = async (id) => {
   const response = await fetch(`/api/users/${id}`, { method: 'GET' });
   return await response.json();
