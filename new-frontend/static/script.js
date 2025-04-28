@@ -6,17 +6,29 @@ let facultyChanges = [];
 let courseChanges = [];
 let preferenceChanges = [];
 
+function updateButtonIndecies(tableBody){
+  const rows = tableBody.querySelectorAll('tr');
+  rows.forEach((row, i) => {
+    const button = row.querySelector('button');
+    if (button) {
+      button.dataset.index = i; // Reassign data-index based on the current row's position
+    }
+  });
+}
+
 // Edit Faculty Entry
-function editFaculty(btn) {
-  editRow = btn.closest('tr');
+function editFaculty(index) {
+  const rows = document.querySelectorAll('#facultyTableBody tr');
+  editRow = rows[index];  // Get the row by index
   editMode = 'faculty';
   document.getElementById("editfacultyName").value = editRow.children[0].textContent;
   openFacultySidebar();
 }
 
 // remove faculty by name
-function removeFaculty(btn) {
-  const row = btn.closest('tr');
+function removeFaculty(index) {
+  const rows = document.querySelectorAll('#courseTableBody tr');
+  const row = rows[index];  // Get the row by index
   row.remove();
   const name = row.children[0].textContent;
   facultyChanges.push({ type: "remove", name: name });
@@ -27,33 +39,27 @@ function removeFaculty(btn) {
 function addFaculty() {
   const name = document.getElementById('facultyName').value.trim();
   if (!name) return;
-  if (name) {
-    const table = document.getElementById('facultyTableBody');
-    
-    const existing = [...table.rows].some(row => row.cells[0].textContent.trim().toLowerCase() === name.toLowerCase());
-    if (existing) {
-      alert("Faculty already exists!"); 
-      return;
-    }
-    
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${name}</td>
-      <td>
-        <button onclick="editFaculty(this)">Edit</button>
-        <button onclick="removeFaculty(this)">Remove</button>
-      </td>
-    `;
-    table.appendChild(row);
-    document.getElementById('facultyName').value = '';
-    facultyChanges.push({ type: "add", name: name });
-    updateFacultyPushState();
-  }
+
+  const tableBody = document.getElementById('facultyTableBody');
+  const row = document.createElement('tr');
+  const newRowIndex = tableBody.rows.length; // Get the index of the new row
+
+  row.innerHTML = `
+    <td>${name}</td>
+    <td>
+      <button class="editButton" data-index="${newRowIndex}">Edit</button>
+      <button class="removeButton" data-index="${newRowIndex}">Remove</button>
+    </td>
+  `;
+  tableBody.appendChild(row);
+
+  document.getElementById('facultyName').value = '';  // Clear input field
 }
 
 // Edit Course Entry
-function editCourse(btn) {
-  editRow = btn.closest('tr');
+function editCourse(index) {
+  const rows = document.querySelectorAll('#courseTableBody tr');
+  editRow = rows[index];  // Get the row by index
   editMode = 'course';
 
   // document.getElementById("editType").value = "Course";
@@ -66,14 +72,41 @@ function editCourse(btn) {
   openSidebar();
 }
 
-function removeCourse(btn) {
-  const row = btn.closest('tr');
+function removeCourse(index) {
+  const rows = document.querySelectorAll('#courseTableBody tr');
+  const row = rows[index];  // Get the row by index
   row.remove();
   const name = row.children[0].textContent;
   courseChanges.push({ type: "remove", name: name });
   updateCoursePushState();
 }
 
+// add course
+function addCourse() {
+  console.log("add course button clicked");
+  const name = document.getElementById('courseName').value.trim();
+  console.log(name)
+  const section = document.getElementById('sectionCount').value.trim();
+  if (!name) return;
+
+  const tableBody = document.getElementById('courseTableBody');
+  const row = document.createElement('tr');
+  const newRowIndex = tableBody.rows.length; // Get the index of the new row
+
+  row.innerHTML = `
+    <td>${name}</td>
+    <td>${section}</td>
+    <td>
+      <button class="editButton" data-index="${newRowIndex}">Edit</button>
+      <button class="removeButton" data-index="${newRowIndex}">Remove</button>
+    </td>
+  `;
+  tableBody.appendChild(row);
+
+  document.getElementById('courseName').value = '';  // Clear input field
+  document.getElementById('sectionCount').value = '1';  // Reset section count
+}
+/*
 // Add Course
 function addCourse() {
   const name = document.getElementById('courseName').value.trim();
@@ -109,7 +142,7 @@ function addCourse() {
     courseChanges.push({ type: "add", name: name });
     updateCoursePushState();
   }
-}
+}*/
 
 // Tab navigation functionality
 document.querySelectorAll('.tab-button').forEach(button => {
@@ -259,9 +292,6 @@ async function loadPreferences() {
     }
     tableBody.appendChild(row);
   });
-
-  // After loading preferences, bind event listeners
-  bindTableListeners();
 }
 
 /*
@@ -293,8 +323,101 @@ async function loadPreferences() {
 }
   */
   
-// Load preferences on page load
-document.addEventListener('DOMContentLoaded', loadPreferences);
+
+// Bind event listeners for the faculty table
+function bindFacultyTableListeners() {
+  const facultyTableBody = document.getElementById('facultyTableBody');
+
+  // Event delegation for edit and remove buttons in the faculty table
+  facultyTableBody.addEventListener('click', function(event) {
+    const button = event.target.closest('button');
+    if (!button) return;
+
+    const index = button.dataset.index;
+
+    if (button.classList.contains('editButton')) {
+      editFaculty(index);  // Edit faculty
+    } else if (button.classList.contains('removeButton')) {
+      removeFaculty(index);  // Remove faculty
+      updateButtonIndecies(tableBody);
+    }
+  });
+}
+
+// Bind event listeners for the course table
+function bindCourseTableListeners() {
+  const courseTableBody = document.getElementById('courseTableBody');
+
+  // Event delegation for edit and remove buttons in the course table
+  courseTableBody.addEventListener('click', function(event) {
+    console.log(event.target)
+    const button = event.target.closest('button');
+    if (!button) return;
+
+    const index = button.dataset.index;
+
+    if (button.classList.contains('editButton')) {
+      editCourse(index);  // Edit course
+    } else if (button.classList.contains('removeButton')) {
+      removeCourse(index);  // Remove course
+      updateButtonIndecies(tableBody);
+    }
+  });
+}
+
+// Bind event listeners for the preferences table
+function bindPreferencesTableListeners() {
+  const preferencesTableBody = document.getElementById('preferencesTableBody');
+
+  // Event delegation for edit and remove buttons in the preferences table
+  preferencesTableBody.addEventListener('click', function(event) {
+    const button = event.target.closest('button');
+    if (!button) return;
+
+    const index = button.dataset.index;
+
+    if (button.classList.contains('editButton')) {
+      editPreference(index);  // Edit preference
+    } else if (button.classList.contains('removeButton')) {
+      removePreference(index);  // Remove preference
+      updateButtonIndecies(tableBody);
+    }
+  });
+}
+
+// below used to be inline
+// Bind the addFaculty and addCourse buttons from index.html
+document.addEventListener('DOMContentLoaded', function() {
+  loadPreferences();
+  // Bind 'Add Faculty' button
+  const addFacultyButton = document.querySelector('#faculty button');
+  console.log(addFacultyButton);
+  addFacultyButton.addEventListener('click', addFaculty);
+
+  // Bind 'Add Course' button
+  const addCourseButton = document.querySelector('#courses button');
+  console.log(addCourseButton)
+  addCourseButton.addEventListener('click', addCourse);
+
+  // Bind preference sidebar cancel button
+  const closePreferenceButton = document.getElementById('closePreferenceButton');
+  closePreferenceButton.addEventListener('click', closePreferenceSidebar)
+
+ // Bind faculty sidebar cancel button
+ const closeFacultyButton = document.getElementById('closeFacultyButton');
+ closeFacultyButton.addEventListener('click', closeFacultySidebar)
+
+ // bind general sidebar function 
+ const closeSidebarButton = document.getElementById('closeSidebarButton');
+ closeSidebarButton.addEventListener('click', closeSidebar)
+
+
+  // Bind tables after loading content
+  bindFacultyTableListeners();
+  bindCourseTableListeners();
+  bindPreferencesTableListeners();
+});
+
 
 // Open sidebar
 function openPreferenceSidebar() {

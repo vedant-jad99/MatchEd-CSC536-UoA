@@ -21,7 +21,8 @@
     <div class="tab-content active" id="faculty">
         <div class="form">
           <input type="text" id="facultyName" placeholder="Enter Faculty Name">
-          <button onclick="addFaculty()">Add</button>
+          <button>Add</button>
+          <!--<button onclick="addFaculty()">Add</button>-->
         </div>
         <table class="modern-table">
           <thead>
@@ -47,7 +48,8 @@
               <option value="1">1 Section</option>
               <option value="2">2 Sections</option>
           </select>
-          <button onclick="addCourse()">Add</button>
+          <button>Add</button>
+          <!--<button onclick="addCourse()">Add</button>-->
         </div>
         <table class="modern-table">
           <thead>
@@ -124,7 +126,7 @@
         
         <div class="sidebar-buttons">
             <button type="submit">Save Changes</button>
-            <button type="button" onclick="closePreferenceSidebar()">Cancel</button>
+            <button id="closePreferenceButton" type="button" >Cancel</button>
         </div>
         </form>
     </div>  
@@ -137,7 +139,7 @@
     
         <div class="sidebar-buttons">
           <button type="submit">Save Changes</button>
-          <button type="button" onclick="closeFacultySidebar()">Cancel</button>
+          <button id="closeFacultyButton" type="button">Cancel</button>
         </div>
       </form>
     </div>
@@ -161,7 +163,7 @@
     
         <div class="sidebar-buttons">
             <button type="submit">Save Changes</button>
-            <button type="button" onclick="closeSidebar()">Cancel</button>
+            <button id="closeSidebarButton" type="button">Cancel</button>
         </div>
         </form>
     </div>
