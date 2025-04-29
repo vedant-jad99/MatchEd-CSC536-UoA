@@ -117,26 +117,19 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 
 	var matching Matching
 	for key, value := range pI.fc_map {
-		matchingElement := MatchingElement{
-			MatchingID:          -1,
-			MatchingIterationID: matchingIter,
-			UserID:              key,
-			CourseSemID:         value[0],
-			MatchingScore:       1.0,
-		}
+		for i := 0; i < 4; i++ {
+			if value[i] != -1 {
+				matchingElement := MatchingElement{
+					MatchingIterationID: matchingIter,
+					UserID:              key,
+					CourseSemID:         value[i],
+					MatchingScore:       1.0,
+				}
 
-		matching.Matchings = append(matching.Matchings, matchingElement)
-
-		if value[1] != -1 {
-			matchingElement2 := MatchingElement{
-				MatchingID:          -1,
-				MatchingIterationID: matchingIter,
-				UserID:              key,
-				CourseSemID:         value[1],
-				MatchingScore:       1.0,
+				matching.Matchings = append(matching.Matchings, matchingElement)
+			} else {
+				break
 			}
-
-			matching.Matchings = append(matching.Matchings, matchingElement2)
 		}
 	}
 

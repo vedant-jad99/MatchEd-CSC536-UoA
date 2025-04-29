@@ -94,8 +94,8 @@ func TestMatchingEngine(t *testing.T) {
 
 	expected := Matching{
 		Matchings: []MatchingElement{
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
 	}
 	// Simulate the matching engine logic
@@ -161,8 +161,8 @@ func TestMatchingEngineBranchCourseNotPresent(t *testing.T) {
 
 	expected := Matching{
 		Matchings: []MatchingElement{
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
 	}
 	// Simulate the matching engine logic
@@ -219,9 +219,9 @@ func TestRunMatching(t *testing.T) {
 
 	expected := Matching{
 		Matchings: []MatchingElement{
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
 	}
 	// Simulate the runMatching logic
@@ -277,8 +277,8 @@ func TestRunMatchingBranchCourseNotPresent(t *testing.T) {
 
 	expected := Matching{
 		Matchings: []MatchingElement{
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
 	}
 	// Simulate the runMatching logic
@@ -334,8 +334,8 @@ func TestCoreStartMatching(t *testing.T) {
 
 	expected := Matching{
 		Matchings: []MatchingElement{
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
 	}
 

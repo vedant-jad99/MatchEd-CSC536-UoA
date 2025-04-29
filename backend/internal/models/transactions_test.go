@@ -178,3 +178,20 @@ func TestFetchLatestMatchings(t *testing.T) {
 	assert.Equal(t, iter.ID, latest[0].MatchingIterationID)
 	clearDB(t)
 }
+
+func TestStoreMatchings(t *testing.T) {
+	setupTestDB(t)
+
+	matchings := []Matching{
+		{MatchingIterationID: 1, UserID: 1, CourseSemID: 1, Score: 0.9},
+		{MatchingIterationID: 1, UserID: 2, CourseSemID: 2, Score: 0.8},
+	}
+
+	err := StoreMatchings(matchings)
+	assert.Nil(t, err)
+
+	fetched, err := FetchMatchingsByIterationID(1)
+	assert.Nil(t, err)
+	assert.Len(t, fetched, 2)
+	clearDB(t)
+}
