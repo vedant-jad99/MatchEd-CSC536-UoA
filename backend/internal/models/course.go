@@ -135,6 +135,22 @@ var UpdateCourseSemester = func(id uint, courseID uint, semester string, mandato
 	return db.Model(&CourseSemester{}).Where("id = ?", id).Updates(updates).Error
 }
 
+var BulkUpsertCourseSemester = func(courseSemesters []CourseSemester) ([]CourseSemester, error) {
+	err := db.Save(&courseSemesters).Error
+	return courseSemesters, err
+}
+
+var BulkDeleteCourseSemesters = func(ids []uint) error {
+	var courseSemesters []CourseSemester
+	err := db.Where("id IN ?", ids).Delete(&courseSemesters).Error
+	return err
+}
+var DeleteCourseSemestersByCourseID = func(courseID uint) error {
+	var courseSemesters []CourseSemester
+	err := db.Where("course_id = ?", courseID).Delete(&courseSemesters).Error
+	return err
+}
+
 var FetchAllCourses = func() ([]Course, error) {
 	var courses []Course
 	err := db.Find(&courses).Error

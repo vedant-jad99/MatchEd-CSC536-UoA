@@ -91,8 +91,10 @@ func setApiHandlers(r *gin.Engine) {
 			courseSemesters.GET("/", controllers.HandleFetchAllCourseSemesters)
 			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester)
 			courseSemesters.POST("/add", controllers.HandleAddCourseSemester)
-			courseSemesters.DELETE("/remove", controllers.HandleRemoveCourseSemester)
+			courseSemesters.DELETE("/remove/:id", controllers.HandleRemoveCourseSemester)
 			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester)
+			courseSemesters.POST("/bulk/upsert", controllers.HandleBulkUpsertCourseSemesters)
+			courseSemesters.POST("/bulk/delete", controllers.HandleBulkDeleteCourseSemesters)
 		}
 
 		preferences := api.Group("/preferences")
@@ -100,6 +102,8 @@ func setApiHandlers(r *gin.Engine) {
 			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences)
 			preferences.GET("/fetch_formatted", controllers.HandleFetchAllPreferencesFormatted)
 			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences)
+			preferences.POST("/bulk/upsert", controllers.HandleBulkUpsertPreferences)
+			preferences.POST("/bulk/delete", controllers.HandleBulkDeletePreferences)
 		}
 
 		matchings := api.Group("/matchings")
