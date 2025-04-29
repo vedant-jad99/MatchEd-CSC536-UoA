@@ -106,43 +106,7 @@ function addCourse() {
   document.getElementById('courseName').value = '';  // Clear input field
   document.getElementById('sectionCount').value = '1';  // Reset section count
 }
-/*
-// Add Course
-function addCourse() {
-  const name = document.getElementById('courseName').value.trim();
-  const section = document.getElementById('sectionCount').value;
-  if (!name) return;
 
-  if (name) {
-    const table = document.getElementById('courseTableBody');
-    
-    const existing = [...table.rows].some(row => {
-    const existingName = row.cells[0].textContent.trim().toLowerCase();
-    const existingSection = row.cells[1].textContent.trim();
-    return existingName === name.toLowerCase() && existingSection === section;
-    });
-
-    if (existing) {
-      alert("Course already exists!");
-      return;
-    }
-    
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${name}</td>
-      <td>${section}</td>
-      <td>
-        <button onclick="editCourse(this)">Edit</button>
-        <button onclick="removeCourse(this)">Remove</button>
-      </td>
-    `;
-    table.appendChild(row);
-    document.getElementById('courseName').value = '';
-    document.getElementById('sectionCount').value = '1';
-    courseChanges.push({ type: "add", name: name });
-    updateCoursePushState();
-  }
-}*/
 
 // Tab navigation functionality
 document.querySelectorAll('.tab-button').forEach(button => {
@@ -299,35 +263,6 @@ async function loadPreferences() {
     tableBody.appendChild(row);
   });
 }
-
-/*
-async function loadPreferences() {
-  // TODO:
-  // Load from database via api call
-  const preferencesData = await fetchAllPreferencesFormatted();
-
-  const tableBody = document.getElementById('preferencesTableBody');
-  tableBody.innerHTML = '';  // Clear any existing rows
-  preferencesData.forEach((pref, index) => {
-    const row = document.createElement('tr');
-    const isEdited = editedRows.some(r => r.rowIndex === index);
-
-    row.innerHTML = `
-      <td>${pref.course}</td>
-      <td>${pref.faculty}</td>
-      <td><span class="preference ${pref.preference}">${pref.preference}</span></td>
-      <td>
-        <button onclick="editPreference(${index})">Edit</button>
-        <button onclick="removePreference(${index})" style="display: none;">Remove</button>
-      </td>
-    `;
-    if (isEdited) {
-      row.style.backgroundColor = '#f0f8ff'; 
-    }
-    tableBody.appendChild(row);
-  });
-}
-  */
   
 
 // Bind event listeners for the faculty table
