@@ -79,6 +79,13 @@ CREATE TABLE IF NOT EXISTS match_schema.matchings (
     score DECIMAL NOT NULL
 );
 
+-- Course History Table
+CREATE TABLE IF NOT EXISTS match_schema.course_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    idx INT NOT NULL DEFAULT 0 -- Index of the course in the user's course list, need to be maintained
+);
+
 GRANT USAGE ON SCHEMA match_schema TO match_rw;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA match_schema TO match_rw;
 GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA match_schema TO match_rw;
@@ -156,6 +163,13 @@ CREATE TABLE IF NOT EXISTS match_schema.matchings (
     score DECIMAL NOT NULL
 );
 
+-- Course History Table
+CREATE TABLE IF NOT EXISTS match_schema.course_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    idx INT NOT NULL DEFAULT 0 -- Index of the course in the user's course list, need to be maintained
+);
+
 GRANT USAGE ON SCHEMA match_schema TO match_rw;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA match_schema TO match_rw;
 GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA match_schema TO match_rw;
@@ -164,3 +178,7 @@ GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA match_schema TO match_rw;
 
 -- INSERT INTO match_schema.user (name, email) VALUES('Martin', 'martinmail@arizona.edu');
 -- SELECT * FROM match_schema.user;
+
+-- Query to insert a new course into the course_history table with the next available idx:
+-- insert into match_schema.course_history(user_id, idx) values 
+--   (1, (SELECT COALESCE(MAX(idx), 0) + 1 FROM match_schema.course_history WHERE user_id = course_history.user_id));
