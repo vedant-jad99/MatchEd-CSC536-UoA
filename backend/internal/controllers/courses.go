@@ -2,11 +2,83 @@ package controllers
 
 import (
 	"backend/internal/models"
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
+
+// fetches courseSemesters, then fetches the course data for those semesters
+// return includes course_sem_id
+func HandleFetchAllCoursesFormatted(c *gin.Context) {
+	results, err := models.FetchAllCourseSemesters()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create a slice to hold the formatted preferences
+	var prettyCourses []map[string]interface{}
+
+	for _, semester := range results {
+		// Fetch course by courseSemester courseID
+		course, err := models.FetchCourseById(semester.CourseID)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				continue // Skip missing course
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
+			continue
+		}
+
+		// calculate number of sections for a course name
+		//count, err := models.CountSemestersForCourse(semester.CourseID)
+
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				continue // Skip missing course
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
+			continue
+		}
+
+		// Format the data as expected by the frontend
+		formattedCourse := map[string]interface{}{
+			"id":       semester.ID,
+			"name":     course.Number,
+			"sections": semester.Section,
+		}
+		prettyCourses = append(prettyCourses, formattedCourse)
+	}
+
+	c.JSON(http.StatusOK, prettyCourses)
+}
+
+func HandleUpsertCourseAndSemester(c *gin.Context) {
+	fmt.Println("Hit upsert handler 0")
+	type request struct {
+		ID     uint   `json:"id"`
+		Name   string `json:"name"`
+		Number string `json:"number"`
+	}
+
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	courseSem, err := models.UpsertCourseAndCourseSemester(req.ID, req.Name, req.Number)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upsert course and semester"})
+		return
+	}
+
+	c.JSON(http.StatusOK, courseSem)
+}
 
 // fetches semesters with the context value {semester: }
 func HandleFetchAllCourseSemesters(c *gin.Context) {
@@ -74,7 +146,7 @@ func HandleUpdateCourseSemester(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := models.UpdateCourseSemester(cs.ID, cs.CourseID, cs.Semester, cs.MandatoryLevel, cs.Timeslot)
+	err := models.UpdateCourseSemester(cs.ID, cs.CourseID, cs.Semester, cs.MandatoryLevel, cs.Section, cs.Timeslot)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

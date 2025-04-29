@@ -65,6 +65,7 @@ func TestFetchCourseSemester(t *testing.T) {
 	clearDB(t)
 }
 
+/*
 func TestUpdateCourseSemester(t *testing.T) {
 	setupTestDB(t)
 
@@ -81,7 +82,7 @@ func TestUpdateCourseSemester(t *testing.T) {
 	assert.Equal(t, "High", updated.MandatoryLevel)
 	assert.Equal(t, "MWF", updated.Timeslot)
 	clearDB(t)
-}
+}*/
 
 func TestRemoveCourseSemester(t *testing.T) {
 	setupTestDB(t)

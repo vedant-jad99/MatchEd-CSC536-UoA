@@ -35,7 +35,7 @@
         </table>
         
         <!-- Faculty Push Button -->
-        <div id="faculty-change-controls" style="margin-top: 20px; text-align: center;">
+        <div id="faculty-change-controls" style="margin-top: 20px; text-align: center;display: none;">
           <button id="pushFacultyChangesBtn" class="disabled" disabled>Push Changes</button>
         </div>
     </div>
@@ -59,11 +59,11 @@
               <th>Actions</th>
               </tr>
           </thead>
-          <tbody id="courseTableBody"></tbody>
+          <tbody id="coursesTableBody"></tbody>
         </table>
 
         <!-- Courses Push Button -->
-        <div id="courses-change-controls" style="margin-top: 20px; text-align: center;">
+        <div id="courses-change-controls" style="margin-top: 20px; text-align: center;display: none;">
           <button id="pushCourseChangesBtn" class="disabled" disabled>Push Changes</button>
         </div>
       </div> 
@@ -77,6 +77,7 @@
             <th>Faculty</th>
             <th>Preference</th>
             <th>Actions</th>
+            <th>Weights</th>
             </tr>
         </thead>
         <tbody id="preferencesTableBody" >
@@ -84,7 +85,7 @@
         </table>
 
         <!-- Push preferences button -->
-        <div id="change-controls" style="margin-top: 20px; text-align: center;">
+        <div id="change-controls" style="margin-top: 20px; text-align: center;display: none;">
             <button id="pushChangesBtn" class="disabled" disabled>Push Changes</button>
         </div>
     </div>
@@ -102,6 +103,10 @@
       <tbody id="outputsTableBody" >
       </tbody>
       </table>
+      <!-- Match button -->
+      <div id="match-change-controls" style="margin-top: 20px; text-align: center;">
+        <button id="matchBtn">Match</button>
+      </div>
     </div>
 
     <!-- Confirmation Modal -->
@@ -133,11 +138,16 @@
             <option value="yellow">Yellow</option>
             <option value="red">Red</option>
         </select>
-        
+
+        <label for="editWeight">Weight:</label>
+        <input type="range" id="editWeight" min="1" max="5" value="3" />
+        <span id="editWeightValue">3</span>
+                
         <div class="sidebar-buttons">
             <button type="submit">Save Changes</button>
             <button id="closePreferenceButton" type="button" >Cancel</button>
         </div>
+
         </form>
     </div>  
     

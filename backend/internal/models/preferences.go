@@ -77,10 +77,48 @@ var FetchPreferences = func(userID uint) ([]Preferences, error) {
 	err := db.Where("user_id = ?", userID).Find(&prefs).Error
 	return prefs, err
 }
+
+var FetchPreferenceById = func(id uint) (Preferences, error) {
+	var pref Preferences
+	txn := db.First(&pref, id)
+	return pref, txn.Error
+}
+
 var FetchPreferencesBySemester = func(semester string) ([]Preferences, error) {
 	var prefs []Preferences
 	err := db.Where("semester = ?", semester).Find(&prefs).Error
 	return prefs, err
+}
+
+var UpsertPreference = func(pref Preferences) (Preferences, error) {
+	// If preference ID is not set (i.e., new preference), create a new preference
+	if pref.ID == 0 {
+		// Insert the new preference into the database
+		if err := db.Create(&pref).Error; err != nil {
+			return pref, err // Error during insert
+		}
+		return pref, nil // Successfully inserted new user
+	}
+
+	// Check if the preference exists by ID
+	var existingPref Preferences
+	if err := db.Where("id = ?", pref.ID).First(&existingPref).Error; err != nil {
+		if err.Error() == "record not found" {
+			// User does not exist, so insert new record
+			if err := db.Create(&pref).Error; err != nil {
+				return pref, err // Error during insert
+			}
+			return pref, nil // Successfully inserted new user
+		}
+		return pref, err // Error while checking if user exists
+	}
+
+	// If the user exists, update the record
+	if err := db.Model(&existingPref).Updates(pref).Error; err != nil {
+		return pref, err // Error during update
+	}
+
+	return existingPref, nil // Return the updated user
 }
 
 var BulkUpsertPreferences = func(prefs []Preferences) ([]Preferences, error) {
@@ -103,4 +141,3 @@ var DeletePreferencesByUserID = func(userID uint) error {
 	err := db.Where("user_id = ?", userID).Delete(&prefs).Error
 	return err
 }
-

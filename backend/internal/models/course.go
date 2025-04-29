@@ -2,6 +2,9 @@ package models
 
 import (
 	"errors"
+	"fmt"
+
+	"gorm.io/gorm"
 )
 
 // TODO change time reprentation of days and times the course section is scheduled for
@@ -23,11 +26,68 @@ type CourseSemester struct {
 	CourseID       uint   `json:"course_id" gorm:"column:course_id;not null"`
 	Semester       string `json:"semester" gorm:"type:varchar;not null"`
 	MandatoryLevel string `json:"mandatory_level" gorm:"column:mandatory_level;type:varchar;"`
+	Section        string `json:"section" gorm:"type:varchar;"`
 	Timeslot       string `json:"timeslot" gorm:"type:varchar;"`
 }
 
 func (CourseSemester) TableName() string {
 	return `"match_schema"."course_sem"`
+}
+
+func CountSemestersForCourse(courseID uint) (int64, error) {
+	var count int64
+	err := db.Model(&CourseSemester{}).Where("course_id = ?", courseID).Count(&count).Error
+	return count, err
+}
+
+// adds a new course semester with the course that matches the name
+// or updates the coursesemester with the course that matches the name
+// creates a new course if no course matches
+func UpsertCourseAndCourseSemester(courseSemesterID uint, courseName, courseNumber string) (*CourseSemester, error) {
+	var course Course
+	var err error
+
+	// Step 1: Find or create the Course based on Number
+	err = db.Where("number = ?", courseNumber).First(&course).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		course = Course{
+			Name:   courseName,
+			Number: courseNumber,
+			Campus: "TBD",
+		}
+		if err = db.Create(&course).Error; err != nil {
+			return nil, fmt.Errorf("failed to create course: %w", err)
+		}
+	} else if err != nil {
+		return nil, fmt.Errorf("failed to find course: %w", err)
+	}
+
+	// Step 2: Prepare the CourseSemester struct
+	courseSem := CourseSemester{
+		CourseID: course.ID,
+		Semester: "TBD",
+		Section:  "1",
+	}
+
+	// Step 3: Try to find existing CourseSemester by ID
+	var existingCourseSem CourseSemester
+	err = db.Where("id = ?", courseSemesterID).First(&existingCourseSem).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// Doesn't exist — insert new
+		if err = db.Create(&courseSem).Error; err != nil {
+			return nil, fmt.Errorf("failed to create course_semester: %w", err)
+		}
+		return &courseSem, nil
+	} else if err != nil {
+		return nil, fmt.Errorf("failed to find course_semester: %w", err)
+	}
+
+	// Exists — update fields
+	if err = db.Model(&existingCourseSem).Updates(courseSem).Error; err != nil {
+		return nil, fmt.Errorf("failed to update course_semester: %w", err)
+	}
+
+	return &existingCourseSem, nil
 }
 
 // Add CourseSemester by Course name
@@ -125,11 +185,12 @@ var RemoveCourseSemesters = func(courseID uint) error {
 	return db.Where("course_id = ?", courseID).Delete(&CourseSemester{}).Error
 }
 
-var UpdateCourseSemester = func(id uint, courseID uint, semester string, mandatoryLevel string, timeslot string) error {
+var UpdateCourseSemester = func(id uint, courseID uint, semester string, mandatoryLevel string, section string, timeslot string) error {
 	updates := map[string]interface{}{
 		"course_id":       courseID,
 		"semester":        semester,
 		"mandatory_level": mandatoryLevel,
+		"section":         section,
 		"timeslot":        timeslot,
 	}
 	return db.Model(&CourseSemester{}).Where("id = ?", id).Updates(updates).Error

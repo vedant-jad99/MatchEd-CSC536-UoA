@@ -2,9 +2,13 @@ package controllers
 
 import (
 	"backend/internal/models"
+	"errors"
 	"net/http"
+	"sort"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // gets all preferences for the given semester {semester:semester}
@@ -37,23 +41,39 @@ func HandleFetchAllPreferencesFormatted(c *gin.Context) {
 			continue
 		}
 
-		// Fetch course by ID (assuming `FetchCourseById` exists)
-		course, err := models.FetchCourseById(pref.CourseSemesterID)
+		// Fetch course semester by ID
+		courseSemester, err := models.FetchCourseSemester(pref.CourseSemesterID)
 		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
+			continue
+		}
+
+		// Fetch course by courseSemester courseID
+		course, err := models.FetchCourseById(courseSemester.CourseID)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				continue // Skip missing course
+			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
 			continue
 		}
 
 		// Format the preference data as expected by the frontend
 		formattedPreference := map[string]interface{}{
+			"id":         pref.ID,
 			"course":     course.Number,
 			"faculty":    user.Name,
 			"preference": pref.PreferenceLevel, // Assuming you want to return PreferenceLevel
+			"weight":     pref.PreferenceWeight,
 		}
 
 		// Append the formatted preference to the slice
 		formattedPreferences = append(formattedPreferences, formattedPreference)
 	}
+
+	sort.Slice(formattedPreferences, func(i, j int) bool {
+		return formattedPreferences[i]["course"].(string) < formattedPreferences[j]["course"].(string)
+	})
 
 	// Return the formatted preferences as a JSON response
 	c.JSON(http.StatusOK, formattedPreferences)
@@ -74,6 +94,36 @@ func HandleFetchPreferences(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, prefs)
+}
+
+// fetch preference by id
+func HandleFetchPreferenceById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	result, err := models.FetchPreferenceById(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+// Upsert preference
+func HandleUpsertPreference(c *gin.Context) {
+	var input models.Preferences
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	preference, err := models.UpsertPreference(input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, preference)
 }
 
 func HandleBulkUpsertPreferences(c *gin.Context) {

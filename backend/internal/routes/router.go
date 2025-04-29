@@ -72,6 +72,7 @@ func setApiHandlers(r *gin.Engine) {
 		courses := api.Group("/course")
 		{
 			courses.GET("/", controllers.HandleFetchAllCourses)
+			courses.GET("/formatted", controllers.HandleFetchAllCoursesFormatted)
 			courses.GET("/:id", controllers.HandleFetchCourseById)
 			courses.POST("/", controllers.HandleUpsertCourse)
 			courses.DELETE("/:id", controllers.HandleDeleteCourse)
@@ -89,19 +90,22 @@ func setApiHandlers(r *gin.Engine) {
 		courseSemesters := api.Group("/course_semester")
 		{
 			courseSemesters.GET("/", controllers.HandleFetchAllCourseSemesters)
-			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester)
+			courseSemesters.GET("/get/:id", controllers.HandleFetchCourseSemester)
 			courseSemesters.POST("/add", controllers.HandleAddCourseSemester)
 			courseSemesters.DELETE("/remove/:id", controllers.HandleRemoveCourseSemester)
 			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester)
+			courseSemesters.POST("/upsert", controllers.HandleUpsertCourseAndSemester)
 			courseSemesters.POST("/bulk/upsert", controllers.HandleBulkUpsertCourseSemesters)
 			courseSemesters.POST("/bulk/delete", controllers.HandleBulkDeleteCourseSemesters)
 		}
 
 		preferences := api.Group("/preferences")
 		{
+			preferences.GET("/:id", controllers.HandleFetchPreferenceById)
 			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences)
 			preferences.GET("/fetch_formatted", controllers.HandleFetchAllPreferencesFormatted)
 			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences)
+			preferences.POST("/upsert", controllers.HandleUpsertPreference)
 			preferences.POST("/bulk/upsert", controllers.HandleBulkUpsertPreferences)
 			preferences.POST("/bulk/delete", controllers.HandleBulkDeletePreferences)
 		}
@@ -111,6 +115,7 @@ func setApiHandlers(r *gin.Engine) {
 			matchings.GET("/latest", controllers.HandleFetchLatestMatchings)
 			matchings.GET("/latest_formatted", controllers.HandleFetchLatestMatchingsFormatted)
 			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID)
+			matchings.POST("/trigger", controllers.TriggerMatchingEngine)
 		}
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "pong"})

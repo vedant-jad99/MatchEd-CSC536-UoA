@@ -65,7 +65,7 @@ func TriggerMatchingEngine(c *gin.Context) {
 	// }
 
 	mIteration := models.MatchingIteration{
-		TriggeredBy: uint(rand.Uint32()),
+		TriggeredBy: uint(rand.Int31()),
 		Status:      matching.MatchingIterationStatusInitialized,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),

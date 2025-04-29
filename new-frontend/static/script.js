@@ -1,4 +1,10 @@
-import { fetchAllPreferences, fetchAllPreferencesFormatted, fetchLatestMatchings, fetchLatestMatchingsFormatted } from "./api.js";
+import { fetchAllCourses, fetchAllPreferences, upsertPreference,
+         deleteUser, fetchAllCoursesFormatted, fetchAllPreferencesFormatted, 
+         fetchAllUsers, fetchLatestMatchings, fetchLatestMatchingsFormatted, 
+         upsertUser, fetchUserById, fetchPreferenceById, triggerMatchingEngine,
+          upsertCourseAndSemester, removeCourseSemester, 
+          fetchCourseSemester,
+          updateCourseSemester} from "./api.js";
 
 let editRow = null;
 let editMode = ''; 
@@ -17,92 +23,112 @@ function updateButtonIndecies(tableBody){
   });
 }
 
-// Edit Faculty Entry
-function editFaculty(index) {
-  const rows = document.querySelectorAll('#facultyTableBody tr');
-  editRow = rows[index];  // Get the row by index
-  editMode = 'faculty';
-  document.getElementById("editfacultyName").value = editRow.children[0].textContent;
-  openFacultySidebar();
+function editFaculty(id) {
+  const row = document.querySelector(`#facultyTableBody tr[data-id="${id}"]`);
+  editRow = row;
+  if (row) {
+    editMode = 'faculty';
+    document.getElementById("editfacultyName").value = row.children[0].textContent;
+    openFacultySidebar();
+  } else {
+    console.log('Row with the specified ID not found');
+  }
 }
 
-// remove faculty by name
-function removeFaculty(index) {
-  const rows = document.querySelectorAll('#facultyTableBody tr');
-  const row = rows[index];  // Get the row by index
-  console.log(index)
-  row.remove();
-  const name = row.children[0].textContent;
-  facultyChanges.push({ type: "remove", name: name });
-  updateFacultyPushState();
+// Remove Faculty by ID
+function removeFaculty(id) {
+  const row = document.querySelector(`#facultyTableBody tr[data-id="${id}"]`); // Find the row with the matching data-id
+  
+  if (row) {
+    deleteUser(id);
+    const name = row.children[0].textContent;  // Get the name from the first column
+    row.remove();  // Remove the row from the table
+    facultyChanges.push({ type: "remove", name: name });
+    updateFacultyPushState();
+  } else {
+    console.log('Row with the specified ID not found');
+  }
 }
 
 // Add Faculty
-function addFaculty() {
+async function addFaculty() {
   const name = document.getElementById('facultyName').value.trim();
   if (!name) return;
 
-  const tableBody = document.getElementById('facultyTableBody');
-  const row = document.createElement('tr');
-  const newRowIndex = tableBody.rows.length; // Get the index of the new row
+  const userData = {
+    id: 0,
+    name: name,
+  };
+  console.log(userData)
 
-  row.innerHTML = `
-    <td>${name}</td>
-    <td>
-      <button class="editButton" data-index="${newRowIndex}">Edit</button>
-      <button class="removeButton" data-index="${newRowIndex}">Remove</button>
-    </td>
-  `;
-  tableBody.appendChild(row);
+  const user = await upsertUser(userData)
+  .then(response => console.log('User data upserted:', response))
+  .catch(error => console.error('Error upserting user data:', error));
 
+  // todo, use user.id to lookup facultyTable row
+  // instead of refreshing
+  loadFaculty();
   document.getElementById('facultyName').value = '';  // Clear input field
 }
 
 // Edit Course Entry
-function editCourse(index) {
-  const rows = document.querySelectorAll('#courseTableBody tr');
-  editRow = rows[index];  // Get the row by index
-  editMode = 'course';
-  const section = editRow.children[1].textContent.trim();
-  // document.getElementById("editType").value = "Course";
-  document.getElementById("editName").value = editRow.children[0].textContent;
+function editCourse(id) {
+  const row = document.querySelector(`#coursesTableBody tr[data-id="${id}"]`);
+  editRow = row;
 
+  if (row) {
+    editMode = 'course';
+    document.getElementById("editName").value = editRow.children[0].textContent;
+    const section = editRow.children[1].textContent.trim();
+    document.getElementById("editSection").value = section;
+    openSidebar();
+  } else {
+    console.log('Row with the specified ID not found');
+  }
   
-  document.getElementById("editSection").value = section;
   openSidebar();
 }
 
-function removeCourse(index) {
-  const rows = document.querySelectorAll('#courseTableBody tr');
-  const row = rows[index];  // Get the row by index
-  row.remove();
-  const name = row.children[0].textContent;
-  courseChanges.push({ type: "remove", name: name });
-  updateCoursePushState();
+function removeCourse(id) {
+  const row = document.querySelector(`#coursesTableBody tr[data-id="${id}"]`); // Find the row with the matching data-id
+  
+  if (row) {
+    removeCourseSemester(id);
+    const name = row.children[0].textContent;  // Get the name from the first column
+    courseChanges.push({ type: "remove", name: name });
+    updateCoursePushState();
+    row.remove();
+  } else {
+    console.log('Row with the specified ID not found');
+  }
 }
 
 // add course
-function addCourse() {
+async function addCourse() {
   console.log("add course button clicked");
   const name = document.getElementById('courseName').value.trim();
   console.log(name)
   const section = document.getElementById('sectionCount').value.trim();
+
   if (!name) return;
 
-  const tableBody = document.getElementById('courseTableBody');
-  const row = document.createElement('tr');
-  const newRowIndex = tableBody.rows.length; // Get the index of the new row
+  const courseData = {
+    id: 0,
+    name: name,
+    number: name,
+  };
+  console.log(courseData)
 
-  row.innerHTML = `
-    <td>${name}</td>
-    <td>${section}</td>
-    <td>
-      <button class="editButton" data-index="${newRowIndex}">Edit</button>
-      <button class="removeButton" data-index="${newRowIndex}">Remove</button>
-    </td>
-  `;
-  tableBody.appendChild(row);
+  const courseSemester = await upsertCourseAndSemester(courseData)
+  .then(response => console.log('Course data upserted:', response))
+  .catch(error => console.error('Error upserting course data:', error));
 
+  console.log(courseSemester)
+  // todo, id to lookup row
+  // instead of refreshing
+  loadCourses();
+
+  document.getElementById('facultyName').value = '';  // Clear input field
   document.getElementById('courseName').value = '';  // Clear input field
   document.getElementById('sectionCount').value = '1';  // Reset section count
 }
@@ -173,51 +199,118 @@ document.addEventListener('click', function(event) {
 });
   
   
-// Handle Sidebar Form Submission
-document.getElementById("editForm").addEventListener("submit", function (e) {
+// Handle courses Sidebar Form Submission
+document.getElementById("editForm").addEventListener("submit", async function (e) {
   e.preventDefault();
-  const newName = document.getElementById("editName").value.trim();
-  const oldName = editRow.children[0].textContent.trim();
+  const name = document.getElementById("editName").value.trim();
 
-  if (!newName) return;
-
-  editRow.children[0].textContent = newName;
-
+  if (!name) return;
   if (editMode === 'faculty') {
     if (newName !== oldName) {
+
       facultyChanges.push({ type: "edit", name: oldName, newName: newName });
-      updateFacultyPushState();
+      updatePushState();
     }
   } else if (editMode === 'course') {
-    const newSection = document.getElementById("editSection").value;
+    const section = document.getElementById("editSection").value;
+
+    const id = editRow.dataset.id;
+
+    const courseSemester = await fetchCourseSemester(id);
+
+    console.log(courseSemester);
+  
+    if (!courseSemester) {
+      console.warn(`No courseSemester found with id ${id}`);
+      return; // or handle fallback logic here
+    }
+    courseSemester.section = section;
+    await updateCourseSemester(courseSemester);
+
+    loadCourses();
+
+    closeSidebar();
+   
+    const oldName = editRow.children[0];
     const sectionCell = editRow.children[1];
     const oldSection = sectionCell.textContent.trim();
-    sectionCell.textContent = newSection;
-
-
-    courseChanges.push({ type: "edit", name: oldName, newName: newName });
+    sectionCell.textContent = section;
+    courseChanges.push({ type: "edit", name: oldName, newName: name });
     updateCoursePushState();
   }
-
-  closeSidebar();
 });
 
 // Open sidebar to edit preference
-function editPreference(index) {
-  const rows = document.querySelectorAll('#preferencesTableBody tr');
-  editRow = rows[index];  // Get the row by index
+function editPreference(id) {
+  const row = document.querySelector(`#preferencesTableBody tr[data-id="${id}"]`);
+  if (!row){
+    console.log('Row with the specified ID not found');
+    return;
+  }
+
+  editRow = row;
   editMode = 'preferences';
 
+  // TODO you can get preferences from the db instead
   // Extract the values from the row
   const course = editRow.children[0].textContent;  // First column
   const faculty = editRow.children[1].textContent;  // Second column
   const preference = editRow.children[2].textContent;  // Third column
+  const weight = editRow.children[4].textContent;  // Fifth column
+
+  console.log(weight)
   
   document.getElementById('editCourse').value = course;
   document.getElementById('editFaculty').value = faculty;
   document.getElementById('editPreference').value = preference;
+  document.getElementById('editWeight').value = weight;
+  document.getElementById('editWeightValue').textContent = weight;
+  
+  // todo weight
+  console.log(weight);
 
   openPreferenceSidebar();
+}
+
+async function loadFaculty(){
+  const response = await fetchAllUsers();
+  const tableBody = document.getElementById('facultyTableBody');
+  tableBody.innerHTML = '';  // Clear any existing rows
+
+  response.forEach((user) => {
+    const row = document.createElement('tr');
+    row.setAttribute('data-id', user.id);
+
+    row.innerHTML = `
+      <td>${user.name}</td>
+      <td>
+        <button class="editButton" data-id="${user.id}">Edit</button>
+        <button class="removeButton" data-id="${user.id}">Remove</button>
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+async function loadCourses(){
+  const response = await fetchAllCoursesFormatted();
+  const tableBody = document.getElementById('coursesTableBody');
+  tableBody.innerHTML = '';  // Clear any existing rows
+
+  response.forEach((course) => {
+    const row = document.createElement('tr');
+    row.setAttribute('data-id', course.id);
+
+    row.innerHTML = `
+      <td>${course.name}</td>
+      <td>${course.sections}</td>
+      <td>
+        <button class="editButton" data-id="${course.id}">Edit</button>
+        <button class="removeButton" data-id="${course.id}">Remove</button>
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
 }
 
 // loads preference table from the server
@@ -229,16 +322,19 @@ async function loadPreferences() {
 
   preferencesData.forEach((pref, index) => {
     const row = document.createElement('tr');
-    const isEdited = editedRows.some(r => r.rowIndex === index);
+    row.setAttribute('data-id', pref.id);
 
+    const isEdited = editedRows.some(r => r.rowIndex === index);
+    
     row.innerHTML = `
       <td>${pref.course}</td>
       <td>${pref.faculty}</td>
       <td><span class="preference" style="background-color: ${pref.preference};">${pref.preference}</span></td>
       <td>
-        <button class="editButton" data-index="${index}">Edit</button>
-        <button class="removeButton" data-index="${index}" style="display: none;">Remove</button>
+        <button class="editButton" data-id="${pref.id}">Edit</button>
+        <button class="removeButton" data-id="${pref.id}" style="display: none;">Remove</button>
       </td>
+      <td>${pref.weight}</td>
     `;
     if (isEdited) {
       row.style.backgroundColor = '#f0f8ff'; 
@@ -273,34 +369,36 @@ function bindFacultyTableListeners() {
     const button = event.target.closest('button');
     if (!button) return;
 
-    const index = button.dataset.index;
+    const id = button.dataset.id;
+    console.log("clicked: " + id)
 
     if (button.classList.contains('editButton')) {
-      editFaculty(index);  // Edit faculty
+      editFaculty(id);  // Edit faculty
     } else if (button.classList.contains('removeButton')) {
-      removeFaculty(index);  // Remove faculty
+      removeFaculty(id);  // Remove faculty
       updateButtonIndecies(facultyTableBody);
     }
   });
 }
 
 // Bind event listeners for the course table
-function bindCourseTableListeners() {
-  const courseTableBody = document.getElementById('courseTableBody');
+function bindCoursesTableListeners() {
+  const coursesTableBody = document.getElementById('coursesTableBody');
 
   // Event delegation for edit and remove buttons in the course table
-  courseTableBody.addEventListener('click', function(event) {
+  coursesTableBody.addEventListener('click', function(event) {
     console.log(event.target)
     const button = event.target.closest('button');
     if (!button) return;
 
-    const index = button.dataset.index;
+    const id = button.dataset.id;
+    console.log("button id");
+    console.log(id);
 
     if (button.classList.contains('editButton')) {
-      editCourse(index);  // Edit course
+      editCourse(id);  // Edit course
     } else if (button.classList.contains('removeButton')) {
-      removeCourse(index);  // Remove course
-      updateButtonIndecies(courseTableBody);
+      removeCourse(id);  // Remove course
     }
   });
 }
@@ -314,20 +412,27 @@ function bindPreferencesTableListeners() {
     const button = event.target.closest('button');
     if (!button) return;
 
-    const index = button.dataset.index;
+    const id = button.dataset.id;
 
     if (button.classList.contains('editButton')) {
-      editPreference(index);  // Edit preference
+      editPreference(id);  // Edit preference
     } else if (button.classList.contains('removeButton')) {
-      removePreference(index);  // Remove preference
-      updateButtonIndecies(tableBody);
+      removePreference(id);  // Remove preference
     }
   });
 }
 
+// bind match button to matching engine trigger and reload
+document.querySelector('#matchBtn').addEventListener('click', async () => {
+  //await triggerMatchingEngine();
+  loadOutput();
+});
+
 // below used to be inline
 // Bind the addFaculty and addCourse buttons from index.html
 document.addEventListener('DOMContentLoaded', function() {
+  loadFaculty();
+  loadCourses();
   loadPreferences();
   loadOutput();
   // Bind 'Add Faculty' button
@@ -337,7 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Bind 'Add Course' button
   const addCourseButton = document.querySelector('#courses button');
-  console.log(addCourseButton)
   addCourseButton.addEventListener('click', addCourse);
 
   // Bind preference sidebar cancel button
@@ -355,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Bind tables after loading content
   bindFacultyTableListeners();
-  bindCourseTableListeners();
+  bindCoursesTableListeners();
   bindPreferencesTableListeners();
 });
 
@@ -373,23 +477,40 @@ function closePreferenceSidebar() {
   document.body.classList.remove('sidebar-open');
 }
 
+document.getElementById('editWeight').addEventListener('input', function () {
+  document.getElementById('editWeightValue').textContent = this.value;
+});
+
 // Save edited preference
-document.getElementById('editPreferenceForm').addEventListener('submit', function (e) {
+document.getElementById('editPreferenceForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  let course, faculty, preference;
+  let course, faculty, preference, weight;
   
   course = document.getElementById('editCourse').value;
   faculty = document.getElementById('editFaculty').value;
   preference = document.getElementById('editPreference').value;
+  weight = parseInt(document.getElementById('editWeight').value, 10);
 
-  console.log(course)
-  console.log(faculty)
-  console.log(preference)
+  const id = editRow.dataset.id;
+  const pref = await fetchPreferenceById(id);
+  if (!pref) {
+    console.warn(`No preference found with id ${id}`);
+    return; // or handle fallback logic here
+  }
 
-  //trackEdit(editPreferenceRow, 'Preference', oldpref, updatedPreference);
-  //console.log("Tracking edit:", { rowIndex: editPreferenceRow, column: 'Preference', oldValue: oldpref, newValue: updatedPreference });
-  
+  console.log(pref)
+  // Modify the correct snake_case fields
+  pref.preference_level = preference;
+  pref.preference_weight = weight; // TODO: replace with slider value later
+
+  // update database
+  let newPref = await upsertPreference(pref);
+  if (!newPref) {
+    console.warn(`failed to update preference`);
+    return; // or handle fallback logic here
+  }
+
   // update push button
   updatePreferencePushState();
 
@@ -400,16 +521,26 @@ document.getElementById('editPreferenceForm').addEventListener('submit', functio
   closePreferenceSidebar();
 });
 
-document.getElementById("editFacultyForm").addEventListener("submit", function (e) {
+document.getElementById("editFacultyForm").addEventListener("submit", async function (e) {
   e.preventDefault(); // Prevents page reload
-
+  
   const newName = document.getElementById("editfacultyName").value.trim();
   if (!newName || !editRow) return;
+
+  const id = editRow.dataset.id;
+  const user = await fetchUserById(id);
+  if (!user) {
+    console.warn(`No user found with id ${id}`);
+    return; // or handle fallback logic here
+  }
 
   const oldName = editRow.children[0].textContent.trim();
   editRow.children[0].textContent = newName;
 
   if (newName !== oldName) {
+    user.name = newName;
+    upsertUser(user);
+
     facultyChanges.push({ type: "edit", name: oldName, newName: newName });
     updateFacultyPushState();
   }

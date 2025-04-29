@@ -82,10 +82,36 @@ var FetchUserById = func(id uint) (User, error) {
 }
 
 var UpsertUser = func(user User) (User, error) {
-	txn := db.Save(&user)
+	// If user ID is not set (i.e., new user), create a new user
+	if user.ID == 0 {
+		// Insert the new user into the database
+		if err := db.Create(&user).Error; err != nil {
+			return user, err // Error during insert
+		}
+		return user, nil // Successfully inserted new user
+	}
 
-	return user, txn.Error
+	// Check if the user exists by ID
+	var existingUser User
+	if err := db.Where("id = ?", user.ID).First(&existingUser).Error; err != nil {
+		if err.Error() == "record not found" {
+			// User does not exist, so insert new record
+			if err := db.Create(&user).Error; err != nil {
+				return user, err // Error during insert
+			}
+			return user, nil // Successfully inserted new user
+		}
+		return user, err // Error while checking if user exists
+	}
+
+	// If the user exists, update the record
+	if err := db.Model(&existingUser).Updates(user).Error; err != nil {
+		return user, err // Error during update
+	}
+
+	return existingUser, nil // Return the updated user
 }
+
 var DeleteUser = func(id uint) error {
 	var user User
 	txn := db.Delete(&user, id)

@@ -3,6 +3,7 @@ package controllers
 import (
 	"backend/internal/models"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,9 @@ func GetAllUsers(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
 	}
+	sort.Slice(users, func(i, j int) bool {
+		return users[i].Name < users[j].Name
+	})
 	c.JSON(http.StatusOK, users)
 }
 

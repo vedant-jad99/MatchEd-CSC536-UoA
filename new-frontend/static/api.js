@@ -7,6 +7,12 @@ export const fetchAllCourses = async () => {
     return await response.json();
   };
 
+// fetch course_sem_id and course name
+export const fetchAllCoursesFormatted = async () => {
+  const response = await fetch('/api/course/formatted', { method: 'GET' });
+  return await response.json();
+};
+
 export const fetchCourseById = async (id) => {
   const response = await fetch(`/api/course/${id}`, { method: 'GET' });
   return await response.json();
@@ -62,16 +68,27 @@ export const deleteUser = async (id) => {
 
 // ******************************************************
 // Functions to handle API requests for course semesters
+
+export const upsertCourseAndSemester = async (courseData) => {
+  const response = await fetch('/api/course_semester/upsert', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(courseData)
+  });
+  return await response.json();
+};
+
 export const fetchAllCourseSemesters = async () => {
   const response = await fetch('/api/course_semester', { method: 'GET' });
   return await response.json();
 };
 
 export const fetchCourseSemester = async (id) => {
-  const response = await fetch('/api/course_semester/get', {
+  const response = await fetch(`/api/course_semester/get/${id}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id })
   });
   return await response.json();
 };
@@ -86,7 +103,7 @@ export const addCourseSemester = async (courseSemesterData) => {
 };
 
 export const removeCourseSemester = async (id) => {
-  const response = await fetch('/api/course_semester/remove', {
+  const response = await fetch(`/api/course_semester/remove/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id })
@@ -110,6 +127,11 @@ export const fetchLatestMatchings = async () => {
   return await response.json();
 };
 
+export const triggerMatchingEngine = async () => {
+  const response = await fetch('/api/matchings/trigger', { method: 'POST' });
+  return await response.json();
+};
+
 export const fetchLatestMatchingsFormatted = async () => {
   const response = await fetch('/api/matchings/latest_formatted', { method: 'GET' });
   return await response.json();
@@ -126,6 +148,18 @@ export const fetchMatchingsByIterationId = async (id) => {
 
 // ******************************************************
 // Functions to handle API requests for preferences
+
+export const upsertPreference = async (preferenceData) => {
+  const response = await fetch('/api/preferences/upsert', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(preferenceData)
+  });
+  return await response.json();
+};
+
 export const fetchAllPreferences = async () => {
   const response = await fetch('/api/preferences/fetch_all', { method: 'GET' });
   return await response.json();
@@ -143,6 +177,11 @@ export const fetchPreferencesByUserId = async (userId) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id: userId })
   });
+  return await response.json();
+};
+
+export const fetchPreferenceById = async (id) => {
+  const response = await fetch(`/api/preferences/${id}`, { method: 'GET' });
   return await response.json();
 };
 
