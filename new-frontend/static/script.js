@@ -27,8 +27,9 @@ function editFaculty(index) {
 
 // remove faculty by name
 function removeFaculty(index) {
-  const rows = document.querySelectorAll('#courseTableBody tr');
+  const rows = document.querySelectorAll('#facultyTableBody tr');
   const row = rows[index];  // Get the row by index
+  console.log(index)
   row.remove();
   const name = row.children[0].textContent;
   facultyChanges.push({ type: "remove", name: name });
@@ -54,71 +55,6 @@ function addFaculty() {
   tableBody.appendChild(row);
 
   document.getElementById('facultyName').value = '';  // Clear input field
-}
-
-// Edit Course Entry
-function editCourse(index) {
-  const rows = document.querySelectorAll('#courseTableBody tr');
-  editRow = rows[index];  // Get the row by index
-  editMode = 'course';
-  const section = editRow.children[1].textContent.trim();;
-  document.getElementById("editName").value = editRow.children[0].textContent;
-  document.getElementById("editSection").value = section;
-  openSidebar();
-}
-
-function removeCourse(index) {
-  const rows = document.querySelectorAll('#courseTableBody tr');
-  const row = rows[index];  // Get the row by index
-  row.remove();
-  const name = row.children[0].textContent;
-  courseChanges.push({ type: "remove", name: name });
-  updateCoursePushState();
-}
-
-// add course
-function addCourse() {
-  console.log("add course button clicked");
-  const name = document.getElementById('courseName').value.trim();
-  console.log(name)
-  const section = document.getElementById('sectionCount').value.trim();
-  if (!name) return;
-
-  const tableBody = document.getElementById('courseTableBody');
-  const row = document.createElement('tr');
-  const newRowIndex = tableBody.rows.length; // Get the index of the new row
-
-  row.innerHTML = `
-    <td>${name}</td>
-    <td>${section}</td>
-    <td>
-      <button class="editButton" data-index="${newRowIndex}">Edit</button>
-      <button class="removeButton" data-index="${newRowIndex}">Remove</button>
-    </td>
-  `;
-  tableBody.appendChild(row);
-
-  document.getElementById('courseName').value = '';  // Clear input field
-  document.getElementById('sectionCount').value = '1';  // Reset section count
-}
-
-
-function removeCourse(index) {
-  const rows = document.querySelectorAll('#courseTableBody tr');
-  const row = rows[index];  // Get the row by index
-  row.remove();
-  const name = row.children[0].textContent;
-  courseChanges.push({ type: "remove", name: name });
-  updateCoursePushState();
-}
-
-
-// Edit Faculty Entry
-function editFaculty(btn) {
-  editRow = btn.closest('tr');
-  editMode = 'faculty';
-  document.getElementById("editfacultyName").value = editRow.children[0].textContent;
-  openFacultySidebar();
 }
 
 // Edit Course Entry
@@ -340,7 +276,7 @@ function bindFacultyTableListeners() {
       editFaculty(index);  // Edit faculty
     } else if (button.classList.contains('removeButton')) {
       removeFaculty(index);  // Remove faculty
-      updateButtonIndecies(tableBody);
+      updateButtonIndecies(facultyTableBody);
     }
   });
 }
@@ -361,7 +297,7 @@ function bindCourseTableListeners() {
       editCourse(index);  // Edit course
     } else if (button.classList.contains('removeButton')) {
       removeCourse(index);  // Remove course
-      updateButtonIndecies(tableBody);
+      updateButtonIndecies(courseTableBody);
     }
   });
 }
