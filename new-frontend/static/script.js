@@ -61,14 +61,77 @@ function editCourse(index) {
   const rows = document.querySelectorAll('#courseTableBody tr');
   editRow = rows[index];  // Get the row by index
   editMode = 'course';
+  const section = editRow.children[1].textContent.trim();;
+  document.getElementById("editName").value = editRow.children[0].textContent;
+  document.getElementById("editSection").value = section;
+  openSidebar();
+}
 
+function removeCourse(index) {
+  const rows = document.querySelectorAll('#courseTableBody tr');
+  const row = rows[index];  // Get the row by index
+  row.remove();
+  const name = row.children[0].textContent;
+  courseChanges.push({ type: "remove", name: name });
+  updateCoursePushState();
+}
+
+// add course
+function addCourse() {
+  console.log("add course button clicked");
+  const name = document.getElementById('courseName').value.trim();
+  console.log(name)
+  const section = document.getElementById('sectionCount').value.trim();
+  if (!name) return;
+
+  const tableBody = document.getElementById('courseTableBody');
+  const row = document.createElement('tr');
+  const newRowIndex = tableBody.rows.length; // Get the index of the new row
+
+  row.innerHTML = `
+    <td>${name}</td>
+    <td>${section}</td>
+    <td>
+      <button class="editButton" data-index="${newRowIndex}">Edit</button>
+      <button class="removeButton" data-index="${newRowIndex}">Remove</button>
+    </td>
+  `;
+  tableBody.appendChild(row);
+
+  document.getElementById('courseName').value = '';  // Clear input field
+  document.getElementById('sectionCount').value = '1';  // Reset section count
+}
+
+
+function removeCourse(index) {
+  const rows = document.querySelectorAll('#courseTableBody tr');
+  const row = rows[index];  // Get the row by index
+  row.remove();
+  const name = row.children[0].textContent;
+  courseChanges.push({ type: "remove", name: name });
+  updateCoursePushState();
+}
+
+
+// Edit Faculty Entry
+function editFaculty(btn) {
+  editRow = btn.closest('tr');
+  editMode = 'faculty';
+  document.getElementById("editfacultyName").value = editRow.children[0].textContent;
+  openFacultySidebar();
+}
+
+// Edit Course Entry
+function editCourse(index) {
+  const rows = document.querySelectorAll('#courseTableBody tr');
+  editRow = rows[index];  // Get the row by index
+  editMode = 'course';
+  const section = editRow.children[1].textContent.trim();
   // document.getElementById("editType").value = "Course";
   document.getElementById("editName").value = editRow.children[0].textContent;
 
-  const section = editRow.children[1].textContent.trim();;
+  
   document.getElementById("editSection").value = section;
-  // document.getElementById("editSectionGroup").classList.remove("hidden");
-
   openSidebar();
 }
 
@@ -134,11 +197,7 @@ function closeSidebar() {
     document.getElementById("editSidebar").classList.remove("active");
     document.body.classList.remove("sidebar-open");
   }
-  
-  // function openSidebar(sidebarId) {
-  //   document.getElementById(sidebarId).style.display = "block";
-  // }
-  
+
 function closeFacultySidebar() {
   document.getElementById("editFacultySidebar").classList.remove("active");
   document.body.classList.remove("sidebar-open");
@@ -146,6 +205,7 @@ function closeFacultySidebar() {
   document.getElementById("facultyName").value = '';
 }
   
+// Push buttons
 function updateFacultyPushState() {
   const btn = document.getElementById("pushFacultyChangesBtn");
   btn.disabled = facultyChanges.length === 0;
@@ -477,6 +537,7 @@ function setupCellListeners() {
   });
 }
 
+// Confirmation Modal
 function showModal() {
   const modal = document.getElementById("confirmationModal");
   const summary = document.getElementById("changeSummary");
@@ -629,64 +690,127 @@ document.addEventListener("DOMContentLoaded", () => {
   });    
 });
 
-document.getElementById("pushFacultyChangesBtn").addEventListener("click", function () {
-  const summary = document.getElementById("changeSummary");
-  if (facultyChanges.length === 0) {
-    summary.innerHTML = "<em>No faculty changes found.</em>";
-  } else {
-    summary.innerHTML = facultyChanges.map(change => {
-      if (change.type === 'add') {
-        return `<div>Added Faculty: <strong>${change.name}</strong></div>`;
-      } else if (change.type === 'edit') {
-        return `<div>Edited Faculty: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span></div>`;
-      }
-      else if (change.type === 'remove') {
-        return `<div style="color: red">Deleted Faculty: <strong>${change.name}</strong></div>`;
-      }
-    }).join('');
-  }
-  document.getElementById("confirmationModal").classList.remove("hidden");
-  document.getElementById("confirmationModal").classList.add("active");
-});
-
-document.getElementById("pushCourseChangesBtn").addEventListener("click", function () {
-  const summary = document.getElementById("changeSummary");
-  if (courseChanges.length === 0) {
-    summary.innerHTML = "<em>No course changes found.</em>";
-  } else {
-    summary.innerHTML = courseChanges.map(change => {
-      if (change.type === 'add') {
-        return `<div>Added Course: <strong>${change.name}</strong></div>`;
-      } else if (change.type === 'edit') {
-        return `<div>Edited Course: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span> (Section: ${change.oldSection} → ${change.newSection})</div>`;
-      } else if (change.type === 'remove') {
-        return `<div style="color: red">Deleted Course: <strong>${change.name}</strong></div>`;
-      }
-    }).join('');
-  }
-  document.getElementById("confirmationModal").classList.remove("hidden");
-  document.getElementById("confirmationModal").classList.add("active");
-});
-
-document.addEventListener('click', function(event) {
-  const prefSidebar = document.getElementById('editPreferenceSidebar');
-  const courseSidebar = document.getElementById('editSidebar');
-  const facultySidebar = document.getElementById('editFacultySidebar');
-
-  const isButton = event.target.closest('button');
-
-  // Only close if sidebar is open, click is outside the sidebar, and not on a button
-  if (!isButton) {
-    if (prefSidebar.classList.contains('active') && !prefSidebar.contains(event.target)) {
-      closePreferenceSidebar();
+  document.getElementById("pushFacultyChangesBtn").addEventListener("click", function () {
+    const summary = document.getElementById("changeSummary");
+    if (facultyChanges.length === 0) {
+      summary.innerHTML = "<em>No faculty changes found.</em>";
+    } else {
+      summary.innerHTML = facultyChanges.map(change => {
+        if (change.type === 'add') {
+          return `<div>Added Faculty: <strong>${change.name}</strong></div>`;
+        } else if (change.type === 'edit') {
+          return `<div>Edited Faculty: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span></div>`;
+        }
+        else if (change.type === 'remove') {
+          return `<div style="color: red">Deleted Faculty: <strong>${change.name}</strong></div>`;
+        }
+      }).join('');
     }
-
-    if (courseSidebar.classList.contains('active') && !courseSidebar.contains(event.target)) {
-      closeSidebar();
+    document.getElementById("confirmationModal").classList.remove("hidden");
+    document.getElementById("confirmationModal").classList.add("active");
+  });
+  
+  document.getElementById("pushCourseChangesBtn").addEventListener("click", function () {
+    const summary = document.getElementById("changeSummary");
+    if (courseChanges.length === 0) {
+      summary.innerHTML = "<em>No course changes found.</em>";
+    } else {
+      summary.innerHTML = courseChanges.map(change => {
+        if (change.type === 'add') {
+          return `<div>Added Course: <strong>${change.name}</strong></div>`;
+        } else if (change.type === 'edit') {
+          return `<div>Edited Course: <span style="color: red">${change.oldName}</span> → <span style="color: green">${change.newName}</span> (Section: ${change.oldSection} → ${change.newSection})</div>`;
+        } else if (change.type === 'remove') {
+          return `<div style="color: red">Deleted Course: <strong>${change.name}</strong></div>`;
+        }
+      }).join('');
     }
-
-    if (facultySidebar.classList.contains('active') && !facultySidebar.contains(event.target)) {
-      closeFacultySidebar();
+    document.getElementById("confirmationModal").classList.remove("hidden");
+    document.getElementById("confirmationModal").classList.add("active");
+  });
+  
+  document.addEventListener('click', function(event) {
+    const prefSidebar = document.getElementById('editPreferenceSidebar');
+    const courseSidebar = document.getElementById('editSidebar');
+    const facultySidebar = document.getElementById('editFacultySidebar');
+  
+    const isButton = event.target.closest('button');
+  
+    // Only close if sidebar is open, click is outside the sidebar, and not on a button
+    if (!isButton) {
+      if (prefSidebar.classList.contains('active') && !prefSidebar.contains(event.target)) {
+        closePreferenceSidebar();
+      }
+  
+      if (courseSidebar.classList.contains('active') && !courseSidebar.contains(event.target)) {
+        closeSidebar();
+      }
+  
+      if (facultySidebar.classList.contains('active') && !facultySidebar.contains(event.target)) {
+        closeFacultySidebar();
+      }
     }
+  });
+  
+
+//submit faculty form
+function submitForm() {
+  const facultyName = document.getElementById('facultyName').value;
+  const facultyEmail = document.getElementById('facultyEmail').value;
+  const courseNames = document.querySelectorAll('.courseName');
+  const coursePreferences = document.querySelectorAll('.coursePreference');
+
+  let allValid = true;
+
+  if (!facultyName || !facultyEmail) {
+    alert('Please fill in the Faculty Name and Email!');
+    allValid = false;
   }
-});
+
+  // Check if all course fields are filled
+  courseNames.forEach((course, index) => {
+    if (!course.value || !coursePreferences[index].value) {
+      allValid = false;
+      alert('Please fill in all course details!');
+    }
+  });
+
+  if (allValid) {
+    document.getElementById('confirmation').style.display = 'block';
+  }
+}
+
+
+function addFormCourse() {
+  const coursesContainer = document.getElementById('coursesContainer');
+  
+  // Create new course input fields
+  const newCourseGroup = document.createElement('div');
+  newCourseGroup.classList.add('course-group');
+  
+  const courseNameLabel = document.createElement('label');
+  courseNameLabel.textContent = 'Course Name:';
+  const courseNameInput = document.createElement('input');
+  courseNameInput.type = 'text';
+  courseNameInput.classList.add('courseName');
+  courseNameInput.placeholder = 'Enter Course Name';
+  
+  const preferenceLabel = document.createElement('label');
+  preferenceLabel.textContent = 'Course Preference Level:';
+  const preferenceSelect = document.createElement('select');
+  preferenceSelect.classList.add('coursePreference');
+  preferenceSelect.innerHTML = `
+    <option value="green">Green</option>
+    <option value="yellow">Yellow</option>
+    <option value="red">Red</option>
+  `;
+  
+  // Append new elements to the new course group
+  newCourseGroup.appendChild(courseNameLabel);
+  newCourseGroup.appendChild(courseNameInput);
+  newCourseGroup.appendChild(preferenceLabel);
+  newCourseGroup.appendChild(preferenceSelect);
+  
+  // Append new course group to courses container
+  coursesContainer.appendChild(newCourseGroup);
+}

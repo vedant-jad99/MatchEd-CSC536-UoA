@@ -61,6 +61,7 @@
           </thead>
           <tbody id="courseTableBody"></tbody>
         </table>
+
         <!-- Courses Push Button -->
         <div id="courses-change-controls" style="margin-top: 20px; text-align: center;">
           <button id="pushCourseChangesBtn" class="disabled" disabled>Push Changes</button>
@@ -82,10 +83,13 @@
         </tbody>
         </table>
 
+        <!-- Push preferences button -->
         <div id="change-controls" style="margin-top: 20px; text-align: center;">
             <button id="pushChangesBtn" class="disabled" disabled>Push Changes</button>
         </div>
     </div>
+
+    <!-- Confirmation Modal -->
     <div id="confirmationModal" class="modal hidden">
       <div class="modal-content">
         <h3>Confirm Your Changes</h3>
@@ -96,15 +100,6 @@
           <button id="cancelBtn">Take Me Back</button>
         </div>
       </div>
-      <!-- <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
-            <h2 class="text-xl font-semibold mb-4">Confirm Push</h2>
-            <p class="mb-4">Are you sure you want to push these changes?</p>
-            <div class="flex justify-end gap-2">
-                <button id="cancelBtn" class="px-4 py-2 rounded border">Cancel</button>
-                <button id="confirmPushBtn" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Confirm</button>
-            </div>
-        </div> -->
     </div>
     
     <!-- Edit Preference Sidebar -->
@@ -131,6 +126,7 @@
         </form>
     </div>  
     
+    <!-- Faculty Sidebar -->
     <div id="editFacultySidebar" class="edit-sidebar">
       <h2>Edit Faculty</h2>
       <form id="editFacultyForm">
@@ -144,12 +140,10 @@
       </form>
     </div>
 
+    <!-- Courses Sidebar -->
     <div id="editSidebar" class="edit-sidebar">
         <h2>Edit Entry</h2>
         <form id="editForm">
-        <!-- <label for="editType">Type:</label>
-        <input type="text" id="editType" readonly /> -->
-    
         <label for="editName">Name:</label>
         <input type="text" id="editName" readonly />
     
