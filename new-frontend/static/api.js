@@ -110,6 +110,11 @@ export const fetchLatestMatchings = async () => {
   return await response.json();
 };
 
+export const fetchLatestMatchingsFormatted = async () => {
+  const response = await fetch('/api/matchings/latest_formatted', { method: 'GET' });
+  return await response.json();
+};
+
 export const fetchMatchingsByIterationId = async (id) => {
   const response = await fetch('/api/matchings/by_iteration', {
     method: 'GET',

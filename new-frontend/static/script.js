@@ -1,10 +1,11 @@
-import { fetchAllPreferences, fetchAllPreferencesFormatted } from "./api.js";
+import { fetchAllPreferences, fetchAllPreferencesFormatted, fetchLatestMatchings, fetchLatestMatchingsFormatted } from "./api.js";
 
 let editRow = null;
 let editMode = ''; 
 let facultyChanges = [];
 let courseChanges = [];
 let preferenceChanges = [];
+let editPreferenceRow = null;
 
 function updateButtonIndecies(tableBody){
   const rows = tableBody.querySelectorAll('tr');
@@ -201,17 +202,6 @@ document.getElementById("editForm").addEventListener("submit", function (e) {
   closeSidebar();
 });
 
-let editPreferenceRow = null;
-
-// to be fetched from db
-/*
-const preferencesData = [
-  { course: 'CS101', faculty: 'Diazh', preference: 'green' },
-  { course: 'CS102', faculty: 'Anson', preference: 'yellow' },
-];
-*/
-
-
 // Open sidebar to edit preference
 function editPreference(index) {
   const rows = document.querySelectorAll('#preferencesTableBody tr');
@@ -230,11 +220,8 @@ function editPreference(index) {
   openPreferenceSidebar();
 }
 
-
-let preferencesData = [];
-
+// loads preference table from the server
 async function loadPreferences() {
-  // TODO: Load from database via API call
   const preferencesData = await fetchAllPreferencesFormatted();
 
   const tableBody = document.getElementById('preferencesTableBody');
@@ -247,7 +234,7 @@ async function loadPreferences() {
     row.innerHTML = `
       <td>${pref.course}</td>
       <td>${pref.faculty}</td>
-      <td><span class="preference ${pref.preference}">${pref.preference}</span></td>
+      <td><span class="preference" style="background-color: ${pref.preference};">${pref.preference}</span></td>
       <td>
         <button class="editButton" data-index="${index}">Edit</button>
         <button class="removeButton" data-index="${index}" style="display: none;">Remove</button>
@@ -259,7 +246,23 @@ async function loadPreferences() {
     tableBody.appendChild(row);
   });
 }
-  
+
+async function loadOutput(){
+  const response = await fetchLatestMatchingsFormatted();
+  const tableBody = document.getElementById('outputsTableBody');
+  tableBody.innerHTML = '';  // Clear any existing rows
+
+  response.forEach((matching, index) => {
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+      <td>${matching.course}</td>
+      <td>${matching.faculty}</td>
+      <td><span class="score ${matching.score} data-id="${matching.id}">${matching.score}</span></td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
 
 // Bind event listeners for the faculty table
 function bindFacultyTableListeners() {
@@ -326,6 +329,7 @@ function bindPreferencesTableListeners() {
 // Bind the addFaculty and addCourse buttons from index.html
 document.addEventListener('DOMContentLoaded', function() {
   loadPreferences();
+  loadOutput();
   // Bind 'Add Faculty' button
   const addFacultyButton = document.querySelector('#faculty button');
   console.log(addFacultyButton);

@@ -46,5 +46,53 @@ func HandleFetchLatestMatchings(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, matches)
+}
+
+func HandleFetchLatestMatchingsFormatted(c *gin.Context) {
+	matches, err := models.FetchLatestMatchings()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create a slice to hold the formatted preferences
+	var prettyMatches []map[string]interface{}
+
+	// Loop through preferences and get corresponding course and faculty
+	for _, match := range matches {
+		// Fetch user (faculty) by ID
+		user, err := models.FetchUserById(match.UserID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
+			continue
+		}
+
+		// Fetch course semester by ID
+		courseSemester, err := models.FetchCourseSemester(match.CourseSemID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
+			continue
+		}
+
+		// Fetch course semester by ID
+		course, err := models.FetchCourseById(courseSemester.CourseID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
+			continue
+		}
+
+		// Format the preference data as expected by the frontend
+		formattedMatch := map[string]interface{}{
+			"id":      match.ID,
+			"course":  course.Number,
+			"faculty": user.Name,
+			"score":   match.Score, // Assuming you want to return PreferenceLevel
+		}
+
+		// Append the formatted preference to the slice
+		prettyMatches = append(prettyMatches, formattedMatch)
+	}
+	c.JSON(http.StatusOK, prettyMatches)
 }

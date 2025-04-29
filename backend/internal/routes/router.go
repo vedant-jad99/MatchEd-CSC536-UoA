@@ -109,6 +109,7 @@ func setApiHandlers(r *gin.Engine) {
 		matchings := api.Group("/matchings")
 		{
 			matchings.GET("/latest", controllers.HandleFetchLatestMatchings)
+			matchings.GET("/latest_formatted", controllers.HandleFetchLatestMatchingsFormatted)
 			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID)
 		}
 		api.GET("/ping", func(c *gin.Context) {
