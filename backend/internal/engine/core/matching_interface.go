@@ -52,7 +52,7 @@ type Faculty struct {
 }
 
 type MatchingInput struct {
-	Faculty     []Faculty
+	Faculty  	[]Faculty
 	Course_s    []CourseSems
 	Preferences []Preferences
 }
