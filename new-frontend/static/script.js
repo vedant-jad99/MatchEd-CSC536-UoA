@@ -254,12 +254,18 @@ const preferencesData = [
 
 // Open sidebar to edit preference
 function editPreference(index) {
-  editPreferenceRow = index;
-  const preference = preferencesData[index];
+  const rows = document.querySelectorAll('#preferencesTableBody tr');
+  editRow = rows[index];  // Get the row by index
+  editMode = 'preferences';
 
-  document.getElementById('editCourse').value = preference.course;
-  document.getElementById('editFaculty').value = preference.faculty;
-  document.getElementById('editPreference').value = preference.preference;
+  // Extract the values from the row
+  const course = editRow.children[0].textContent;  // First column
+  const faculty = editRow.children[1].textContent;  // Second column
+  const preference = editRow.children[2].textContent;  // Third column
+  
+  document.getElementById('editCourse').value = course;
+  document.getElementById('editFaculty').value = faculty;
+  document.getElementById('editPreference').value = preference;
 
   openPreferenceSidebar();
 }
@@ -435,26 +441,26 @@ function closePreferenceSidebar() {
 // Save edited preference
 document.getElementById('editPreferenceForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  
-  const updatedPreference = document.getElementById('editPreference').value;
-  const currentpref = preferencesData[editPreferenceRow];
-  const oldpref = currentpref.preference;
-  preferencesData[editPreferenceRow].preference = updatedPreference;
-  
-  if(updatedPreference !== oldpref) {
-    trackEdit(editPreferenceRow, 'Preference', oldpref, updatedPreference);
-    console.log("Tracking edit:", { rowIndex: editPreferenceRow, column: 'Preference', oldValue: oldpref, newValue: updatedPreference });
-    
-    // update push button
-    updatePreferencePushState();
 
-    // add preference update to changelog
-    currentpref = preferencesData[editPreferenceRow];
-    course = currentpref.course;
-    faculty = currentpref.faculty;
-    preference = currentpref.preference;
-    facultyChanges.push({ type: "edit", courseName: course, facultyName: faculty, newColor: preference});
-  }
+  let course, faculty, preference;
+  
+  course = document.getElementById('editCourse').value;
+  faculty = document.getElementById('editFaculty').value;
+  preference = document.getElementById('editPreference').value;
+
+  console.log(course)
+  console.log(faculty)
+  console.log(preference)
+
+  //trackEdit(editPreferenceRow, 'Preference', oldpref, updatedPreference);
+  //console.log("Tracking edit:", { rowIndex: editPreferenceRow, column: 'Preference', oldValue: oldpref, newValue: updatedPreference });
+  
+  // update push button
+  updatePreferencePushState();
+
+  // add preference update to changelog
+  preferenceChanges.push({ type: "edit", courseName: course, facultyName: faculty, newColor: preference});
+
   loadPreferences();
   closePreferenceSidebar();
 });
