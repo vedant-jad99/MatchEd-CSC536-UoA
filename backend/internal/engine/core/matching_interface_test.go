@@ -42,9 +42,9 @@ func TestTriggerMatching(t *testing.T) {
 
 	expected := Matching{
 		Matchings: []MatchingElement{
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
-			{MatchingID: -1, MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 103, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 1, CourseSemID: 101, MatchingScore: 1.0},
+			{MatchingIterationID: matchingIter, UserID: 2, CourseSemID: 102, MatchingScore: 1.0},
 		},
 	}
 

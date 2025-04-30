@@ -16,7 +16,7 @@ type pMatchingInput struct {
 	faculty_ids    []IDType
 	course_s_ids   []IDType
 	preferences    []Preferences
-	fc_map         map[IDType]*[2]IDType
+	fc_map         map[IDType]*[4]IDType
 	c_map          map[IDType]bool
 	f2rc_map       map[IDType]int               //FacultyID --> number of required courses to teach
 	preference_map map[IDType]map[int64][]pData //FacultyID --> preference (3,2,1) --> (courseSemID, weight)[]
@@ -32,14 +32,14 @@ func StartMatching(matchingIter IDType, input MatchingInput) (Matching, error) {
 
 func preprocessMatchingInput(mI MatchingInput) pMatchingInput {
 	var preprocessInput pMatchingInput
-	preprocessInput.fc_map = make(map[IDType]*[2]IDType)
+	preprocessInput.fc_map = make(map[IDType]*[4]IDType)
 	preprocessInput.c_map = make(map[IDType]bool)
 	preprocessInput.f2rc_map = make(map[IDType]int)
 	preprocessInput.preference_map = make(map[IDType]map[int64][]pData)
 
 	for _, value := range mI.Faculty {
 		preprocessInput.faculty_ids = append(preprocessInput.faculty_ids, value.UserID)
-		preprocessInput.fc_map[value.UserID] = &([2]IDType{-1, -1})
+		preprocessInput.fc_map[value.UserID] = &([4]IDType{-1, -1, -1, -1})
 		preprocessInput.f2rc_map[value.UserID] = value.NumReqCourses
 	}
 	for _, value := range mI.Course_s {
@@ -95,10 +95,11 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 						continue
 					}
 					if !pI.c_map[courseSemId] { // If course is not assigned
-						if pI.fc_map[value][0] == -1 {
-							pI.fc_map[value][0] = courseSemId
-						} else {
-							pI.fc_map[value][1] = courseSemId
+						for k := 0; k < 4; k++ {
+							if pI.fc_map[value][k] == -1 {
+								pI.fc_map[value][k] = courseSemId
+								break
+							}
 						}
 						pI.c_map[courseSemId] = true
 						flag = true
@@ -116,26 +117,19 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 
 	var matching Matching
 	for key, value := range pI.fc_map {
-		matchingElement := MatchingElement{
-			MatchingID:          -1,
-			MatchingIterationID: matchingIter,
-			UserID:              key,
-			CourseSemID:         value[0],
-			MatchingScore:       1.0,
-		}
+		for i := 0; i < 4; i++ {
+			if value[i] != -1 {
+				matchingElement := MatchingElement{
+					MatchingIterationID: matchingIter,
+					UserID:              key,
+					CourseSemID:         value[i],
+					MatchingScore:       1.0,
+				}
 
-		matching.Matchings = append(matching.Matchings, matchingElement)
-
-		if value[1] != -1 {
-			matchingElement2 := MatchingElement{
-				MatchingID:          -1,
-				MatchingIterationID: matchingIter,
-				UserID:              key,
-				CourseSemID:         value[1],
-				MatchingScore:       1.0,
+				matching.Matchings = append(matching.Matchings, matchingElement)
+			} else {
+				break
 			}
-
-			matching.Matchings = append(matching.Matchings, matchingElement2)
 		}
 	}
 

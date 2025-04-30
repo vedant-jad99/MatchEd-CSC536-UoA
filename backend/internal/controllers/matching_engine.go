@@ -65,7 +65,7 @@ func TriggerMatchingEngine(c *gin.Context) {
 	// }
 
 	mIteration := models.MatchingIteration{
-		TriggeredBy: uint(rand.Int31()),
+		TriggeredBy: uint(rand.Int31()), // Ensure the value fits within PostgreSQL's int4 range
 		Status:      matching.MatchingIterationStatusInitialized,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
@@ -100,6 +100,33 @@ func TriggerMatchingEngine(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Matching engine failed"})
 		return
 	}
+	// Save the matching output to the database
+	var matchings []models.Matching
+	for _, match := range matchingOutput.Matchings {
+		matchings = append(matchings, models.Matching{
+			MatchingIterationID: uint(mIteration.ID),
+			UserID:              uint(match.UserID),
+			CourseSemID:         uint(match.CourseSemID),
+			Score:               match.MatchingScore,
+		})
+	}
+	if len(matchings) == 0 {
+		mIteration.Status = matching.MatchingIterationStatusCompleted
+		mIteration.UpdatedAt = time.Now()
+		_, err = models.UpdateMatchingIteration(mIteration)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Matching engine failed. Failed to update matching iteration status."})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Matching engine completed. But No matchings found."})
+		return
+	}
+	// Store the matchings in the database
+	err = models.StoreMatchings(matchings)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Matching engine completed. Failed to store matchings"})
+		return
+	}
 	mIteration.Status = matching.MatchingIterationStatusCompleted
 	mIteration.UpdatedAt = time.Now()
 	_, err = models.UpdateMatchingIteration(mIteration)
@@ -109,5 +136,5 @@ func TriggerMatchingEngine(c *gin.Context) {
 	}
 	// Save the matching output to the database
 
-	c.JSON(http.StatusOK, gin.H{"message": "Matching engine triggered successfully", "data": matchingOutput})
+	c.JSON(http.StatusOK, gin.H{"message": "Matching engine successful", "data": matchings})
 }
