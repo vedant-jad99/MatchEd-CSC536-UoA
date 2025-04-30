@@ -54,3 +54,11 @@ var FetchLatestMatchings = func() ([]Matching, error) {
 	}
 	return FetchMatchingsByIterationID(latestIteration.ID)
 }
+
+var StoreMatchings = func(matchings []Matching) error {
+	txn := db.Create(&matchings)
+	if txn.Error != nil {
+		return txn.Error
+	}
+	return nil
+}
