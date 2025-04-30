@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"backend/internal/models"
-	"errors"
 	"net/http"
 	"sort"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // gets all preferences for the given semester {semester:semester}
@@ -21,53 +19,54 @@ func HandleFetchAllPreferences(c *gin.Context) {
 	c.JSON(http.StatusOK, prefs)
 }
 
+func DeletePreference(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+	err = models.DeletePreference(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete Preference"})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
 func HandleFetchAllPreferencesFormatted(c *gin.Context) {
-	// Fetch all preferences from the database
 	prefs, err := models.FetchAllPreferences()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Create a slice to hold the formatted preferences
 	var formattedPreferences []map[string]interface{}
 
-	// Loop through preferences and get corresponding course and faculty
 	for _, pref := range prefs {
-		// Fetch user (faculty) by ID
 		user, err := models.FetchUserById(pref.UserID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
-			continue
+			continue // skip if user not found
 		}
 
-		// Fetch course semester by ID
 		courseSemester, err := models.FetchCourseSemester(pref.CourseSemesterID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
-			continue
+			continue // skip if course semester not found
 		}
 
-		// Fetch course by courseSemester courseID
 		course, err := models.FetchCourseById(courseSemester.CourseID)
 		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				continue // Skip missing course
-			}
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Course not found"})
-			continue
+			continue // skip if course not found
 		}
 
-		// Format the preference data as expected by the frontend
 		formattedPreference := map[string]interface{}{
 			"id":         pref.ID,
 			"course":     course.Number,
 			"faculty":    user.Name,
-			"preference": pref.PreferenceLevel, // Assuming you want to return PreferenceLevel
+			"preference": pref.PreferenceLevel,
 			"weight":     pref.PreferenceWeight,
+			"courseload": user.NumReqCourses,
 		}
 
-		// Append the formatted preference to the slice
 		formattedPreferences = append(formattedPreferences, formattedPreference)
 	}
 
@@ -75,7 +74,6 @@ func HandleFetchAllPreferencesFormatted(c *gin.Context) {
 		return formattedPreferences[i]["course"].(string) < formattedPreferences[j]["course"].(string)
 	})
 
-	// Return the formatted preferences as a JSON response
 	c.JSON(http.StatusOK, formattedPreferences)
 }
 

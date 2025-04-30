@@ -21,7 +21,7 @@ func GetAllUsers(c *gin.Context) {
 	sort.Slice(users, func(i, j int) bool {
 		return users[i].Name < users[j].Name
 	})
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, users)                  
 }
 
 func GetUserById(c *gin.Context) {

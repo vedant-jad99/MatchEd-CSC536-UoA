@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+
+	"gorm.io/gorm"
 )
 
 // import "gorm.io/gorm"
@@ -112,9 +114,28 @@ var UpsertUser = func(user User) (User, error) {
 	return existingUser, nil // Return the updated user
 }
 
+/*
+
 var DeleteUser = func(id uint) error {
 	var user User
 	txn := db.Delete(&user, id)
 
 	return txn.Error
+}
+*/
+
+var DeleteUser = func(id uint) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		// Delete related preferences
+		if err := tx.Where("user_id = ?", id).Delete(&Preferences{}).Error; err != nil {
+			return err
+		}
+
+		// Delete the user
+		if err := tx.Delete(&User{}, id).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
 }

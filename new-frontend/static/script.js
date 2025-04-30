@@ -1,5 +1,5 @@
 import { fetchAllCourses, fetchAllPreferences, upsertPreference,
-         deleteUser, fetchAllCoursesFormatted, fetchAllPreferencesFormatted, 
+         deleteUser, removePreferenceById, fetchAllCoursesFormatted, fetchAllPreferencesFormatted, 
          fetchAllUsers, fetchLatestMatchings, fetchLatestMatchingsFormatted, 
          upsertUser, fetchUserById, fetchPreferenceById, triggerMatchingEngine,
           upsertCourseAndSemester, removeCourseSemester, 
@@ -103,6 +103,7 @@ function removeCourse(id) {
   }
 }
 
+
 // add course
 async function addCourse() {
   console.log("add course button clicked");
@@ -127,6 +128,7 @@ async function addCourse() {
   // todo, id to lookup row
   // instead of refreshing
   loadCourses();
+
 
   document.getElementById('facultyName').value = '';  // Clear input field
   document.getElementById('courseName').value = '';  // Clear input field
@@ -283,6 +285,7 @@ async function loadFaculty(){
 
     row.innerHTML = `
       <td>${user.name}</td>
+      <td>${user.num_req_courses}</td>
       <td>
         <button class="editButton" data-id="${user.id}">Edit</button>
         <button class="removeButton" data-id="${user.id}">Remove</button>
@@ -332,7 +335,7 @@ async function loadPreferences() {
       <td><span class="preference" style="background-color: ${pref.preference};">${pref.preference}</span></td>
       <td>
         <button class="editButton" data-id="${pref.id}">Edit</button>
-        <button class="removeButton" data-id="${pref.id}" style="display: none;">Remove</button>
+        <button class="removeButton" data-id="${pref.id}">Remove</button>
       </td>
       <td>${pref.weight}</td>
     `;
@@ -345,6 +348,7 @@ async function loadPreferences() {
 
 async function loadOutput(){
   const response = await fetchLatestMatchingsFormatted();
+  console.log(response)
   const tableBody = document.getElementById('outputsTableBody');
   tableBody.innerHTML = '';  // Clear any existing rows
 
@@ -424,7 +428,7 @@ function bindPreferencesTableListeners() {
 
 // bind match button to matching engine trigger and reload
 document.querySelector('#matchBtn').addEventListener('click', async () => {
-  //await triggerMatchingEngine();
+  await triggerMatchingEngine();
   loadOutput();
 });
 
@@ -525,6 +529,8 @@ document.getElementById("editFacultyForm").addEventListener("submit", async func
   e.preventDefault(); // Prevents page reload
   
   const newName = document.getElementById("editfacultyName").value.trim();
+  const newCourseload = document.getElementById("editfacultyCourseload").value.trim();
+  
   if (!newName || !editRow) return;
 
   const id = editRow.dataset.id;
@@ -533,27 +539,40 @@ document.getElementById("editFacultyForm").addEventListener("submit", async func
     console.warn(`No user found with id ${id}`);
     return; // or handle fallback logic here
   }
+  console.log(user);
 
   const oldName = editRow.children[0].textContent.trim();
   editRow.children[0].textContent = newName;
 
-  if (newName !== oldName) {
-    user.name = newName;
-    upsertUser(user);
+  user.name = newName;
+  user.num_req_courses = parseInt(newCourseload);
+  upsertUser(user);
+  console.log("after upsert")
+  console.log(user);
 
-    facultyChanges.push({ type: "edit", name: oldName, newName: newName });
-    updateFacultyPushState();
-  }
+  facultyChanges.push({ type: "edit", name: oldName, newName: newName });
+  updateFacultyPushState();
   
   closeFacultySidebar();
 });
 
 
 // Remove preference
-function removePreference(index) {
-  preferencesData.splice(index, 1);
-  loadPreferences();
+function removePreference(id) {
+  const row = document.querySelector(`#preferencesTableBody tr[data-id="${id}"]`); // Find the row with the matching data-id
+  if (row) {
+    removePreferenceById(id);
+
+    const name = row.children[0].textContent;  // Get the name from the first column
+    row.remove();  // Remove the row from the table
+    facultyChanges.push({ type: "remove", name: name });
+    updateFacultyPushState();
+  } else {
+    console.log('Row with the specified ID not found');
+  }
 }
+
+
 
 let editedRows = [];
 

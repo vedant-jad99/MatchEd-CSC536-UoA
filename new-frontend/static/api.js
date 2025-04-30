@@ -185,6 +185,15 @@ export const fetchPreferenceById = async (id) => {
   return await response.json();
 };
 
+export const removePreferenceById = async (id) => {
+  const response = await fetch(`/api/preferences/remove/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return await response.json();
+};
+
 // Ping function to test the server
 export const pingServer = async () => {
   const response = await fetch('/api/ping', { method: 'GET' });

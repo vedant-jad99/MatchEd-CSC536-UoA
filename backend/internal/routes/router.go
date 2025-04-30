@@ -108,6 +108,7 @@ func setApiHandlers(r *gin.Engine) {
 			preferences.POST("/upsert", controllers.HandleUpsertPreference)
 			preferences.POST("/bulk/upsert", controllers.HandleBulkUpsertPreferences)
 			preferences.POST("/bulk/delete", controllers.HandleBulkDeletePreferences)
+			preferences.DELETE("/remove/:id", controllers.DeletePreference)
 		}
 
 		matchings := api.Group("/matchings")

@@ -17,6 +17,13 @@ func (Preferences) TableName() string {
 	return "match_schema.preferences"
 }
 
+var DeletePreference = func(id uint) error {
+	var preferences Preferences
+	txn := db.Delete(&preferences, id)
+
+	return txn.Error
+}
+
 // Edit Preference Color by Course Name and Faculty (User) Name
 func EditPreferenceColorByCourseAndUser(courseName, userName, newPreferenceColor string) (*Preferences, error) {
 	// Find the course by name
@@ -55,6 +62,7 @@ func EditPreferenceColorByCourseAndUser(courseName, userName, newPreferenceColor
 
 	if matchingPreference == nil {
 		return nil, errors.New("preference for the course not found")
+
 	}
 
 	// Update the preference color

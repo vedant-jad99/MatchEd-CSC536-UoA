@@ -177,8 +177,23 @@ var AddCourseSemester = func(courseID uint, semester string) error {
 	return db.Create(&cs).Error
 }
 
+/*
 var RemoveCourseSemester = func(id uint) error {
 	return db.Delete(&CourseSemester{}, id).Error
+}*/
+
+var RemoveCourseSemester = func(id uint) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		// Delete related preferences
+		if err := tx.Where("course_sem_id = ?", id).Delete(&Preferences{}).Error; err != nil {
+			return err
+		}
+		// Delete the course semester
+		if err := tx.Delete(&CourseSemester{}, id).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 var RemoveCourseSemesters = func(courseID uint) error {

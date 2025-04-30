@@ -1,6 +1,7 @@
 package matching
 
 import (
+	"fmt"
 	"math/rand"
 	"slices"
 	"sort"
@@ -23,6 +24,7 @@ type pMatchingInput struct {
 }
 
 func StartMatching(matchingIter IDType, input MatchingInput) (Matching, error) {
+	fmt.Println("started matching")
 	matching, err := runMatching(input, matchingIter)
 	if err != nil {
 		return Matching{}, err
@@ -90,7 +92,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 					j++
 
 					// Check if the course exists in the course map
-					_, ok := pI.c_map[courseSemId];
+					_, ok := pI.c_map[courseSemId]
 					if !ok {
 						continue
 					}
@@ -132,6 +134,7 @@ func matchingEngine(pI pMatchingInput, matchingIter IDType) (Matching, error) {
 			}
 		}
 	}
+	fmt.Println(matching)
 
 	return matching, nil
 }
