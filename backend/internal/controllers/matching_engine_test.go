@@ -25,7 +25,7 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 
 	// Mock data
 	mockPreferences := []models.Preferences{
-		{ID: 1, UserID: 1, CourseSemesterID: 1, Semester: "Fall", PreferenceLevel: "High", PreferenceWeight: 10},
+		{ID: 1, UserID: 1, CourseSemesterID: 1, Semester: "Fall", PreferenceLevel: matching.PreferenceLevelGreenString, PreferenceWeight: 10},
 	}
 	mockUsers := []models.User{
 		{ID: 1, NumReqCourses: 2},
@@ -40,6 +40,9 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
+	// mockMatchings := []models.Matching{
+	// 	{MatchingIterationID: 1, UserID: 1, CourseSemID: 1, Score: 0.9},
+	// }
 	originalFetchAllPreferences := models.FetchAllPreferences
 	defer func() { models.FetchAllPreferences = originalFetchAllPreferences }()
 	originalFetchAllUsers := models.FetchAllUsers
@@ -50,6 +53,8 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 	defer func() { models.CreateMatchingIteration = originalCreateMatchingIteration }()
 	originalUpdateMatchingIteration := models.UpdateMatchingIteration
 	defer func() { models.UpdateMatchingIteration = originalUpdateMatchingIteration }()
+	originalStoreMatchings := models.StoreMatchings
+	defer func() { models.StoreMatchings = originalStoreMatchings }()
 
 	// Mocking the functions
 	models.FetchAllPreferences = func() ([]models.Preferences, error) {
@@ -68,6 +73,9 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 		iteration.Status = matching.MatchingIterationStatusCompleted
 		return iteration, nil
 	}
+	models.StoreMatchings = func(matchings []models.Matching) error {
+		return nil
+	}
 	// Create a test request
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -79,9 +87,10 @@ func TestTriggerMatchingEngine_Success(t *testing.T) {
 
 	// Call the function
 	TriggerMatchingEngine(c)
-
+	// println("Response: ", w.Body.String())
 	// Assertions
 	require.Equal(t, http.StatusOK, w.Code)
+	require.Contains(t, w.Body.String(), "Matching engine successful")
 }
 
 func TestTriggerMatchingEngine_FetchPreferencesError(t *testing.T) {
