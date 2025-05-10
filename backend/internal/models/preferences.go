@@ -1,5 +1,9 @@
 package models
 
+import (
+	"errors"
+)
+
 type Preferences struct {
 	ID               uint   `json:"id" gorm:"primaryKey"`
 	Semester         string `json:"semester" gorm:"varchar;not null"`
@@ -13,6 +17,63 @@ func (Preferences) TableName() string {
 	return "match_schema.preferences"
 }
 
+var DeletePreference = func(id uint) error {
+	var preferences Preferences
+	txn := db.Delete(&preferences, id)
+
+	return txn.Error
+}
+
+// Edit Preference Color by Course Name and Faculty (User) Name
+func EditPreferenceColorByCourseAndUser(courseName, userName, newPreferenceColor string) (*Preferences, error) {
+	// Find the course by name
+	var course Course
+	if err := db.Where("name = ?", courseName).First(&course).Error; err != nil {
+		return nil, errors.New("course not found")
+	}
+
+	// Find the user (faculty) by name
+	var user User
+	if err := db.Where("name = ?", userName).First(&user).Error; err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	// Fetch all preferences for the user
+	var preferences []Preferences
+	if err := db.Where("user_id = ?", user.ID).Find(&preferences).Error; err != nil {
+		return nil, errors.New("preferences not found")
+	}
+
+	// Iterate over all preferences to find the one matching the course
+	var matchingPreference *Preferences
+	for _, pref := range preferences {
+		// Get the CourseSemester for this preference
+		var courseSemester CourseSemester
+		if err := db.Where("id = ?", pref.CourseSemesterID).First(&courseSemester).Error; err != nil {
+			continue
+		}
+
+		// If the course matches, update the preference
+		if courseSemester.CourseID == course.ID {
+			matchingPreference = &pref
+			break
+		}
+	}
+
+	if matchingPreference == nil {
+		return nil, errors.New("preference for the course not found")
+
+	}
+
+	// Update the preference color
+	matchingPreference.PreferenceLevel = newPreferenceColor
+	if err := db.Save(matchingPreference).Error; err != nil {
+		return nil, err
+	}
+
+	return matchingPreference, nil
+}
+
 var FetchAllPreferences = func() ([]Preferences, error) {
 	var prefs []Preferences
 	err := db.Find(&prefs).Error
@@ -24,10 +85,48 @@ var FetchPreferences = func(userID uint) ([]Preferences, error) {
 	err := db.Where("user_id = ?", userID).Find(&prefs).Error
 	return prefs, err
 }
+
+var FetchPreferenceById = func(id uint) (Preferences, error) {
+	var pref Preferences
+	txn := db.First(&pref, id)
+	return pref, txn.Error
+}
+
 var FetchPreferencesBySemester = func(semester string) ([]Preferences, error) {
 	var prefs []Preferences
 	err := db.Where("semester = ?", semester).Find(&prefs).Error
 	return prefs, err
+}
+
+var UpsertPreference = func(pref Preferences) (Preferences, error) {
+	// If preference ID is not set (i.e., new preference), create a new preference
+	if pref.ID == 0 {
+		// Insert the new preference into the database
+		if err := db.Create(&pref).Error; err != nil {
+			return pref, err // Error during insert
+		}
+		return pref, nil // Successfully inserted new user
+	}
+
+	// Check if the preference exists by ID
+	var existingPref Preferences
+	if err := db.Where("id = ?", pref.ID).First(&existingPref).Error; err != nil {
+		if err.Error() == "record not found" {
+			// User does not exist, so insert new record
+			if err := db.Create(&pref).Error; err != nil {
+				return pref, err // Error during insert
+			}
+			return pref, nil // Successfully inserted new user
+		}
+		return pref, err // Error while checking if user exists
+	}
+
+	// If the user exists, update the record
+	if err := db.Model(&existingPref).Updates(pref).Error; err != nil {
+		return pref, err // Error during update
+	}
+
+	return existingPref, nil // Return the updated user
 }
 
 var BulkUpsertPreferences = func(prefs []Preferences) ([]Preferences, error) {

@@ -341,6 +341,17 @@ body.sidebar-open::before {
   cursor: pointer;
 }
 
+#matchBtn {
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -408,3 +419,47 @@ body.sidebar-open::before {
 }
 
 
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.form input, .form select {
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.form button {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background-color: #45a049;
+}
+
+.confirmation {
+  margin-top: 20px;
+  text-align: center;
+  display: none;
+  padding: 15px;
+  background-color: #e7f4e4;
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+}
+
+.course-group {
+  margin-top: 20px;
+}

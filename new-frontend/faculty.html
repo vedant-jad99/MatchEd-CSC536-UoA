@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Course Assignment</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Faculty Course Assignment</h1>
+    
+    <div class="form">
+      <label for="facultyName">Faculty Name:</label>
+      <input type="text" id="facultyName" placeholder="Enter Faculty Name">
+      
+      <label for="facultyEmail">Email:</label>
+      <input type="email" id="facultyEmail" placeholder="Enter Faculty Email">
+      
+      <div id="coursesContainer">
+        <div class="course-group">
+          <label for="courseName">Course Name:</label>
+          <input type="text" class="courseName" placeholder="Enter Course Name">
+    
+          <label for="coursePreference">Course Preference Level:</label>
+          <select class="coursePreference">
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+            <option value="red">Red</option>
+          </select>
+        </div>
+      </div>
+      
+      <button onclick="addFormCourse()">Add More Courses</button>
+      <button onclick="submitForm()">Submit</button>
+    </div>
+
+    <div id="confirmation" class="confirmation">
+      <h3>Form Submitted!</h3>
+      <p>Your details have been submitted successfully.</p>
+    </div>
+  </div>
+<script src="static/script.js"></script>
+</body>
+</html>

@@ -62,10 +62,17 @@ func setApiHandlers(r *gin.Engine) {
 	{
 		// Matching engine routes
 		api.POST("/trigger-matching", controllers.TriggerMatchingEngine)
+
+		batch := api.Group("/batch")
+		{
+			batch.POST("/", controllers.HandleBatchPush)
+		}
+
 		// Course routes
 		courses := api.Group("/course")
 		{
 			courses.GET("/", controllers.HandleFetchAllCourses)
+			courses.GET("/formatted", controllers.HandleFetchAllCoursesFormatted)
 			courses.GET("/:id", controllers.HandleFetchCourseById)
 			courses.POST("/", controllers.HandleUpsertCourse)
 			courses.DELETE("/:id", controllers.HandleDeleteCourse)
@@ -74,6 +81,7 @@ func setApiHandlers(r *gin.Engine) {
 		users := api.Group("/users")
 		{
 			users.GET("/", controllers.GetAllUsers)
+			//users.GET("/fetch_formatted", controllers.GetAllUsersFormatted)
 			users.GET("/:id", controllers.GetUserById)
 			users.POST("/", controllers.UpsertUser)
 			users.DELETE("/:id", controllers.DeleteUser)
@@ -82,26 +90,33 @@ func setApiHandlers(r *gin.Engine) {
 		courseSemesters := api.Group("/course_semester")
 		{
 			courseSemesters.GET("/", controllers.HandleFetchAllCourseSemesters)
-			courseSemesters.GET("/get", controllers.HandleFetchCourseSemester)
+			courseSemesters.GET("/get/:id", controllers.HandleFetchCourseSemester)
 			courseSemesters.POST("/add", controllers.HandleAddCourseSemester)
 			courseSemesters.DELETE("/remove/:id", controllers.HandleRemoveCourseSemester)
 			courseSemesters.PUT("/update", controllers.HandleUpdateCourseSemester)
+			courseSemesters.POST("/upsert", controllers.HandleUpsertCourseAndSemester)
 			courseSemesters.POST("/bulk/upsert", controllers.HandleBulkUpsertCourseSemesters)
 			courseSemesters.POST("/bulk/delete", controllers.HandleBulkDeleteCourseSemesters)
 		}
 
 		preferences := api.Group("/preferences")
 		{
+			preferences.GET("/:id", controllers.HandleFetchPreferenceById)
 			preferences.GET("/fetch_all", controllers.HandleFetchAllPreferences)
+			preferences.GET("/fetch_formatted", controllers.HandleFetchAllPreferencesFormatted)
 			preferences.GET("/fetch_by_user", controllers.HandleFetchPreferences)
+			preferences.POST("/upsert", controllers.HandleUpsertPreference)
 			preferences.POST("/bulk/upsert", controllers.HandleBulkUpsertPreferences)
 			preferences.POST("/bulk/delete", controllers.HandleBulkDeletePreferences)
+			preferences.DELETE("/remove/:id", controllers.DeletePreference)
 		}
 
 		matchings := api.Group("/matchings")
 		{
 			matchings.GET("/latest", controllers.HandleFetchLatestMatchings)
+			matchings.GET("/latest_formatted", controllers.HandleFetchLatestMatchingsFormatted)
 			matchings.GET("/by_iteration", controllers.HandleFetchMatchingsByIterationID)
+			matchings.POST("/trigger", controllers.TriggerMatchingEngine)
 		}
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(200, gin.H{"message": "pong"})
